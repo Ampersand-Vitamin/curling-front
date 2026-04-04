@@ -1,6 +1,6 @@
 import MapView from "./components/MapView";
 import ViewToggle from "./components/ViewToggle";
-import DesignerCarousel from "./components/DesignerCarousel";
+import PullBar from "./components/PullBar";
 
 export default function DiscoverPage() {
   return (
@@ -10,14 +10,14 @@ export default function DiscoverPage() {
         <ViewToggle />
       </div>
 
-      {/* 지도 영역 */}
-      <div className="flex-1">
+      {/* 지도 영역 — 전체 화면 */}
+      <div className="absolute inset-0">
         <MapView />
       </div>
 
-      {/* 하단 디자이너 캐러셀 */}
-      <div className="px-4 py-4">
-        <DesignerCarousel />
+      {/* 하단 Pull Bar — 지도 위에 겹침 */}
+      <div className="mt-auto relative z-10">
+        <PullBar />
       </div>
     </div>
   );
