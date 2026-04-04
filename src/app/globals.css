@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@import "../styles/typography.css";
+
+/* Design Ref: §4 — Figma Color System → Tailwind @theme mapping */
+@theme {
+  /* Font Family */
+  --font-pretendard: var(--font-pretendard-variable), "Pretendard", sans-serif;
+
+  /* Primary (Figma: Primary) */
+  --color-primary-50: #faf2f5;
+  --color-primary-200: #f8dae2;
+  --color-primary-300: #fcb2c7;
+  --color-primary-400: #ff80a4;
+  --color-primary-600: #ed1250;
+  --color-primary-700: #c20138;
+
+  /* Secondary (Figma: Secondary) */
+  --color-secondary-50: #f9f5f1;
+  --color-secondary-200: #f7e5d5;
+  --color-secondary-300: #fbc99d;
+  --color-secondary-400: #ebae79;
+  --color-secondary-500: #da904e;
+  --color-secondary-600: #b16b2d;
+
+  /* Surface (Figma: warm grey) */
+  --color-surface-50: #fcfbf8;
+  --color-surface-100: #f7f6f3;
+  --color-surface-200: #f0efec;
+  --color-surface-300: #e0dfdd;
+  --color-surface-400: #b8b7b5;
+  --color-surface-500: #8c8b8a;
+  --color-surface-600: #696867;
+  --color-surface-700: #545353;
+  --color-surface-800: #3b3a3a;
+  --color-surface-900: #292828;
+  --color-surface-950: #171717;
+
+  /* Accent (Figma: Accent) */
+  --color-accent-100: #f1f5f9;
+  --color-accent-300: #cbd5e1;
+  --color-accent-400: #94a3b8;
+  --color-accent-500: #657b9b;
+  --color-accent-700: #2a3f5f;
+  --color-accent-900: #152343;
+
+  /* Success (Figma: Green) */
+  --color-success-100: #e6f2ca;
+  --color-success-500: #6ebd44;
+}
+
+body {
+  background: var(--color-surface-50);
+  color: var(--color-surface-950);
+}
