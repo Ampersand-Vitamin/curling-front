@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curling Platform — ERD</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #6366f1;
+    --accent-light: #eef2ff;
+    --phase1: #6366f1;
+    --phase1-bg: #eef2ff;
+    --phase2: #f59e0b;
+    --phase2-bg: #fffbeb;
+    --phase3: #10b981;
+    --phase3-bg: #ecfdf5;
+    --phase4: #ef4444;
+    --phase4-bg: #fef2f2;
+    --pk: #6366f1;
+    --fk: #f59e0b;
+    --col: #374151;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  @media print {
+    body { padding: 24px; }
+    .page-break { page-break-before: always; }
+    .no-print { display: none; }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid var(--border);
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .header .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  .header .meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Phase badge */
+  .phase-section {
+    margin-bottom: 56px;
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .phase-badge.p1 { background: var(--phase1-bg); color: var(--phase1); }
+  .phase-badge.p2 { background: var(--phase2-bg); color: var(--phase2); }
+  .phase-badge.p3 { background: var(--phase3-bg); color: var(--phase3); }
+  .phase-badge.p4 { background: var(--phase4-bg); color: var(--phase4); }
+  .phase-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .phase-desc {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  /* ERD Canvas */
+  .erd-canvas {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    margin-bottom: 32px;
+  }
+
+  /* Table card */
+  .table-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .table-card {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    break-inside: avoid;
+  }
+  .table-card-header {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .table-card-header .icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .p1 .table-card-header { background: var(--phase1-bg); color: var(--phase1); }
+  .p1 .table-card-header .icon { background: var(--phase1); }
+  .p2 .table-card-header { background: var(--phase2-bg); color: var(--phase2); }
+  .p2 .table-card-header .icon { background: var(--phase2); }
+  .p3 .table-card-header { background: var(--phase3-bg); color: var(--phase3); }
+  .p3 .table-card-header .icon { background: var(--phase3); }
+  .p4 .table-card-header { background: var(--phase4-bg); color: var(--phase4); }
+  .p4 .table-card-header .icon { background: var(--phase4); }
+
+  .table-card-body { padding: 0; }
+  .col-row {
+    display: grid;
+    grid-template-columns: 140px 100px 1fr;
+    font-size: 12px;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: center;
+  }
+  .col-row:last-child { border-bottom: none; }
+  .col-row > span { padding: 7px 12px; }
+  .col-name {
+    font-weight: 500;
+    color: var(--col);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .col-type { color: var(--muted); font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+  .col-desc { color: var(--muted); font-size: 11px; }
+  .badge-pk, .badge-fk {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .badge-pk { background: #eef2ff; color: var(--pk); }
+  .badge-fk { background: #fef3c7; color: #92400e; }
+
+  /* Relationship diagram (SVG) */
+  .rel-diagram {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .rel-diagram svg { display: block; margin: 0 auto; }
+
+  /* Relation list */
+  .rel-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .rel-item {
+    font-size: 12px;
+    color: var(--col);
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rel-item .rel-type {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Mapping table */
+  .mapping-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 16px;
+  }
+  .mapping-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+  }
+  .mapping-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f3f4f6;
+    color: var(--col);
+  }
+  .mapping-table code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Index table */
+  .index-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .index-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: #f9fafb;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .index-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .index-table code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Phase overview */
+  .phase-overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .phase-card {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .phase-card.active { border-color: var(--phase1); background: var(--phase1-bg); }
+  .phase-card h3 { font-size: 14px; margin-bottom: 4px; }
+  .phase-card p { font-size: 12px; color: var(--muted); }
+  .phase-card .entities {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+  .phase-card .entity-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    color: var(--col);
+  }
+  .phase-card.active .entity-tag { background: #fff; }
+
+  /* Status badge */
+  .status-current {
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--phase1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 8px;
+    display: inline-block;
+  }
+  .status-planned {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 8px;
+    display: inline-block;
+  }
+
+  /* Flow diagram */
+  .flow-box {
+    text-align: center;
+    margin: 24px 0;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 10px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--col);
+    line-height: 2;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--muted);
+    background: #f9fafb;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>Curling Platform — ERD</h1>
+  <div class="subtitle">컬리 헤어 전문 디자이너 매칭 플랫폼 데이터 모델</div>
+  <div class="meta">
+    <span>Created: 2026-04-04</span>
+    <span>Status: Draft</span>
+    <span>Version: 1.0</span>
+  </div>
+</div>
+
+<!-- Phase Overview -->
+<div class="section-label">Phase Overview</div>
+<div class="phase-overview">
+  <div class="phase-card active">
+    <h3>Phase 1</h3>
+    <p>Discover</p>
+    <div class="entities">
+      <span class="entity-tag">User</span>
+      <span class="entity-tag">DesignerProfile</span>
+      <span class="entity-tag">Salon</span>
+      <span class="entity-tag">Portfolio</span>
+      <span class="entity-tag">Keyword</span>
+      <span class="entity-tag">Favorite</span>
+    </div>
+    <span class="status-current">CURRENT</span>
+  </div>
+  <div class="phase-card">
+    <h3>Phase 2</h3>
+    <p>Booking & Review</p>
+    <div class="entities">
+      <span class="entity-tag">Service</span>
+      <span class="entity-tag">Booking</span>
+      <span class="entity-tag">Review</span>
+    </div>
+    <span class="status-planned">Planned</span>
+  </div>
+  <div class="phase-card">
+    <h3>Phase 3</h3>
+    <p>Chat</p>
+    <div class="entities">
+      <span class="entity-tag">ChatRoom</span>
+      <span class="entity-tag">ChatMessage</span>
+    </div>
+    <span class="status-planned">Planned</span>
+  </div>
+</div>
+
+<!-- ===== PHASE 1 ===== -->
+<div class="phase-section">
+  <div class="phase-header">
+    <span class="phase-badge p1">Phase 1</span>
+    <h2>Discover</h2>
+  </div>
+  <p class="phase-desc">디자이너 탐색, 맵뷰, 키워드 필터, 찜하기 — 현재 구현 중인 핵심 기능</p>
+
+  <!-- Relationship Diagram -->
+  <div class="rel-diagram">
+    <svg width="820" height="380" viewBox="0 0 820 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Entity boxes -->
+      <!-- User -->
+      <rect x="20" y="140" width="140" height="50" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="90" y="170" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#6366f1">User</text>
+
+      <!-- DesignerProfile -->
+      <rect x="240" y="140" width="160" height="50" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="320" y="170" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#6366f1">DesignerProfile</text>
+
+      <!-- Salon -->
+      <rect x="240" y="20" width="140" height="50" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="310" y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#6366f1">Salon</text>
+
+      <!-- Portfolio -->
+      <rect x="240" y="260" width="140" height="50" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="310" y="290" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#6366f1">Portfolio</text>
+
+      <!-- KeywordCategory -->
+      <rect x="500" y="80" width="160" height="50" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="580" y="110" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#6366f1">KeywordCategory</text>
+
+      <!-- Keyword -->
+      <rect x="500" y="200" width="140" height="50" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="570" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#6366f1">Keyword</text>
+
+      <!-- DesignerKeyword -->
+      <rect x="500" y="320" width="170" height="44" rx="8" fill="#f9fafb" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 2"/>
+      <text x="585" y="346" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#6b7280">DesignerKeyword (M2M)</text>
+
+      <!-- Relationship lines -->
+      <!-- User → DesignerProfile (1:1) -->
+      <line x1="160" y1="165" x2="240" y2="165" stroke="#6366f1" stroke-width="1.5"/>
+      <circle cx="160" cy="165" r="3" fill="#6366f1"/>
+      <circle cx="240" cy="165" r="3" fill="#6366f1"/>
+      <text x="200" y="157" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#6b7280">1 : 1</text>
+
+      <!-- DesignerProfile → Salon (N:1) -->
+      <line x1="310" y1="140" x2="310" y2="70" stroke="#6366f1" stroke-width="1.5"/>
+      <circle cx="310" cy="140" r="3" fill="#6366f1"/>
+      <circle cx="310" cy="70" r="3" fill="#6366f1"/>
+      <text x="325" y="110" font-family="Inter, sans-serif" font-size="10" fill="#6b7280">N : 1</text>
+
+      <!-- DesignerProfile → Portfolio (1:N) -->
+      <line x1="310" y1="190" x2="310" y2="260" stroke="#6366f1" stroke-width="1.5"/>
+      <circle cx="310" cy="190" r="3" fill="#6366f1"/>
+      <circle cx="310" cy="260" r="3" fill="#6366f1"/>
+      <text x="325" y="230" font-family="Inter, sans-serif" font-size="10" fill="#6b7280">1 : N</text>
+
+      <!-- KeywordCategory → Keyword (1:N) -->
+      <line x1="575" y1="130" x2="575" y2="200" stroke="#6366f1" stroke-width="1.5"/>
+      <circle cx="575" cy="130" r="3" fill="#6366f1"/>
+      <circle cx="575" cy="200" r="3" fill="#6366f1"/>
+      <text x="590" y="170" font-family="Inter, sans-serif" font-size="10" fill="#6b7280">1 : N</text>
+
+      <!-- DesignerProfile ↔ Keyword via DesignerKeyword (N:M) -->
+      <path d="M400 175 L500 230" stroke="#6366f1" stroke-width="1" stroke-dasharray="4 2"/>
+      <path d="M400 175 L500 342" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 2"/>
+      <path d="M570 250 L570 320" stroke="#d1d5db" stroke-width="1" stroke-dasharray="4 2"/>
+      <text x="440" y="195" font-family="Inter, sans-serif" font-size="10" fill="#6b7280">N : M</text>
+    </svg>
+  </div>
+
+  <!-- Table cards -->
+  <div class="table-grid">
+    <!-- User -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> User</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name">email</span><span class="col-type">VARCHAR(255)</span><span class="col-desc">UNIQUE, NOT NULL</span></div>
+        <div class="col-row"><span class="col-name">password_hash</span><span class="col-type">VARCHAR(255)</span><span class="col-desc">bcrypt hash</span></div>
+        <div class="col-row"><span class="col-name">name</span><span class="col-type">VARCHAR(100)</span><span class="col-desc">표시 이름</span></div>
+        <div class="col-row"><span class="col-name">phone</span><span class="col-type">VARCHAR(20)</span><span class="col-desc">UNIQUE</span></div>
+        <div class="col-row"><span class="col-name">role</span><span class="col-type">ENUM</span><span class="col-desc">CUSTOMER | DESIGNER | ADMIN</span></div>
+        <div class="col-row"><span class="col-name">profile_image</span><span class="col-type">VARCHAR(500)</span><span class="col-desc">프로필 이미지 URL</span></div>
+        <div class="col-row"><span class="col-name">locale</span><span class="col-type">VARCHAR(5)</span><span class="col-desc">DEFAULT 'en'</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name">updated_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- DesignerProfile -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> DesignerProfile</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> user_id</span><span class="col-type">UUID</span><span class="col-desc">→ User, UNIQUE</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> salon_id</span><span class="col-type">UUID</span><span class="col-desc">→ Salon, NULLABLE</span></div>
+        <div class="col-row"><span class="col-name">bio</span><span class="col-type">TEXT</span><span class="col-desc">자기소개</span></div>
+        <div class="col-row"><span class="col-name">years_of_exp</span><span class="col-type">INT</span><span class="col-desc">경력 연차</span></div>
+        <div class="col-row"><span class="col-name">rating_avg</span><span class="col-type">DECIMAL(2,1)</span><span class="col-desc">DEFAULT 0</span></div>
+        <div class="col-row"><span class="col-name">review_count</span><span class="col-type">INT</span><span class="col-desc">DEFAULT 0</span></div>
+        <div class="col-row"><span class="col-name">is_verified</span><span class="col-type">BOOLEAN</span><span class="col-desc">인증 디자이너</span></div>
+        <div class="col-row"><span class="col-name">highlight_message</span><span class="col-type">VARCHAR(200)</span><span class="col-desc">카드 한 줄 소개</span></div>
+        <div class="col-row"><span class="col-name">languages</span><span class="col-type">VARCHAR[]</span><span class="col-desc">['korean', 'english']</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- Salon -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> Salon</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name">name</span><span class="col-type">VARCHAR(200)</span><span class="col-desc">살롱 이름</span></div>
+        <div class="col-row"><span class="col-name">address</span><span class="col-type">VARCHAR(500)</span><span class="col-desc">주소</span></div>
+        <div class="col-row"><span class="col-name">latitude</span><span class="col-type">DECIMAL(10,7)</span><span class="col-desc">위도</span></div>
+        <div class="col-row"><span class="col-name">longitude</span><span class="col-type">DECIMAL(10,7)</span><span class="col-desc">경도</span></div>
+        <div class="col-row"><span class="col-name">phone</span><span class="col-type">VARCHAR(20)</span><span class="col-desc">매장 전화번호</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- Portfolio -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> Portfolio</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> designer_id</span><span class="col-type">UUID</span><span class="col-desc">→ DesignerProfile</span></div>
+        <div class="col-row"><span class="col-name">image_url</span><span class="col-type">VARCHAR(500)</span><span class="col-desc">이미지 URL</span></div>
+        <div class="col-row"><span class="col-name">description</span><span class="col-type">VARCHAR(300)</span><span class="col-desc">설명</span></div>
+        <div class="col-row"><span class="col-name">hair_type</span><span class="col-type">VARCHAR(50)</span><span class="col-desc">헤어 타입 태그</span></div>
+        <div class="col-row"><span class="col-name">is_primary</span><span class="col-type">BOOLEAN</span><span class="col-desc">대표 이미지 여부</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- KeywordCategory -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> KeywordCategory</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name">name</span><span class="col-type">VARCHAR(50)</span><span class="col-desc">카테고리명</span></div>
+        <div class="col-row"><span class="col-name">slug</span><span class="col-type">VARCHAR(50)</span><span class="col-desc">UNIQUE</span></div>
+        <div class="col-row"><span class="col-name">display_order</span><span class="col-type">INT</span><span class="col-desc">표시 순서</span></div>
+      </div>
+    </div>
+
+    <!-- Keyword -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> Keyword</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> category_id</span><span class="col-type">UUID</span><span class="col-desc">→ KeywordCategory</span></div>
+        <div class="col-row"><span class="col-name">name</span><span class="col-type">VARCHAR(100)</span><span class="col-desc">키워드명</span></div>
+        <div class="col-row"><span class="col-name">slug</span><span class="col-type">VARCHAR(100)</span><span class="col-desc">URL용</span></div>
+        <div class="col-row"><span class="col-name">display_order</span><span class="col-type">INT</span><span class="col-desc">표시 순서</span></div>
+      </div>
+    </div>
+
+    <!-- DesignerKeyword -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> DesignerKeyword <span style="font-weight:400;font-size:11px;color:#6b7280">(M2M)</span></div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> designer_id</span><span class="col-type">UUID</span><span class="col-desc">→ DesignerProfile</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> keyword_id</span><span class="col-type">UUID</span><span class="col-desc">→ Keyword</span></div>
+        <div class="col-row"><span class="col-name" style="color:#6b7280;font-size:11px">PK = (designer_id, keyword_id)</span><span class="col-type"></span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- Favorite -->
+    <div class="table-card p1">
+      <div class="table-card-header"><span class="icon"></span> Favorite</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> customer_id</span><span class="col-type">UUID</span><span class="col-desc">→ User</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> designer_id</span><span class="col-type">UUID</span><span class="col-desc">→ DesignerProfile</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name" style="color:#6b7280;font-size:11px">UNIQUE(customer_id, designer_id)</span><span class="col-type"></span><span class="col-desc"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frontend ↔ DB Mapping -->
+  <h3>Frontend ↔ DB Mapping</h3>
+  <table class="mapping-table">
+    <thead>
+      <tr><th>Frontend</th><th>DB Source</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>DesignerCard.name</code></td><td><code>User.name</code> JOIN DesignerProfile</td></tr>
+      <tr><td><code>DesignerCard.languages</code></td><td><code>DesignerProfile.languages</code></td></tr>
+      <tr><td><code>DesignerCard.profileImage</code></td><td><code>User.profile_image</code></td></tr>
+      <tr><td><code>DesignerCard.portfolioImage</code></td><td><code>Portfolio WHERE is_primary = true</code></td></tr>
+      <tr><td><code>DesignerCard.message</code></td><td><code>DesignerProfile.highlight_message</code></td></tr>
+      <tr><td><code>KeywordFilter</code> chips</td><td><code>KeywordCategory</code> + <code>Keyword</code></td></tr>
+      <tr><td><code>MapView</code> markers</td><td><code>Salon.latitude</code>, <code>Salon.longitude</code></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Index -->
+  <h3>Indexes</h3>
+  <table class="index-table">
+    <thead>
+      <tr><th>Table</th><th>Index</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>User</td><td><code>email</code> (UNIQUE)</td><td>Login lookup</td></tr>
+      <tr><td>DesignerProfile</td><td><code>salon_id</code></td><td>Salon filter</td></tr>
+      <tr><td>Salon</td><td><code>(latitude, longitude)</code> GiST</td><td>Map range query</td></tr>
+      <tr><td>Portfolio</td><td><code>(designer_id, is_primary)</code></td><td>Primary image lookup</td></tr>
+      <tr><td>DesignerKeyword</td><td><code>keyword_id</code></td><td>Keyword filter</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== PHASE 2 ===== -->
+<div class="page-break"></div>
+<div class="phase-section">
+  <div class="phase-header">
+    <span class="phase-badge p2">Phase 2</span>
+    <h2>Booking & Review</h2>
+  </div>
+  <p class="phase-desc">시술 메뉴 조회, 예약, 리뷰</p>
+
+  <div class="table-grid">
+    <!-- Service -->
+    <div class="table-card p2">
+      <div class="table-card-header"><span class="icon"></span> Service</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> salon_id</span><span class="col-type">UUID</span><span class="col-desc">→ Salon</span></div>
+        <div class="col-row"><span class="col-name">name</span><span class="col-type">VARCHAR(200)</span><span class="col-desc">시술명</span></div>
+        <div class="col-row"><span class="col-name">description</span><span class="col-type">TEXT</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name">price</span><span class="col-type">INT</span><span class="col-desc">가격 (원)</span></div>
+        <div class="col-row"><span class="col-name">duration_min</span><span class="col-type">INT</span><span class="col-desc">소요 시간 (분)</span></div>
+        <div class="col-row"><span class="col-name">category</span><span class="col-type">VARCHAR(50)</span><span class="col-desc">cut | perm | color | treatment</span></div>
+        <div class="col-row"><span class="col-name">is_active</span><span class="col-type">BOOLEAN</span><span class="col-desc">DEFAULT true</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- Booking -->
+    <div class="table-card p2">
+      <div class="table-card-header"><span class="icon"></span> Booking</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> customer_id</span><span class="col-type">UUID</span><span class="col-desc">→ User</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> designer_id</span><span class="col-type">UUID</span><span class="col-desc">→ DesignerProfile</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> service_id</span><span class="col-type">UUID</span><span class="col-desc">→ Service</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> salon_id</span><span class="col-type">UUID</span><span class="col-desc">→ Salon</span></div>
+        <div class="col-row"><span class="col-name">scheduled_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc">예약 일시</span></div>
+        <div class="col-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-desc">PENDING | CONFIRMED | COMPLETED | CANCELLED</span></div>
+        <div class="col-row"><span class="col-name">note</span><span class="col-type">TEXT</span><span class="col-desc">고객 요청사항</span></div>
+        <div class="col-row"><span class="col-name">total_price</span><span class="col-type">INT</span><span class="col-desc">최종 가격</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name">updated_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- Review -->
+    <div class="table-card p2">
+      <div class="table-card-header"><span class="icon"></span> Review</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> booking_id</span><span class="col-type">UUID</span><span class="col-desc">→ Booking, UNIQUE</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> customer_id</span><span class="col-type">UUID</span><span class="col-desc">→ User</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> designer_id</span><span class="col-type">UUID</span><span class="col-desc">→ DesignerProfile</span></div>
+        <div class="col-row"><span class="col-name">rating</span><span class="col-type">SMALLINT</span><span class="col-desc">1~5</span></div>
+        <div class="col-row"><span class="col-name">content</span><span class="col-type">TEXT</span><span class="col-desc">리뷰 내용</span></div>
+        <div class="col-row"><span class="col-name">images</span><span class="col-type">VARCHAR[]</span><span class="col-desc">이미지 URL 배열</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-box">
+    <strong>Booking Status Flow</strong><br>
+    PENDING &rarr; CONFIRMED &rarr; COMPLETED<br>
+    PENDING | CONFIRMED &rarr; CANCELLED
+  </div>
+
+  <div class="note">Review 생성 시 <code>DesignerProfile.rating_avg</code>, <code>review_count</code> 비정규화 필드 갱신 필요</div>
+</div>
+
+<!-- ===== PHASE 3 ===== -->
+<div class="page-break"></div>
+<div class="phase-section">
+  <div class="phase-header">
+    <span class="phase-badge p3">Phase 3</span>
+    <h2>Chat</h2>
+  </div>
+  <p class="phase-desc">고객-디자이너 1:1 채팅</p>
+
+  <div class="table-grid">
+    <!-- ChatRoom -->
+    <div class="table-card p3">
+      <div class="table-card-header"><span class="icon"></span> ChatRoom</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> customer_id</span><span class="col-type">UUID</span><span class="col-desc">→ User</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> designer_id</span><span class="col-type">UUID</span><span class="col-desc">→ DesignerProfile</span></div>
+        <div class="col-row"><span class="col-name">last_message_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc">마지막 메시지</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name" style="color:#6b7280;font-size:11px">UNIQUE(customer_id, designer_id)</span><span class="col-type"></span><span class="col-desc"></span></div>
+      </div>
+    </div>
+
+    <!-- ChatMessage -->
+    <div class="table-card p3">
+      <div class="table-card-header"><span class="icon"></span> ChatMessage</div>
+      <div class="table-card-body">
+        <div class="col-row"><span class="col-name"><span class="badge-pk">PK</span> id</span><span class="col-type">UUID</span><span class="col-desc"></span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> room_id</span><span class="col-type">UUID</span><span class="col-desc">→ ChatRoom</span></div>
+        <div class="col-row"><span class="col-name"><span class="badge-fk">FK</span> sender_id</span><span class="col-type">UUID</span><span class="col-desc">→ User</span></div>
+        <div class="col-row"><span class="col-name">content</span><span class="col-type">TEXT</span><span class="col-desc">메시지 내용</span></div>
+        <div class="col-row"><span class="col-name">message_type</span><span class="col-type">ENUM</span><span class="col-desc">TEXT | IMAGE | BOOKING_LINK</span></div>
+        <div class="col-row"><span class="col-name">read_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc">NULL = 미읽음</span></div>
+        <div class="col-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-desc"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
