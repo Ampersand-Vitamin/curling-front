@@ -1,0 +1,625 @@
+[
+  {
+    "id": "hair-001",
+    "filename": "hair-001.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "보브"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "블랙"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.8
+    }
+  },
+  {
+    "id": "hair-002",
+    "filename": "hair-002.jpg",
+    "tags": {
+      "length": "크롭",
+      "cut": [
+        "픽시"
+      ],
+      "texture": "내추럴",
+      "color": [
+        "실버"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.92
+    }
+  },
+  {
+    "id": "hair-003",
+    "filename": "hair-003.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [],
+      "texture": "스트레이트",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "뉴트럴",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "남성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-004",
+    "filename": "hair-004.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "뉴트럴",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-005",
+    "filename": "hair-005.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "청순"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-006",
+    "filename": "hair-006.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "빈티지"
+      ],
+      "gender": "여성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-007",
+    "filename": "hair-007.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "보브",
+        "레이어드"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "모던",
+        "캐주얼"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-008",
+    "filename": "hair-008.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "보브"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "블론드",
+        "애쉬"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-009",
+    "filename": "hair-009.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "보브"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "뉴트럴",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "여성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-010",
+    "filename": "hair-010.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "투블럭"
+      ],
+      "texture": "내추럴",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "뉴트럴",
+      "mood": [
+        "모던",
+        "캐주얼"
+      ],
+      "gender": "남성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-011",
+    "filename": "hair-011.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "투블럭",
+        "테이퍼"
+      ],
+      "texture": "내추럴",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "뉴트럴",
+      "mood": [
+        "클래식",
+        "시크"
+      ],
+      "gender": "남성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-012",
+    "filename": "hair-012.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "투블럭",
+        "테이퍼"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "남성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-013",
+    "filename": "hair-013.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "컬",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-014",
+    "filename": "hair-014.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "컬",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "힙"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-015",
+    "filename": "hair-015.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "컬",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "남성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-016",
+    "filename": "hair-016.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "블론드",
+        "하이라이트"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "여성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-017",
+    "filename": "hair-017.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "블론드"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "캐주얼",
+        "청순"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-018",
+    "filename": "hair-018.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "레이어드",
+        "쉐기"
+      ],
+      "texture": "컬",
+      "color": [
+        "라이트브라운",
+        "블론드"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-019",
+    "filename": "hair-019.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "청순"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-020",
+    "filename": "hair-020.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "원랭스"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "클래식",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-021",
+    "filename": "hair-021.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "시크",
+        "모던"
+      ],
+      "gender": "여성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-022",
+    "filename": "hair-022.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "애쉬",
+        "블론드"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-023",
+    "filename": "hair-023.jpg",
+    "tags": {
+      "length": null,
+      "cut": null,
+      "texture": null,
+      "color": null,
+      "tone": null,
+      "mood": null,
+      "gender": null,
+      "confidence": 0
+    }
+  },
+  {
+    "id": "hair-024",
+    "filename": "hair-024.jpg",
+    "tags": {
+      "length": null,
+      "cut": null,
+      "texture": null,
+      "color": null,
+      "tone": null,
+      "mood": null,
+      "gender": null,
+      "confidence": 0
+    }
+  },
+  {
+    "id": "hair-025",
+    "filename": "hair-025.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "컬",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-026",
+    "filename": "hair-026.jpg",
+    "tags": {
+      "length": "롱",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "컬",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼",
+        "모던"
+      ],
+      "gender": "여성",
+      "confidence": 0.88
+    }
+  },
+  {
+    "id": "hair-027",
+    "filename": "hair-027.jpg",
+    "tags": {
+      "length": "미디엄",
+      "cut": [
+        "레이어드"
+      ],
+      "texture": "웨이브",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "캐주얼"
+      ],
+      "gender": "여성",
+      "confidence": 0.82
+    }
+  },
+  {
+    "id": "hair-028",
+    "filename": "hair-028.jpg",
+    "tags": {
+      "length": "크롭",
+      "cut": [
+        "픽시"
+      ],
+      "texture": "내추럴",
+      "color": [
+        "애쉬",
+        "실버"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-029",
+    "filename": "hair-029.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "픽시",
+        "레이어드"
+      ],
+      "texture": "내추럴",
+      "color": [
+        "블랙"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "hair-030",
+    "filename": "hair-030.jpg",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "픽시",
+        "레이어드"
+      ],
+      "texture": "내추럴",
+      "color": [
+        "다크브라운"
+      ],
+      "tone": "웜톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.9
+    }
+  }
+]

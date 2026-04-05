@@ -1,0 +1,65 @@
+{
+  "uploadImage": {
+    "id": "hair-001",
+    "tags": {
+      "length": "숏",
+      "cut": [
+        "보브"
+      ],
+      "texture": "스트레이트",
+      "color": [
+        "블랙"
+      ],
+      "tone": "쿨톤",
+      "mood": [
+        "모던",
+        "시크"
+      ],
+      "gender": "여성",
+      "confidence": 0.8
+    }
+  },
+  "matches": [
+    {
+      "designerId": "hair-029",
+      "score": 11,
+      "maxScore": 14,
+      "percentage": 79,
+      "matchedTags": [
+        {
+          "category": "길이",
+          "tags": [
+            "숏"
+          ]
+        },
+        {
+          "category": "색상",
+          "tags": [
+            "블랙"
+          ]
+        },
+        {
+          "category": "톤",
+          "tags": [
+            "쿨톤"
+          ]
+        },
+        {
+          "category": "무드",
+          "tags": [
+            "모던",
+            "시크"
+          ]
+        },
+        {
+          "category": "성별",
+          "tags": [
+            "여성"
+          ]
+        }
+      ],
+      "mustMatchFailed": false
+    }
+  ],
+  "timestamp": "2026-04-05T07:49:21.887Z"
+}
