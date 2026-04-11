@@ -11,7 +11,7 @@
 
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
-import { TAXONOMY, type TagCategory } from "./taxonomy";
+import { TAXONOMY, type TagCategory } from "./kr-taxonomy";
 
 const TAGGED_PATH = path.resolve("sample-data/tagged-results.json");
 const MATCH_OUTPUT = path.resolve("sample-data/match-demo.json");

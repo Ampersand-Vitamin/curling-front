@@ -1,6 +1,9 @@
 /**
  * 헤어 태그 택소노미 (분류 체계)
  *
+ * K-Hairstyle 데이터셋(KAIST, 50만 장)의 분류 체계를 그대로 반영.
+ * 참고: https://psh01087.github.io/K-Hairstyle/
+ *
  * - 모든 태깅은 이 목록 안에서만 이루어짐
  * - Vision AI 프롬프트에 이 목록을 전달하여 일관성 유지
  * - weight: 매칭 시 카테고리별 가중치 (높을수록 중요)
@@ -12,46 +15,122 @@ export interface TagCategory {
   label: string;
   weight: number;
   mustMatch: boolean;
-  multiple: boolean; // 복수 선택 가능 여부
+  multiple: boolean;
   tags: string[];
 }
 
 export const TAXONOMY: TagCategory[] = [
+  // ── basestyle (K-Hairstyle: 31 types) ─────────────────────
+  {
+    key: "basestyle",
+    label: "베이스 스타일",
+    weight: 3,
+    mustMatch: false,
+    multiple: true,
+    tags: [
+      "Hershey",
+      "Dandy",
+      "Build",
+      "Parted",
+      "Short male",
+      "Tassel",
+      "Other female",
+      "Comma",
+      "Short female",
+      "Pomade",
+      "Bob",
+      "Hippi",
+      "Misty",
+      "Pleats",
+      "As",
+      "See-through dandy",
+      "Leaf",
+      "Air",
+      "Body",
+      "Spin swallow",
+      "Soft two-block dandy",
+      "One-block dandy",
+      "One length",
+      "Other layered",
+      "Loop",
+      "Other male",
+      "Baby",
+      "Regent",
+      "Bonnie",
+      "Shadow",
+      "Short bob",
+    ],
+  },
+
+  // ── basestyle_type (K-Hairstyle) ──────────────────────────
+  {
+    key: "basestyle_type",
+    label: "스타일 길이 타입",
+    weight: 1,
+    mustMatch: false,
+    multiple: false,
+    tags: ["short", "long"],
+  },
+
+  // ── length (K-Hairstyle) ──────────────────────────────────
   {
     key: "length",
     label: "길이",
     weight: 2,
     mustMatch: false,
     multiple: false,
-    tags: ["크롭", "숏", "미디엄", "롱"],
+    tags: ["female short", "male", "short", "long", "medium"],
   },
+
+  // ── curl (K-Hairstyle) ────────────────────────────────────
   {
-    key: "cut",
-    label: "컷 스타일",
+    key: "curl",
+    label: "컬",
     weight: 2,
     mustMatch: false,
-    multiple: true,
+    multiple: false,
+    tags: ["S", "C", "J", "SC", "CS", "CC", "X", "S3", "SS"],
+  },
+
+  // ── bang (K-Hairstyle) ────────────────────────────────────
+  {
+    key: "bang",
+    label: "앞머리",
+    weight: 2,
+    mustMatch: false,
+    multiple: false,
     tags: [
-      "레이어드",
-      "보브",
-      "쉐기",
-      "울프",
-      "투블럭",
-      "허쉬",
-      "테이퍼",
-      "원랭스",
-      "픽시",
-      "가일컷",
+      "along faceline",
+      "others",
+      "slightly swept",
+      "None",
+      "full bang",
+      "see-through",
+      "choppy bang",
     ],
   },
+
+  // ── loss (K-Hairstyle) ────────────────────────────────────
   {
-    key: "texture",
-    label: "텍스처",
+    key: "loss",
+    label: "탈모",
     weight: 1,
     mustMatch: false,
     multiple: false,
-    tags: ["스트레이트", "웨이브", "컬", "내추럴"],
+    tags: ["None", "partial", "early stage", "hair loss"],
   },
+
+  // ── side (K-Hairstyle) ────────────────────────────────────
+  {
+    key: "side",
+    label: "사이드",
+    weight: 1,
+    mustMatch: false,
+    multiple: false,
+    tags: ["one-block", "None", "two-block"],
+  },
+
+  // ── color (K-Hairstyle) ───────────────────────────────────
   {
     key: "color",
     label: "색상",
@@ -59,44 +138,55 @@ export const TAXONOMY: TagCategory[] = [
     mustMatch: true,
     multiple: true,
     tags: [
-      "블랙",
-      "다크브라운",
-      "브라운",
-      "라이트브라운",
-      "블론드",
-      "애쉬",
-      "실버",
-      "레드",
-      "핑크",
-      "블루",
-      "하이라이트",
-      "발레아쥬",
-      "옴브레",
+      "reddish brown",
+      "yellowish brown",
+      "natural brown",
+      "Ombre",
+      "ash brown",
+      "others",
+      "black",
+      "two-tone",
+      "pink-brown",
     ],
   },
+
+  // ── partition (K-Hairstyle) ───────────────────────────────
   {
-    key: "tone",
-    label: "톤",
-    weight: 3,
-    mustMatch: true,
+    key: "partition",
+    label: "가르마",
+    weight: 1,
+    mustMatch: false,
     multiple: false,
-    tags: ["웜톤", "쿨톤", "뉴트럴"],
+    tags: ["9:1", "None", "7:3", "8:2", "2:8", "1:9", "6:4", "3:7", "4:6", "5:5"],
   },
+
+  // ── exceptional (K-Hairstyle) ─────────────────────────────
   {
-    key: "mood",
-    label: "무드",
+    key: "exceptional",
+    label: "특수 스타일링",
     weight: 1,
     mustMatch: false,
     multiple: true,
-    tags: ["클래식", "캐주얼", "모던", "빈티지", "시크", "청순", "힙"],
+    tags: [
+      "swept hair",
+      "ponytail",
+      "braided",
+      "Buzz cut",
+      "accessories",
+      "curly hair",
+      "others",
+      "None",
+    ],
   },
+
+  // ── gender (K-Hairstyle) ──────────────────────────────────
   {
     key: "gender",
     label: "성별",
     weight: 2,
     mustMatch: false,
     multiple: false,
-    tags: ["남성", "여성", "유니섹스"],
+    tags: ["female", "male"],
   },
 ];
 

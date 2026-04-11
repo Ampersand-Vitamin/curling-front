@@ -14,7 +14,7 @@
 import "dotenv/config";
 import { readFile, readdir, writeFile } from "fs/promises";
 import path from "path";
-import { TAXONOMY, buildTagPromptSection } from "./taxonomy";
+import { TAXONOMY, buildTagPromptSection } from "./kr-taxonomy";
 
 const IMAGES_DIR = path.resolve("sample-data/images");
 const OUTPUT_PATH = path.resolve("sample-data/tagged-results.json");

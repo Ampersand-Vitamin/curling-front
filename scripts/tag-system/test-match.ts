@@ -12,7 +12,7 @@
 import "dotenv/config";
 import { readFile } from "fs/promises";
 import path from "path";
-import { TAXONOMY, buildTagPromptSection } from "./taxonomy";
+import { TAXONOMY, buildTagPromptSection } from "./kr-taxonomy";
 import { rankMatches, type TagSet } from "./match";
 
 const TAGGED_PATH = path.resolve("sample-data/tagged-results.json");
