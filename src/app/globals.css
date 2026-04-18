@@ -6,23 +6,8 @@
   /* Font Family */
   --font-pretendard: var(--font-pretendard-variable), "Pretendard", sans-serif;
 
-  /* Primary (Figma: Primary) */
-  --color-primary-50: #faf2f5;
-  --color-primary-200: #f8dae2;
-  --color-primary-300: #fcb2c7;
-  --color-primary-400: #ff80a4;
-  --color-primary-600: #ed1250;
-  --color-primary-700: #c20138;
-
-  /* Secondary (Figma: Secondary) */
-  --color-secondary-50: #f9f5f1;
-  --color-secondary-200: #f7e5d5;
-  --color-secondary-300: #fbc99d;
-  --color-secondary-400: #ebae79;
-  --color-secondary-500: #da904e;
-  --color-secondary-600: #b16b2d;
-
-  /* Surface (Figma: warm grey) */
+  /* Surface (Figma: Curling/Surface — warm grey) */
+  --color-surface-white: #ffffff;
   --color-surface-50: #fcfbf8;
   --color-surface-100: #f7f6f3;
   --color-surface-200: #f0efec;
@@ -35,17 +20,45 @@
   --color-surface-900: #292828;
   --color-surface-950: #171717;
 
-  /* Accent (Figma: Accent) */
-  --color-accent-100: #f1f5f9;
-  --color-accent-300: #cbd5e1;
-  --color-accent-400: #94a3b8;
-  --color-accent-500: #657b9b;
-  --color-accent-700: #2a3f5f;
-  --color-accent-900: #152343;
+  /* Primary (Figma: Curling/Primary) */
+  --color-primary-50: #fffaf6;
+  --color-primary-100: #f9eee6;
+  --color-primary-200: #ebdace;
+  --color-primary-300: #d4b7a1;
+  --color-primary-400: #ab8d7b;
+  --color-primary-500: #8f715f;
+  --color-primary-600: #684d3d;
+  --color-primary-700: #4b3528;
+  --color-primary-800: #2e201b;
+  --color-primary-900: #2e1e1b;
 
-  /* Success (Figma: Green) */
-  --color-success-100: #e6f2ca;
-  --color-success-500: #6ebd44;
+  /* Secondary (Figma: Curling/Secondary/Beige) */
+  --color-secondary-50: #f8efed;
+  --color-secondary-100: #f6e1dc;
+  --color-secondary-200: #ecc6bd;
+  --color-secondary-300: #e9a898;
+  --color-secondary-400: #e36a4b;
+  --color-secondary-500: #ba5a41;
+  --color-secondary-600: #a04129;
+  --color-secondary-700: #94260b;
+  --color-secondary-800: #761a03;
+  --color-secondary-900: #501203;
+
+  /* Accent (Figma: Curling/Accent) */
+  --color-accent-50: #f1f5f9;
+  --color-accent-100: #e9f0f7;
+  --color-accent-200: #dfe8f2;
+  --color-accent-300: #cbd5e1;
+  --color-accent-400: #acbcd2;
+  --color-accent-500: #748fb7;
+  --color-accent-600: #4f6d9a;
+  --color-accent-700: #38557e;
+  --color-accent-800: #152f53;
+  --color-accent-900: #091531;
+
+  /* Alert (Figma: Curling/Alert) */
+  --color-alert-100: #ecf09b;
+  --color-alert-500: #c8ce5d;
 }
 
 body {
