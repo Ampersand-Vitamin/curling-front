@@ -10,7 +10,7 @@ function SalonPin() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex items-center justify-center rounded-full bg-surface-white p-1 shadow-[0px_2px_8px_rgba(0,0,0,0.15)]">
-        <img src={storageUrl("asset/discover/barber-pole.svg")} alt="salon" width={16} height={16} />
+        <img src={storageUrl("asset/discover/salon.svg")} alt="salon" width={16} height={16} />
       </div>
       <svg
         width="6"

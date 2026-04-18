@@ -19,7 +19,7 @@ export default function IconButton({
     <button
       type="button"
       onClick={onClick}
-      className={`relative flex items-center justify-center size-[50px] rounded-full shrink-0 transition-colors ${
+      className={`relative flex items-center justify-center size-[46px] rounded-full shrink-0 transition-colors ${
         variant === "dark"
           ? "bg-surface-900 text-white"
           : "bg-white text-surface-900"

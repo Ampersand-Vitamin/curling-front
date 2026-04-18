@@ -15,8 +15,8 @@ export default function DiscoverPage() {
         <MapView />
       </div>
 
-      {/* 하단 Pull Bar — 지도 위에 겹침 */}
-      <div className="mt-auto relative z-10">
+      {/* 하단 Pull Bar — BottomNav 바로 위에 위치 */}
+      <div className="absolute bottom-[76px] left-0 right-0 z-10">
         <PullBar />
       </div>
     </div>

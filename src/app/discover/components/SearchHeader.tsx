@@ -30,11 +30,11 @@ export default function SearchHeader() {
       {/* Search Row */}
       <div className="flex items-center gap-1 px-3 py-3">
         <IconButton variant="dark" badge={filterCount > 0 ? filterCount : undefined}>
-          <img src={storageUrl("asset/discover/filter.svg")} alt="filter" width={24} height={24} />
+          <img src={storageUrl("asset/discover/filter_v2.svg")} alt="filter" width={20} height={20} />
         </IconButton>
         <SearchBar />
         <IconButton variant="light">
-          <img src={storageUrl("asset/discover/barber-pole.svg")} alt="salon" width={24} height={24} />
+          <img src={storageUrl("asset/discover/salon.svg")} alt="salon" width={20} height={20} />
         </IconButton>
       </div>
 
