@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import KeywordFilter from "./KeywordFilter";
 import DesignerCarousel from "./DesignerCarousel";
 
 type PullBarVariant = "collapsed" | "compact" | "expanded";
@@ -28,32 +27,13 @@ function getVariantFromHeight(height: number): PullBarVariant {
   return "expanded";
 }
 
-const FILTERS = [
-  { label: "English Available" },
-  { label: "Experience with Curly Hair" },
-  { label: "Foreigner Friendly" },
-];
-
 export default function PullBar() {
   const [variant, setVariant] = useState<PullBarVariant>("compact");
-  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
   const [isDragging, setIsDragging] = useState(false);
   const [dragHeight, setDragHeight] = useState(VARIANT_HEIGHTS.compact);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const handleRef = useRef<HTMLDivElement>(null);
-
-  const toggleFilter = (label: string) => {
-    setActiveFilters((prev) => {
-      const next = new Set(prev);
-      if (next.has(label)) {
-        next.delete(label);
-      } else {
-        next.add(label);
-      }
-      return next;
-    });
-  };
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -114,20 +94,6 @@ export default function PullBar() {
         className="flex justify-center bg-surface-50 pt-3 pb-2 cursor-grab active:cursor-grabbing select-none touch-none"
       >
         <div className="w-10 h-1 rounded-full bg-surface-300" />
-      </div>
-
-      {/* Filter Section */}
-      <div className="bg-surface-50 px-2.5 py-2 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-2">
-          {FILTERS.map((filter) => (
-            <KeywordFilter
-              key={filter.label}
-              label={filter.label}
-              activated={activeFilters.has(filter.label)}
-              onClick={() => toggleFilter(filter.label)}
-            />
-          ))}
-        </div>
       </div>
 
       {/* Content Section — 드래그 중 실시간 높이, 릴리즈 시 스프링 전환 */}

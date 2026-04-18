@@ -26,12 +26,10 @@ export default function KeywordFilter({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-1 rounded-full py-1 text-[14px] leading-5 tracking-[-0.14px] transition-colors shrink-0 ${
-        showChevron ? "pl-2.5 pr-1.5" : "px-2.5"
-      } ${
+      className={`flex items-center justify-center rounded-full px-[10px] py-[6px] text-[12px] leading-[16px] tracking-[-0.5px] capitalize transition-colors shrink-0 ${
         activated
-          ? "bg-primary-50 border border-primary-400 text-primary-700"
-          : "bg-surface-200 text-surface-800"
+          ? "bg-secondary-400 text-white"
+          : "bg-white border-[0.5px] border-surface-400 text-surface-800"
       }`}
     >
       {label}
