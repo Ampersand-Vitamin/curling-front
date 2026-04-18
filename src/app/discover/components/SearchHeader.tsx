@@ -1,0 +1,78 @@
+"use client";
+
+import IconButton from "@/components/ui/IconButton";
+import SearchBar from "@/components/ui/SearchBar";
+import KeywordFilter from "./KeywordFilter";
+import { storageUrl } from "@/lib/storage";
+
+const KEYWORDS = [
+  { label: "English Speaker" },
+  { label: "Curly Hair Expert" },
+  { label: "Foreigner Friendly" },
+];
+
+function CloseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M12 4L4 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M4 4L12 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+interface SearchHeaderProps {
+  activeKeywords: Set<string>;
+  showFilter: boolean;
+  onToggleKeyword: (keyword: string) => void;
+  onFilterPress: () => void;
+  onFilterClose: () => void;
+}
+
+export default function SearchHeader({
+  activeKeywords,
+  showFilter,
+  onToggleKeyword,
+  onFilterPress,
+  onFilterClose,
+}: SearchHeaderProps) {
+  const filterCount = activeKeywords.size;
+
+  return (
+    <div className="flex flex-col w-full">
+      {/* Search Row */}
+      <div className="flex items-center gap-1 px-3 py-3">
+        <IconButton variant="dark" badge={filterCount > 0 ? filterCount : undefined} onClick={onFilterPress}>
+          <img src={storageUrl("asset/discover/filter_v2.svg")} alt="filter" width={20} height={20} />
+        </IconButton>
+        <SearchBar placeholder={showFilter ? "Search Keywords" : "Search salons"} />
+        {showFilter ? (
+          <button
+            type="button"
+            onClick={onFilterClose}
+            className="flex items-center justify-center size-[46px] rounded-full shrink-0 bg-surface-100/30"
+          >
+            <CloseIcon />
+          </button>
+        ) : (
+          <IconButton variant="light">
+            <img src={storageUrl("asset/discover/salon.svg")} alt="salon" width={20} height={20} />
+          </IconButton>
+        )}
+      </div>
+
+      {/* Keyword Chips — 필터 닫혀있을 때만 */}
+      {!showFilter && (
+        <div className="flex gap-2 px-3 overflow-x-auto scrollbar-hide">
+          {KEYWORDS.map((kw) => (
+            <KeywordFilter
+              key={kw.label}
+              label={kw.label}
+              activated={activeKeywords.has(kw.label)}
+              onClick={() => onToggleKeyword(kw.label)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

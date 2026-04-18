@@ -1,1 +1,84 @@
-/* Design Ref: §4.2 — Figma Typography Tokens */
+/* Design Ref: §4.2 — Figma Typography Tokens (Pretendard) */
+
+/* Font: Pretendard
+ * H1–H2: SemiBold  |  H3–H6, Button: Medium  |  Body, Caption: Regular
+ *
+ * Usage: <h1 class="typo-h1"> or <p class="typo-body1">
+ */
+
+@utility typo-h1 {
+  font-size: 40px;
+  line-height: 52px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@utility typo-h2 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@utility typo-h3 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+@utility typo-h4 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+@utility typo-h5 {
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+@utility typo-h6 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+@utility typo-body1 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@utility typo-body2 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@utility typo-caption {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+@utility typo-caption2 {
+  font-size: 11px;
+  line-height: 13px;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+@utility typo-button {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}

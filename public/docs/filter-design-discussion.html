@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curling — Filter &amp; 탭 역할 설계 논의</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Pretendard', -apple-system, sans-serif; background: #f7f6f3; color: #292828; line-height: 1.6; }
+  .container { max-width: 800px; margin: 0 auto; padding: 24px 20px 80px; }
+  h1 { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
+  h2 { font-size: 22px; font-weight: 600; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #e0dfdd; }
+  h3 { font-size: 17px; font-weight: 600; margin: 24px 0 12px; }
+  p { margin: 8px 0; color: #3b3a3a; }
+  .subtitle { color: #8c8b8a; font-size: 14px; margin-bottom: 32px; }
+
+  .card { background: #fff; border-radius: 16px; padding: 24px; margin: 16px 0; }
+  .card-warn { border-left: 4px solid #e36a4b; }
+  .card-info { border-left: 4px solid #4a90d9; }
+  .card-success { border-left: 4px solid #6abf69; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .compare-box { background: #fff; border-radius: 12px; padding: 20px; }
+  .compare-box h4 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .chip { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 100px; font-size: 12px; white-space: nowrap; }
+  .chip-default { background: #f0efec; color: #3b3a3a; }
+  .chip-active { background: #e36a4b; color: #fff; }
+  .chip-strike { background: #f0efec; color: #b8b7b5; text-decoration: line-through; }
+  .chip-new { background: #fff; border: 1.5px dashed #4a90d9; color: #4a90d9; }
+  .chip-group { background: #292828; color: #fff; font-weight: 500; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  th { text-align: left; padding: 10px 12px; background: #f0efec; font-weight: 500; }
+  td { padding: 10px 12px; border-bottom: 1px solid #f0efec; }
+
+  .flow { display: flex; align-items: center; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+  .flow-box { background: #fff; border: 1px solid #e0dfdd; border-radius: 12px; padding: 14px 18px; text-align: center; min-width: 120px; }
+  .flow-box strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  .flow-box span { font-size: 12px; color: #8c8b8a; }
+  .flow-box.primary { border-color: #e36a4b; background: #fff5f3; }
+  .flow-arrow { font-size: 20px; color: #b8b7b5; }
+
+  .phone { width: 300px; margin: 16px auto; background: #fff; border-radius: 28px; padding: 18px 14px 20px; box-shadow: 0 4px 30px rgba(0,0,0,0.1); }
+  .phone-header { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+  .phone-btn { width: 40px; height: 40px; border-radius: 100px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .phone-btn-dark { background: #292828; color: #fff; }
+  .phone-btn-light { background: #f7f6f3; color: #292828; }
+  .phone-search { flex: 1; height: 40px; border-radius: 100px; background: #f7f6f3; display: flex; align-items: center; padding: 0 14px; color: #b8b7b5; font-size: 13px; }
+  .phone-section { margin: 14px 0 8px; }
+  .phone-section-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #292828; }
+  .phone-divider { height: 1px; background: #f0efec; margin: 10px 0; }
+
+  .highlight { background: #fff5f3; padding: 16px 20px; border-radius: 12px; margin: 16px 0; }
+  .highlight strong { color: #e36a4b; }
+  .highlight-blue { background: #f0f4ff; padding: 16px 20px; border-radius: 12px; margin: 16px 0; }
+  .highlight-blue strong { color: #4a90d9; }
+  .highlight-green { background: #f0fff0; padding: 16px 20px; border-radius: 12px; margin: 16px 0; }
+  .highlight-green strong { color: #2d8a2d; }
+
+  .section-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #292828; color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; margin-right: 8px; vertical-align: middle; }
+
+  .discuss { background: #f0f4ff; border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .discuss h4 { color: #4a90d9; font-size: 15px; margin-bottom: 12px; }
+  .discuss ul { padding-left: 20px; }
+  .discuss li { margin: 6px 0; font-size: 14px; }
+  .discuss-warn { background: #fff5f3; }
+  .discuss-warn h4 { color: #e36a4b; }
+
+  .vs { display: flex; align-items: stretch; gap: 0; margin: 24px 0; }
+  .vs-side { flex: 1; padding: 24px; border-radius: 16px; }
+  .vs-left { background: #f0fff0; border: 2px solid #6abf69; border-radius: 16px 0 0 16px; }
+  .vs-right { background: #f0f4ff; border: 2px solid #4a90d9; border-radius: 0 16px 16px 0; }
+  .vs-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .vs-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .vs-desc { font-size: 13px; color: #545353; }
+
+  @media (max-width: 600px) {
+    .compare { grid-template-columns: 1fr; }
+    .vs { flex-direction: column; }
+    .vs-left, .vs-right { border-radius: 16px; }
+    .flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Discover vs Style &mdash; 탭 역할 &amp; 필터 설계</h1>
+<p class="subtitle">2026-04-18 &middot; 팀 논의용</p>
+
+<div class="card" style="background: #292828; color: #fff; margin-bottom: 32px;">
+  <h3 style="margin-top: 0; color: #fff; font-size: 15px; margin-bottom: 12px;">Abstract</h3>
+  <p style="color: #e0dfdd; font-size: 14px; line-height: 1.8; margin: 0;">
+    1. Discover 탭의 <strong style="color: #fff;">필터 팝업 키워드와 실제 디자이너 데이터가 일치하지 않고</strong>, 검색 필터와 고객 프로필이 혼재되어 있다.<br>
+    2. Discover와 Style 두 탭이 모두 "디자이너 찾기"를 하는데, <strong style="color: #fff;">기능 경계가 정의되지 않았다.</strong><br>
+    3. 이 문서는 <strong style="color: #fff;">탭 역할 분리와 필터 구조 개편 방향</strong>을 논의하기 위해 작성되었다.
+  </p>
+</div>
+
+<!-- ============================================ -->
+<h2><span class="section-num">1</span> 두 탭의 역할을 명확히 정의해야 한다</h2>
+
+<p>Discover와 Style 모두 "디자이너/살롱 찾기"를 한다. 하지만 찾는 방식이 근본적으로 다르다.</p>
+
+<div class="vs">
+  <div class="vs-side vs-left">
+    <div class="vs-label" style="color: #6abf69;">Discover</div>
+    <div class="vs-title">정량적 필터</div>
+    <div class="vs-desc">
+      "English 가능 + Curly 전문 + Cut"<br>
+      조건을 직접 골라서 정확히 맞는 곳만 지도에 표시
+    </div>
+    <div style="margin-top: 16px; font-size: 12px; color: #545353;">
+      <strong>키워드:</strong> 위치 기반, 직접 선택, 정확 매칭, 지도 마커
+    </div>
+  </div>
+  <div class="vs-side vs-right">
+    <div class="vs-label" style="color: #4a90d9;">Style</div>
+    <div class="vs-title">정성적 검색</div>
+    <div class="vs-desc">
+      "3c 컬 헤어인데 발라야쥬 잘하는 곳 찾고 싶어"<br>
+      자연어로 설명하면 AI가 유사도 기반으로 매칭
+    </div>
+    <div style="margin-top: 16px; font-size: 12px; color: #545353;">
+      <strong>키워드:</strong> 의도 기반, 자연어, 벡터 유사도, 스코어링 정렬
+    </div>
+  </div>
+</div>
+
+<div class="flow">
+  <div class="flow-box">
+    <strong>사용자</strong>
+    <span></span>
+  </div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-box" style="border-color: #6abf69; background: #f0fff0;">
+    <strong>뭘 원하는지 모름</strong>
+    <span>&rarr; Discover</span>
+  </div>
+  <span class="flow-arrow">/</span>
+  <div class="flow-box" style="border-color: #4a90d9; background: #f0f4ff;">
+    <strong>뭘 원하는지 앎</strong>
+    <span>&rarr; Style</span>
+  </div>
+</div>
+
+<table>
+  <tr><th></th><th>Discover</th><th>Style</th></tr>
+  <tr><td><strong>사용자 의도</strong></td><td>"주변에 뭐가 있지?"</td><td>"이걸 잘하는 곳 찾아줘"</td></tr>
+  <tr><td><strong>핵심 축</strong></td><td>위치 (지도)</td><td>니즈 (검색)</td></tr>
+  <tr><td><strong>입력 방식</strong></td><td>필터 칩 직접 선택</td><td>자연어 텍스트 입력</td></tr>
+  <tr><td><strong>매칭</strong></td><td>정확 매칭 (AND/OR)</td><td>유사도 매칭 (벡터 스코어링)</td></tr>
+  <tr><td><strong>결과</strong></td><td>지도 마커 (위치 중심)</td><td>리스트 (관련도순)</td></tr>
+  <tr><td><strong>Profile 활용</strong></td><td>Recommended 키워드에 반영</td><td>검색 컨텍스트로 활용</td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2><span class="section-num">2</span> 현재 문제: FilterPopup이 안 맞는다</h2>
+
+<div class="card card-warn">
+  <h3 style="margin-top: 0;">키워드 불일치 + 성격 혼재</h3>
+  <p>하드코딩된 60+ 키워드가 실제 데이터와 안 맞고, 검색 필터와 고객 프로필 정보가 섞여있다.</p>
+</div>
+<div class="compare">
+  <div class="compare-box" style="border: 1px solid #e36a4b;">
+    <h4 style="color: #e36a4b;">데이터 불일치</h4>
+    <p style="font-size: 12px; color: #8c8b8a; margin-bottom: 8px;">FilterPopup에 없는 실제 서비스:</p>
+    <div class="chip-row">
+      <span class="chip chip-new">Braids</span>
+      <span class="chip chip-new">Balayage</span>
+      <span class="chip chip-new">Curly Cut</span>
+      <span class="chip chip-new">Locs</span>
+      <span class="chip chip-new">Fade</span>
+      <span class="chip chip-new">Keratin</span>
+    </div>
+    <p style="font-size: 12px; color: #8c8b8a; margin-top: 8px;">FilterPopup에만 있고 데이터에 없음:</p>
+    <div class="chip-row">
+      <span class="chip chip-strike">Down Perm</span>
+      <span class="chip chip-strike">Wig</span>
+      <span class="chip chip-strike">Root Touch-up</span>
+    </div>
+  </div>
+  <div class="compare-box" style="border: 1px solid #4a90d9;">
+    <h4 style="color: #4a90d9;">성격 혼재</h4>
+    <p style="font-size: 12px; color: #8c8b8a; margin-bottom: 8px;">검색 필터 (디자이너 속성):</p>
+    <div class="chip-row">
+      <span class="chip chip-active">Service</span>
+      <span class="chip chip-active">Language</span>
+      <span class="chip chip-active">Hair Type</span>
+    </div>
+    <p style="font-size: 12px; color: #8c8b8a; margin-top: 8px;">고객 프로필 (필터가 아님):</p>
+    <div class="chip-row">
+      <span class="chip chip-strike">Hair Color</span>
+      <span class="chip chip-strike">Hair Length</span>
+      <span class="chip chip-strike">Treatment History</span>
+      <span class="chip chip-strike">Hair Concern</span>
+    </div>
+  </div>
+</div>
+<div class="highlight">
+  <strong>즉, 필터 팝업 키워드 = 디자이너/살롱 키워드 &rarr; 같은 계층에서 관리</strong><br>
+  Discover는 유사도 검색이 아닌 정확한 1:1 매칭이다. 유저가 "Balayage"를 선택하면 DesignerKeyword에 "Balayage"가 있는 디자이너만 나와야 한다. 이를 위해 필터 키워드와 디자이너/살롱 키워드는 반드시 동일한 Keyword 테이블에서 관리되어야 하며, 별도로 관리하면 불일치가 반복된다.
+</div>
+
+<div class="highlight">
+  <strong>"Blonde"를 선택하는 건 "Blonde 전문 살롱"이 아니라 "내가 Blonde"라는 뜻.</strong><br>
+  이건 검색 필터가 아니라 프로필 정보 &rarr; My 탭의 Hair Profile에서 관리.
+</div>
+
+<!-- ============================================ -->
+<h2><span class="section-num">3</span> 제안: Discover 필터 개편</h2>
+
+<h3>10개 카테고리 60+ 키워드 &rarr; 4개 카테고리로 축소</h3>
+
+<table>
+  <tr><th>필터</th><th>매칭 대상</th><th>키워드</th></tr>
+  <tr><td><strong>Language</strong></td><td>DesignerProfile.languages</td><td>English, Korean, Chinese, Japanese...</td></tr>
+  <tr><td><strong>Hair Type</strong></td><td>hair_type_experience / DesignerKeyword</td><td>Straight, Wavy, Curly, Coily</td></tr>
+  <tr><td><strong>Service</strong></td><td>DesignerKeyword (그룹)</td><td>Cut, Color, Perm, Braids &amp; Locs, Care, Barber</td></tr>
+  <tr><td><strong>Salon Features</strong></td><td>SalonKeyword</td><td>Foreigner Friendly, Pet Friendly, Tax-free...</td></tr>
+</table>
+
+<h3>Service: 그룹 칩 + 2단계 펼침</h3>
+
+<p>30개+ 서비스를 6개 그룹으로 묶되, 그룹만 선택하면 범위가 너무 넓다.<br>
+그룹 탭 &rarr; 하위 키워드 펼침으로 정확도를 높인다.</p>
+
+<div class="card">
+
+  <div>
+    <span style="font-size: 13px; color: #8c8b8a;"> "Color" 탭 시 하위 펼침</span>
+    <div class="chip-row" style="margin-top: 4px; margin-bottom: 6px;">
+      <span class="chip chip-default">Cut</span>
+      <span class="chip chip-group">Color &#9662;</span>
+      <span class="chip chip-default">Perm</span>
+      <span class="chip chip-default">Braids</span>
+      <span class="chip chip-default">Care</span>
+      <span class="chip chip-default">Barber</span>
+    </div>
+    <div style="background: #f7f6f3; border-radius: 8px; padding: 10px;">
+      <div class="chip-row">
+        <span class="chip chip-active">Balayage</span>
+        <span class="chip chip-default">Coloring</span>
+        <span class="chip chip-default">Highlights</span>
+        <span class="chip chip-default">Root Touch-up</span>
+        <span class="chip chip-default">Grey Coverage</span>
+      </div>
+    </div>
+  </div>
+
+  <table style="font-size: 13px; margin-top: 16px;">
+    <tr><th>그룹</th><th>하위 서비스</th></tr>
+    <tr><td>Cut</td><td>Haircut, Layered Cut, Curly Cut, Big Chop, Afro Cut, Coily Cut</td></tr>
+    <tr><td>Color</td><td>Coloring, Balayage, Highlights, Root Touch-up, Grey Coverage</td></tr>
+    <tr><td>Perm</td><td>Perm, Korean Perm, Down Perm, Keratin Treatment</td></tr>
+    <tr><td>Braids &amp; Locs</td><td>Braids, Locs, Cornrow, Protective Styles, Twist Out</td></tr>
+    <tr><td>Care</td><td>Head Spa, Scalp Treatment, Moisture Treatment, Blow Dry &amp; Styling</td></tr>
+    <tr><td>Barber</td><td>Fade, Taper, Beard Trim, Line-up, Buzz Cut, Afro Trim</td></tr>
+  </table>
+  <p style="font-size: 12px; color: #8c8b8a; margin-top: 8px;">그룹만 선택 = 하위 전체 매칭 / 세부 선택 = 정확 매칭</p>
+</div>
+
+<!-- ============================================ -->
+<h2><span class="section-num">4</span> Profile 연동 문제</h2>
+
+<div class="card card-warn">
+  <h3 style="margin-top: 0;">Discover에 Profile을 직접 연동하면 "정확 매칭"이 깨진다</h3>
+  <div style="background: #f7f6f3; border-radius: 8px; padding: 14px; margin: 12px 0; font-size: 13px;">
+    고객 Profile: <strong>"Damaged"</strong> (내 머리 상태)<br>
+    디자이너 Keyword: <strong>"Damaged Hair"</strong> (다뤄본 경험)<br><br>
+    &rarr; 고객은 <em>상태</em>를 말하고, 디자이너는 <em>능력</em>을 말한다.<br>
+    &rarr; 이걸 매칭하려면 매핑 레이어 필요 &rarr; 정성적 검색 영역 &rarr; Style 탭의 역할
+  </div>
+</div>
+
+<table style="font-size: 13px;">
+  <tr><th>고객 Profile</th><th>정확 매칭?</th><th>문제</th></tr>
+  <tr><td>hair_type: Curly</td><td style="color: #6abf69;">&#10003; 가능</td><td>Hair Type 필터 "Curly" = DesignerKeyword "Curly"</td></tr>
+  <tr><td>length: Medium</td><td style="color: #8c8b8a;">&mdash;</td><td>길이는 디자이너 능력과 무관</td></tr>
+  <tr><td>concern: Damaged</td><td style="color: #e36a4b;">&#10007;</td><td>매핑 레이어 필요 &rarr; 유사도 영역</td></tr>
+  <tr><td>color: Blonde</td><td style="color: #e36a4b;">&#10007;</td><td>디자이너 키워드에 색상 경험 없음</td></tr>
+  <tr><td>history: Bleached</td><td style="color: #e36a4b;">&#10007;</td><td>매핑 레이어 필요 &rarr; 유사도 영역</td></tr>
+</table>
+
+<p style="font-size: 13px; color: #8c8b8a; margin-top: 8px;">직접 매칭 가능한 건 Hair Type뿐. 나머지는 정성적 검색(Style 탭)이 필요.</p>
+
+<!-- ============================================ -->
+<h2><span class="section-num">5</span> 제안: Recommended 키워드를 Profile 기반으로 동적 생성</h2>
+
+<div class="highlight-green">
+  <strong>Profile을 필터에 직접 연동하지 않고, Recommended 키워드로 간접 반영한다.</strong><br><br>
+  Discover의 정확 매칭은 유지하면서, Profile이 자연스럽게 녹아드는 방식.
+</div>
+
+<div class="card card-success">
+  <h3 style="margin-top: 0;">작동 방식</h3>
+  <div style="background: #f7f6f3; border-radius: 8px; padding: 14px; margin: 12px 0; font-size: 13px;">
+    <strong>내 프로필:</strong> Curly, Medium, Damaged, English<br><br>
+    <strong>&darr; Recommended Keywords 자동 생성</strong>
+  </div>
+  <div class="chip-row">
+    <span class="chip chip-active">English Speaker</span>
+    <span class="chip chip-active">Curly Hair Expert</span>
+    <span class="chip chip-default">Damaged Hair Care</span>
+    <span class="chip chip-default">Foreigner Friendly</span>
+  </div>
+  <ul style="font-size: 13px; margin-top: 12px; padding-left: 20px; color: #545353;">
+    <li>Profile 기반으로 <strong>추천할 뿐</strong>, 자동 적용하지 않음</li>
+    <li>유저가 직접 선택/해제 가능 (강제가 아님)</li>
+    <li>선택하면 기존 정확 매칭 로직 그대로 동작</li>
+    <li>Profile이 없으면 인기순 Recommended 표시</li>
+  </ul>
+</div>
+
+<h3>장점</h3>
+<table style="font-size: 13px;">
+  <tr><td style="color: #6abf69;">&#10003;</td><td>Discover의 정확 매칭 원칙이 깨지지 않음</td></tr>
+  <tr><td style="color: #6abf69;">&#10003;</td><td>Profile이 자연스럽게 반영됨 (키워드 추천)</td></tr>
+  <tr><td style="color: #6abf69;">&#10003;</td><td>키워드 계층 문제 없음 (추천일 뿐 매칭은 동일)</td></tr>
+  <tr><td style="color: #6abf69;">&#10003;</td><td>Style 탭과 역할 구분 유지</td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2><span class="section-num">6</span> 전체 구조 정리</h2>
+
+<div class="card">
+  <table>
+    <tr><th></th><th>Discover</th><th>Style</th><th>My</th></tr>
+    <tr>
+      <td><strong>역할</strong></td>
+      <td>주변 탐색 + 정량 필터</td>
+      <td>자연어 정성 검색</td>
+      <td>내 정보 관리</td>
+    </tr>
+    <tr>
+      <td><strong>Profile 활용</strong></td>
+      <td>Recommended 키워드 추천</td>
+      <td>검색 컨텍스트</td>
+      <td>입력/수정</td>
+    </tr>
+    <tr>
+      <td><strong>매칭</strong></td>
+      <td>정확 매칭</td>
+      <td>벡터 유사도</td>
+      <td>&mdash;</td>
+    </tr>
+    <tr>
+      <td><strong>필터</strong></td>
+      <td>Language, Hair Type,<br>Service (그룹), Salon Features</td>
+      <td>자연어 입력</td>
+      <td>&mdash;</td>
+    </tr>
+  </table>
+</div>
+
+<div class="flow">
+  <div class="flow-box">
+    <strong>My 탭</strong>
+    <span>Hair Profile 입력</span>
+  </div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-box" style="border-color: #6abf69;">
+    <strong>Discover</strong>
+    <span>Recommended 키워드 추천</span>
+  </div>
+</div>
+<div class="flow">
+  <div class="flow-box">
+    <strong>My 탭</strong>
+    <span>Hair Profile 입력</span>
+  </div>
+  <span class="flow-arrow">&rarr;</span>
+  <div class="flow-box" style="border-color: #4a90d9;">
+    <strong>Style</strong>
+    <span>검색 컨텍스트로 활용</span>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<h2><span class="section-num">7</span> 대략적인 UI</h2>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+
+<!-- Phone: Discover 필터 -->
+<div>
+<p style="text-align: center; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Discover 필터 (개편 후)</p>
+<div class="phone">
+  <div class="phone-header">
+    <div class="phone-btn phone-btn-dark" style="font-size: 11px;">&#9776;</div>
+    <div class="phone-search">Search salons</div>
+    <div class="phone-btn phone-btn-light" style="font-size: 11px;">&#10006;</div>
+  </div>
+
+  <div class="phone-section">
+    <div class="phone-section-title" style="color: #e36a4b;">Recommended</div>
+    <div style="font-size: 10px; color: #8c8b8a; margin: -4px 0 6px;">based on your hair profile</div>
+    <div class="chip-row">
+      <span class="chip chip-active">English Speaker</span>
+      <span class="chip chip-active">Curly Expert</span>
+      <span class="chip chip-default">Damaged Hair</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Language</div>
+    <div class="chip-row">
+      <span class="chip chip-active">English</span>
+      <span class="chip chip-default">Korean</span>
+      <span class="chip chip-default">中文</span>
+      <span class="chip chip-default">日本語</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Hair Type</div>
+    <div class="chip-row">
+      <span class="chip chip-default">Straight</span>
+      <span class="chip chip-default">Wavy</span>
+      <span class="chip chip-active">Curly</span>
+      <span class="chip chip-default">Coily</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Service</div>
+    <div class="chip-row">
+      <span class="chip chip-default">Cut</span>
+      <span class="chip chip-default">Color</span>
+      <span class="chip chip-default">Perm</span>
+      <span class="chip chip-default">Braids</span>
+      <span class="chip chip-default">Care</span>
+      <span class="chip chip-default">Barber</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Salon Features</div>
+    <div class="chip-row">
+      <span class="chip chip-default">Foreigner Friendly</span>
+      <span class="chip chip-default">Pet Friendly</span>
+      <span class="chip chip-default">Tax-free</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Phone: Service 펼침 -->
+<div>
+<p style="text-align: center; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Color 그룹 펼침 상태</p>
+<div class="phone">
+  <div class="phone-header">
+    <div class="phone-btn phone-btn-dark" style="font-size: 11px;">&#9776;</div>
+    <div class="phone-search">Search salons</div>
+    <div class="phone-btn phone-btn-light" style="font-size: 11px;">&#10006;</div>
+  </div>
+
+  <div class="phone-section">
+    <div class="phone-section-title" style="color: #e36a4b;">Recommended</div>
+    <div style="font-size: 10px; color: #8c8b8a; margin: -4px 0 6px;">based on your hair profile</div>
+    <div class="chip-row">
+      <span class="chip chip-active">English Speaker</span>
+      <span class="chip chip-active">Curly Expert</span>
+      <span class="chip chip-default">Damaged Hair</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Language</div>
+    <div class="chip-row">
+      <span class="chip chip-active">English</span>
+      <span class="chip chip-default">Korean</span>
+      <span class="chip chip-default">中文</span>
+      <span class="chip chip-default">日本語</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Hair Type</div>
+    <div class="chip-row">
+      <span class="chip chip-default">Straight</span>
+      <span class="chip chip-default">Wavy</span>
+      <span class="chip chip-active">Curly</span>
+      <span class="chip chip-default">Coily</span>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Service</div>
+    <div class="chip-row" style="margin-bottom: 6px;">
+      <span class="chip chip-default">Cut</span>
+      <span class="chip chip-group">Color &#9662;</span>
+      <span class="chip chip-default">Perm</span>
+      <span class="chip chip-default">Braids</span>
+      <span class="chip chip-default">Care</span>
+      <span class="chip chip-default">Barber</span>
+    </div>
+    <div style="background: #f7f6f3; border-radius: 8px; padding: 8px;">
+      <div class="chip-row">
+        <span class="chip chip-active">Balayage</span>
+        <span class="chip chip-default">Coloring</span>
+        <span class="chip chip-default">Highlights</span>
+        <span class="chip chip-default">Root Touch-up</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="phone-divider"></div>
+
+  <div class="phone-section">
+    <div class="phone-section-title">Salon Features</div>
+    <div class="chip-row">
+      <span class="chip chip-active">Foreigner Friendly</span>
+      <span class="chip chip-default">Pet Friendly</span>
+      <span class="chip chip-default">Tax-free</span>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2><span class="section-num">8</span> 결론!</h2>
+
+<div class="discuss-warn discuss">
+  <h4>핵심 결정</h4>
+  <ul>
+    <li><strong>Discover = 정량 필터 / Style = 정성 검색</strong> &mdash; 이렇게 역할 명확히 분리?</li>
+    <li><strong>고객 프로필(Hair Color, Length, Concern 등)은 필터에서 빼고 My 탭으로</strong> &mdash; Discover 필터에는 직접 연동하지 않고 Recommended 키워드 추천으로 간접 반영? 확정 시 필터 팝업 UI 디자인 개선 필요</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>

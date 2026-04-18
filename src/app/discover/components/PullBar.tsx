@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import KeywordFilter from "./KeywordFilter";
 import DesignerCarousel from "./DesignerCarousel";
 
 type PullBarVariant = "collapsed" | "compact" | "expanded";
@@ -28,32 +27,17 @@ function getVariantFromHeight(height: number): PullBarVariant {
   return "expanded";
 }
 
-const FILTERS = [
-  { label: "English Available" },
-  { label: "Experience with Curly Hair" },
-  { label: "Foreigner Friendly" },
-];
+interface PullBarProps {
+  forceCollapsed?: boolean;
+}
 
-export default function PullBar() {
+export default function PullBar({ forceCollapsed = false }: PullBarProps) {
   const [variant, setVariant] = useState<PullBarVariant>("compact");
-  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
   const [isDragging, setIsDragging] = useState(false);
   const [dragHeight, setDragHeight] = useState(VARIANT_HEIGHTS.compact);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const handleRef = useRef<HTMLDivElement>(null);
-
-  const toggleFilter = (label: string) => {
-    setActiveFilters((prev) => {
-      const next = new Set(prev);
-      if (next.has(label)) {
-        next.delete(label);
-      } else {
-        next.add(label);
-      }
-      return next;
-    });
-  };
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -96,7 +80,7 @@ export default function PullBar() {
     }
   }, [variant, isDragging]);
 
-  const contentHeight = isDragging ? dragHeight : VARIANT_HEIGHTS[variant];
+  const contentHeight = forceCollapsed ? 0 : isDragging ? dragHeight : VARIANT_HEIGHTS[variant];
   const showContent = contentHeight > 0;
   const cardSize =
     contentHeight > (VARIANT_HEIGHTS.compact + VARIANT_HEIGHTS.expanded) / 2
@@ -104,46 +88,32 @@ export default function PullBar() {
       : "small";
 
   return (
-    <div className="flex flex-col rounded-t-2xl overflow-hidden bg-surface-50">
+    <div className="flex flex-col rounded-t-2xl overflow-hidden bg-white">
       {/* Handle — 드래그 영역 */}
       <div
         ref={handleRef}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        className="flex justify-center bg-surface-50 pt-3 pb-2 cursor-grab active:cursor-grabbing select-none touch-none"
+        className="flex justify-center bg-white pt-3 pb-2 cursor-grab active:cursor-grabbing select-none touch-none"
       >
         <div className="w-10 h-1 rounded-full bg-surface-300" />
       </div>
 
-      {/* Filter Section */}
-      <div className="bg-surface-50 px-2.5 py-2 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-2">
-          {FILTERS.map((filter) => (
-            <KeywordFilter
-              key={filter.label}
-              label={filter.label}
-              activated={activeFilters.has(filter.label)}
-              onClick={() => toggleFilter(filter.label)}
-            />
-          ))}
-        </div>
-      </div>
-
       {/* Content Section — 드래그 중 실시간 높이, 릴리즈 시 스프링 전환 */}
-      <div
-        className="bg-surface-50 overflow-hidden"
-        style={{
-          height: contentHeight,
-          transition: isDragging ? "none" : "height 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
-        }}
-      >
-        {showContent && (
+      {showContent && (
+        <div
+          className="bg-white overflow-hidden"
+          style={{
+            height: contentHeight,
+            transition: isDragging ? "none" : "height 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
+          }}
+        >
           <div className="px-4 pt-2 pb-5">
             <DesignerCarousel cardSize={cardSize} />
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* TODO: full 상태 — column 레이아웃 (디자인 미정) */}
     </div>
