@@ -5,6 +5,7 @@ interface KeywordFilterProps {
   label: string;
   activated?: boolean;
   showChevron?: boolean;
+  variant?: "outlined" | "filled";
   onClick?: () => void;
 }
 
@@ -20,16 +21,20 @@ export default function KeywordFilter({
   label,
   activated = false,
   showChevron = false,
+  variant = "outlined",
   onClick,
 }: KeywordFilterProps) {
+  const defaultStyle =
+    variant === "outlined"
+      ? "bg-white border-[0.5px] border-surface-400 text-surface-800"
+      : "bg-surface-200 text-surface-800";
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={`flex items-center justify-center rounded-full px-[10px] py-[6px] text-[12px] leading-[16px] tracking-[-0.5px] capitalize transition-colors shrink-0 ${
-        activated
-          ? "bg-secondary-400 text-white"
-          : "bg-white border-[0.5px] border-surface-400 text-surface-800"
+        activated ? "bg-secondary-400 text-white" : defaultStyle
       }`}
     >
       {label}
