@@ -5,10 +5,12 @@ import MapView from "./components/MapView";
 import SearchHeader from "./components/SearchHeader";
 import PullBar from "./components/PullBar";
 import FilterPopup from "./components/FilterPopup";
+import type { DiscoverMode } from "@/types/discover";
 
 export default function DiscoverPage() {
   const [activeKeywords, setActiveKeywords] = useState<Set<string>>(new Set());
   const [showFilter, setShowFilter] = useState(false);
+  const [mode, setMode] = useState<DiscoverMode>("salon");
 
   const toggleKeyword = (keyword: string) => {
     setActiveKeywords((prev) => {
@@ -23,7 +25,7 @@ export default function DiscoverPage() {
     <div className="relative h-[calc(100dvh-76px)]">
       {/* 지도 — 배경 */}
       <div className="absolute inset-0">
-        <MapView />
+        <MapView mode={mode} />
       </div>
 
       {/* 블러 오버레이 */}
@@ -41,9 +43,11 @@ export default function DiscoverPage() {
           <SearchHeader
             activeKeywords={activeKeywords}
             showFilter={showFilter}
+            mode={mode}
             onToggleKeyword={toggleKeyword}
             onFilterPress={() => setShowFilter(true)}
             onFilterClose={() => setShowFilter(false)}
+            onToggleMode={() => setMode((prev) => (prev === "salon" ? "designer" : "salon"))}
           />
         </div>
 

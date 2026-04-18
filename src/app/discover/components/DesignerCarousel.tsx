@@ -5,29 +5,47 @@ const MOCK_DESIGNERS = [
   {
     id: "1",
     name: "Sejin",
-    role: "Designer",
-    languages: ["english", "korean"] as const,
+    role: "Designer" as const,
+    languages: ["english", "korean"],
     profileImage: "/mock/profile-sejin.jpg",
     portfolioImage: "/mock/portfolio-sejin.jpg",
-    message: "98% of Curly hair women were satisfied with Sejin.",
+    highlightMessage: "98% of Curly hair women were satisfied with Sejin.",
+    bio: "Curly hair specialist with passion for natural textures.",
+    yearsOfExp: 8,
+    ratingAvg: 4.9,
+    reviewCount: 127,
+    isVerified: true,
+    hairTypeExperience: ["Wavy Hair (2a-2c)", "Curly Hair (3a-3c)"],
   },
   {
     id: "2",
     name: "Jay",
-    role: "Designer",
-    languages: ["english", "korean"] as const,
+    role: "Designer" as const,
+    languages: ["english", "korean"],
     profileImage: "/mock/profile-jay.jpg",
     portfolioImage: "/mock/portfolio-jay.jpg",
-    message: "Jay has multiple experience with Curly hair.",
+    highlightMessage: "Jay has multiple experience with Curly hair.",
+    bio: "Expert in protective styles and loc maintenance.",
+    yearsOfExp: 5,
+    ratingAvg: 4.7,
+    reviewCount: 83,
+    isVerified: true,
+    hairTypeExperience: ["Curly Hair (3a-3c)", "Coily Hair (4a-4c)"],
   },
   {
     id: "3",
     name: "Yuna",
-    role: "Designer",
-    languages: ["english", "korean"] as const,
+    role: "Designer" as const,
+    languages: ["english", "korean"],
     profileImage: "/mock/profile-yuna.jpg",
     portfolioImage: "/mock/portfolio-yuna.jpg",
-    message: "Yuna has multiple experience with Curly hair.",
+    highlightMessage: "Yuna has multiple experience with Curly hair.",
+    bio: "Color specialist for curly and wavy hair types.",
+    yearsOfExp: 6,
+    ratingAvg: 4.8,
+    reviewCount: 95,
+    isVerified: false,
+    hairTypeExperience: ["Wavy Hair (2a-2c)"],
   },
 ];
 
@@ -40,7 +58,7 @@ export default function DesignerCarousel({
 }: DesignerCarouselProps) {
   return (
     <div className="flex flex-col gap-4 pb-20">
-      <p className="text-[18px] font-medium leading-[26px] tracking-[-0.18px] text-surface-950">
+      <p className="typo-h5 text-surface-950">
         Popular Designer with Curly hair
       </p>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide">
@@ -52,7 +70,7 @@ export default function DesignerCarousel({
             languages={[...designer.languages]}
             profileImage={designer.profileImage}
             portfolioImage={designer.portfolioImage}
-            message={designer.message}
+            highlightMessage={designer.highlightMessage}
             size={cardSize}
           />
         ))}

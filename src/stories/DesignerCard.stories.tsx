@@ -4,10 +4,10 @@ import DesignerCard from "../app/discover/components/DesignerCard";
 const SHARED_ARGS = {
   name: "Sejin",
   role: "Designer",
-  languages: ["english", "korean"] as ("korean" | "english")[],
+  languages: ["english", "korean"],
   profileImage: "/mock/profile-sejin.jpg",
   portfolioImage: "/mock/portfolio-sejin.jpg",
-  message: "98% of Curly hair women were satisfied with Sejin.",
+  highlightMessage: "98% of Curly hair women were satisfied with Sejin.",
 };
 
 const meta = {
@@ -20,7 +20,7 @@ const meta = {
     name: { control: "text" },
     role: { control: "text" },
     languages: { control: "object" },
-    message: { control: "text" },
+    highlightMessage: { control: "text" },
   },
   args: SHARED_ARGS,
 } satisfies Meta<typeof DesignerCard>;

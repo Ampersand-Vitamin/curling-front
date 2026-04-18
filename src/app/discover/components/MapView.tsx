@@ -5,6 +5,8 @@
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { storageUrl } from "@/lib/storage";
 import { MOCK_SALONS, DEFAULT_CENTER, DEFAULT_ZOOM } from "../data/mock-salons";
+import { MOCK_DESIGNER_MAP_ITEMS } from "../data/mock-designers";
+import type { DiscoverMode } from "@/types/discover";
 
 function SalonPin() {
   return (
@@ -25,7 +27,33 @@ function SalonPin() {
   );
 }
 
-export default function MapView() {
+function DesignerPin({ count }: { count: number }) {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="flex items-center gap-1 rounded-full bg-surface-white pl-1.5 pr-2 py-1 shadow-[0px_2px_8px_rgba(0,0,0,0.15)]">
+        <img src={storageUrl("asset/discover/designer.svg")} alt="designer" width={16} height={16} />
+        {count > 1 && (
+          <span className="typo-caption2 text-surface-900">{count}</span>
+        )}
+      </div>
+      <svg
+        width="6"
+        height="4"
+        viewBox="0 0 6 4"
+        fill="none"
+        className="-mt-px"
+      >
+        <path d="M3 4L0 0H6L3 4Z" fill="white" />
+      </svg>
+    </div>
+  );
+}
+
+interface MapViewProps {
+  mode?: DiscoverMode;
+}
+
+export default function MapView({ mode = "salon" }: MapViewProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   if (!apiKey) {
@@ -48,15 +76,25 @@ export default function MapView() {
         disableDefaultUI
         zoomControl
       >
-        {MOCK_SALONS.map((salon) => (
-          <AdvancedMarker
-            key={salon.id}
-            position={{ lat: salon.latitude, lng: salon.longitude }}
-            title={salon.name}
-          >
-            <SalonPin />
-          </AdvancedMarker>
-        ))}
+        {mode === "salon"
+          ? MOCK_SALONS.map((salon) => (
+              <AdvancedMarker
+                key={salon.id}
+                position={{ lat: salon.latitude, lng: salon.longitude }}
+                title={salon.name}
+              >
+                <SalonPin />
+              </AdvancedMarker>
+            ))
+          : MOCK_DESIGNER_MAP_ITEMS.map((item) => (
+              <AdvancedMarker
+                key={item.salonId}
+                position={{ lat: item.latitude, lng: item.longitude }}
+                title={item.salonName}
+              >
+                <DesignerPin count={item.designerCount} />
+              </AdvancedMarker>
+            ))}
       </Map>
     </APIProvider>
   );

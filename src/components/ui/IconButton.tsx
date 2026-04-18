@@ -27,7 +27,7 @@ export default function IconButton({
     >
       {children}
       {badge != null && badge > 0 && (
-        <span className="absolute top-0 -right-0.5 flex items-center justify-center size-[18px] rounded-full bg-secondary-400 text-white text-[11px] leading-[13px] tracking-[-0.055px]">
+        <span className="absolute top-0 -right-0.5 flex items-center justify-center size-[18px] rounded-full bg-secondary-400 text-white typo-caption2">
           {badge}
         </span>
       )}

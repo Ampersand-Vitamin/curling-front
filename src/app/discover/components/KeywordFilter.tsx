@@ -33,7 +33,7 @@ export default function KeywordFilter({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center justify-center rounded-full px-[10px] py-[6px] text-[12px] leading-[16px] tracking-[-0.5px] capitalize transition-colors shrink-0 ${
+      className={`flex items-center justify-center rounded-full px-[10px] py-[6px] typo-caption capitalize transition-colors shrink-0 ${
         activated ? "bg-secondary-400 text-white" : defaultStyle
       }`}
     >

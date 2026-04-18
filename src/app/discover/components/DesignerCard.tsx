@@ -4,10 +4,14 @@ import LanguageTag from "./LanguageTag";
 export interface DesignerCardProps {
   name: string;
   role: string;
-  languages: ("korean" | "english")[];
+  languages: string[];
   profileImage: string;
   portfolioImage: string;
-  message?: string;
+  highlightMessage?: string;
+  isVerified?: boolean;
+  ratingAvg?: number;
+  reviewCount?: number;
+  yearsOfExp?: number;
   size?: "small" | "medium" | "large";
 }
 
@@ -29,8 +33,8 @@ function ChevronRight() {
 
 const HEIGHT_MAP = {
   small: "h-[138px]",
-  medium: "h-[220px]",
-  large: "h-[320px]",
+  medium: "h-[350px]",
+  large: "h-[350px]",
 } as const;
 
 function DesignerInfo({
@@ -43,10 +47,10 @@ function DesignerInfo({
     <>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-end gap-1 min-w-0">
-          <span className="text-[24px] font-medium leading-8 tracking-[-0.36px] text-surface-50 whitespace-nowrap">
+          <span className="typo-h3 text-surface-50 whitespace-nowrap">
             {name}
           </span>
-          <span className="text-[12px] leading-4 tracking-[-0.06px] text-surface-200 pb-0.5">
+          <span className="typo-caption text-surface-200 pb-0.5">
             {role}
           </span>
         </div>
@@ -67,7 +71,7 @@ function MessageSection({ message }: { message: string }) {
   return (
     <div className="relative p-2.5 bg-gradient-to-t from-surface-950/50 to-transparent">
       <div className="backdrop-blur-[15px] bg-surface-50/30 rounded-lg px-2.5 py-1.5">
-        <p className="text-[12px] leading-4 tracking-[-0.06px] text-surface-50">
+        <p className="typo-caption text-surface-50">
           {message}
         </p>
       </div>
@@ -81,7 +85,7 @@ export default function DesignerCard({
   languages,
   profileImage,
   portfolioImage,
-  message,
+  highlightMessage,
   size = "small",
 }: DesignerCardProps) {
   const infoProps = { name, role, languages, profileImage };
@@ -121,7 +125,7 @@ export default function DesignerCard({
           )}
 
           {/* Bottom message */}
-          {message && <MessageSection message={message} />}
+          {highlightMessage && <MessageSection message={highlightMessage} />}
         </div>
       )}
     </div>
