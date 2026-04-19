@@ -1,5 +1,5 @@
 import type { Meta, StoryFn, StoryObj } from "@storybook/nextjs-vite";
-import DesignerCard from "../app/discover/components/DesignerCard";
+import DesignerCard from "../app/(main)/discover/components/DesignerCard";
 
 const SHARED_ARGS = {
   name: "Sejin",
