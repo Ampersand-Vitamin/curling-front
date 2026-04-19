@@ -61,6 +61,11 @@
   --color-alert-500: #c8ce5d;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 body {
   background: var(--color-surface-50);
   color: var(--color-surface-950);
