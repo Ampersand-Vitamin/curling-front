@@ -2,11 +2,64 @@
 // Figma Ref: 254:21435 — 커스텀 살롱 핀 마커 (흰색 원형 + barber pole 아이콘)
 "use client";
 
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { useEffect, useState } from "react";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  useMap,
+} from "@vis.gl/react-google-maps";
 import { storageUrl } from "@/lib/storage";
 import { MOCK_SALONS, DEFAULT_CENTER, DEFAULT_ZOOM } from "../data/mock-salons";
 import { MOCK_DESIGNER_MAP_ITEMS } from "../data/mock-designers";
 import type { DiscoverMode } from "@/types/discover";
+
+type LatLng = { lat: number; lng: number };
+
+// Figma Ref: 254:21362 — 본인 위치 마커 (secondary-400 컬러)
+function UserLocationPin() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <div className="absolute w-6 h-6 rounded-full bg-secondary-400/30 [animation:pulseSoft_1s_ease-in-out_infinite]" />
+      <div className="w-4 h-4 rounded-full bg-secondary-400 border-2 border-surface-white shadow-[0px_2px_6px_rgba(0,0,0,0.2)]" />
+    </div>
+  );
+}
+
+function UserLocationTracker({
+  position,
+  onResolved,
+}: {
+  position: LatLng | null;
+  onResolved: (pos: LatLng) => void;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (position || typeof window === "undefined" || !navigator.geolocation)
+      return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        onResolved({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      (err) => {
+        console.warn("[MapView] geolocation error", err);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+    );
+  }, [position, onResolved]);
+
+  useEffect(() => {
+    if (map && position) {
+      map.panTo(position);
+    }
+  }, [map, position]);
+
+  return null;
+}
 
 function SalonPin() {
   return (
@@ -55,6 +108,7 @@ interface MapViewProps {
 
 export default function MapView({ mode = "salon" }: MapViewProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const [userPos, setUserPos] = useState<LatLng | null>(null);
 
   if (!apiKey) {
     return (
@@ -76,6 +130,12 @@ export default function MapView({ mode = "salon" }: MapViewProps) {
         disableDefaultUI
         zoomControl
       >
+        <UserLocationTracker position={userPos} onResolved={setUserPos} />
+        {userPos && (
+          <AdvancedMarker position={userPos} title="내 위치">
+            <UserLocationPin />
+          </AdvancedMarker>
+        )}
         {mode === "salon"
           ? MOCK_SALONS.map((salon) => (
               <AdvancedMarker
