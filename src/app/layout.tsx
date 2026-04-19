@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import BottomNav from "@/components/ui/BottomNav";
 
 // Design Ref: §5 — Pretendard via next/font/local, weight 400/500/600
 const pretendard = localFont({
@@ -24,13 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${pretendard.variable} h-full antialiased`}>
-      <body className="min-h-full flex justify-center bg-surface-950 font-pretendard">
-        <div className="w-full max-w-[400px] min-h-full flex flex-col bg-surface-50">
-          <div className="flex-1">{children}</div>
-          <div className="sticky bottom-0 z-50">
-            <BottomNav />
-          </div>
-        </div>
+      <body className="h-full flex justify-center bg-surface-950 font-pretendard overflow-hidden">
+        {children}
       </body>
     </html>
   );
