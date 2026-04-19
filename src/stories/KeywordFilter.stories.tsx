@@ -1,6 +1,6 @@
 import type { Meta, StoryFn, StoryObj } from "@storybook/nextjs-vite";
 import { fn } from "storybook/test";
-import KeywordFilter from "../app/discover/components/KeywordFilter";
+import KeywordFilter from "../app/(main)/discover/components/KeywordFilter";
 
 const meta = {
   title: "Discover/KeywordFilter",
