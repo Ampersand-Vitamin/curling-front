@@ -1,16 +1,17 @@
 -- Phase 1 — Keyword 마스터 시드
--- 소스: Downloads/designers.json (150명)에서 추출한 유니크 값
+-- 소스: Downloads/designers.json (150명) + filter-popup-redesign PDCA
 --
 -- 범위:
 --   keyword_category 9개 전체 생성
---   keyword는 designer 데이터 기반 44개만 시드
---     - Treatment: 21 (Cut/Color/Perm/Braids&Locs/Care/Barber)
---     - Style:      2
---     - Hair Type: 13
---     - Languages:  8
+--   keyword 시드 51개:
+--     - Treatment:     21 (Cut/Color/Perm/Braids&Locs/Care/Barber)
+--     - Style:          2
+--     - Hair Type:     13
+--     - Languages:      8
+--     - Special Offers: 7 (Salon Features — filter-popup-redesign)
 --
---   hair_concern / hair_color / hair_length / treatment_history / special_offers
---   카테고리는 생성만, keyword 시드는 해당 PDCA 시점에 진행
+--   hair_concern / hair_color / hair_length / treatment_history
+--   카테고리는 생성만, keyword 시드는 추후 PDCA(My 탭 Hair Profile)에서 진행
 
 BEGIN;
 
@@ -133,13 +134,34 @@ FROM public.keyword_category kc,
 WHERE kc.slug = 'languages'
 ON CONFLICT (category_id, slug) DO NOTHING;
 
+-- ═══════════════════════════════════════════════════════════════════
+-- 6) keyword — Special Offers 카테고리 (Salon Features, 7개)
+--    소스: filter-design-discussion.html §7 "Salon Features"
+--    Plan FR-08 / Design §4.9
+-- ═══════════════════════════════════════════════════════════════════
+
+INSERT INTO public.keyword (category_id, name, slug, group_name, display_order)
+SELECT kc.id, v.name, v.slug, NULL, v.display_order
+FROM public.keyword_category kc,
+     (VALUES
+        ('Foreigner Friendly', 'foreigner_friendly', 10),
+        ('English-speaking',   'english_speaking',   20),
+        ('Private Room',       'private_room',       30),
+        ('Pet Friendly',       'pet_friendly',       40),
+        ('Tax-free',           'tax_free',           50),
+        ('Pregnancy-safe',     'pregnancy_safe',     60),
+        ('Vegan Products',     'vegan_products',     70)
+     ) AS v(name, slug, display_order)
+WHERE kc.slug = 'special_offers'
+ON CONFLICT (category_id, slug) DO NOTHING;
+
 COMMIT;
 
 -- ═══════════════════════════════════════════════════════════════════
 -- 검증 쿼리
 -- ═══════════════════════════════════════════════════════════════════
 -- SELECT COUNT(*) FROM public.keyword_category;                          -- 9
--- SELECT COUNT(*) FROM public.keyword;                                   -- 44
+-- SELECT COUNT(*) FROM public.keyword;                                   -- 51
 --
 -- SELECT kc.slug AS category, COUNT(k.id) AS keyword_count
 -- FROM public.keyword_category kc
@@ -152,7 +174,7 @@ COMMIT;
 -- --   style             :  2
 -- --   hair_concern      :  0
 -- --   languages         :  8
--- --   special_offers    :  0
+-- --   special_offers    :  7   ← filter-popup-redesign
 -- --   hair_color        :  0
 -- --   hair_length       :  0
 -- --   treatment_history :  0
