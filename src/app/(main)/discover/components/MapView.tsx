@@ -10,9 +10,13 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import { storageUrl } from "@/lib/storage";
-import { MOCK_SALONS, DEFAULT_CENTER, DEFAULT_ZOOM } from "../data/mock-salons";
-import { MOCK_DESIGNER_MAP_ITEMS } from "../data/mock-designers";
 import type { DiscoverMode } from "@/types/discover";
+import type { Salon } from "@/types/salon";
+import type { DesignerMapItem } from "@/lib/designers";
+
+// 지도 초기 중심/줌 (뉴욕 기반 — 실서비스 시 유저 위치로 대체)
+const DEFAULT_CENTER = { lat: 40.758, lng: -73.9855 };
+const DEFAULT_ZOOM = 12;
 
 type LatLng = { lat: number; lng: number };
 
@@ -104,9 +108,11 @@ function DesignerPin({ count }: { count: number }) {
 
 interface MapViewProps {
   mode?: DiscoverMode;
+  salons: Salon[];
+  designerMapItems: DesignerMapItem[];
 }
 
-export default function MapView({ mode = "salon" }: MapViewProps) {
+export default function MapView({ mode = "salon", salons, designerMapItems }: MapViewProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const [userPos, setUserPos] = useState<LatLng | null>(null);
 
@@ -137,7 +143,7 @@ export default function MapView({ mode = "salon" }: MapViewProps) {
           </AdvancedMarker>
         )}
         {mode === "salon"
-          ? MOCK_SALONS.map((salon) => (
+          ? salons.map((salon) => (
               <AdvancedMarker
                 key={salon.id}
                 position={{ lat: salon.latitude, lng: salon.longitude }}
@@ -146,7 +152,7 @@ export default function MapView({ mode = "salon" }: MapViewProps) {
                 <SalonPin />
               </AdvancedMarker>
             ))
-          : MOCK_DESIGNER_MAP_ITEMS.map((item) => (
+          : designerMapItems.map((item) => (
               <AdvancedMarker
                 key={item.salonId}
                 position={{ lat: item.latitude, lng: item.longitude }}
