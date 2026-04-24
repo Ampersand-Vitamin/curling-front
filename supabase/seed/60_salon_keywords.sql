@@ -1,8 +1,7 @@
--- Phase 1 — salon_keyword 시드 (Facility/Policy + Salon-level Service)
+-- Phase 1 — salon_keyword 매핑 시드
 --
--- 역할:
---   1) keyword_category 'special_offers' 안에 Facility 키워드 마스터 시드
---   2) 각 살롱에 해당 키워드 매핑
+-- 역할: 살롱과 special_offers(Salon Features) 키워드의 매핑만 담당.
+--       키워드 마스터는 30_keywords.sql에서 단일 소스로 관리.
 --
 -- 매핑 전략:
 --   (a) 자동 — salon.languages, salon.introduction 텍스트로부터 유추
@@ -11,26 +10,7 @@
 BEGIN;
 
 -- ═══════════════════════════════════════════════════════════════════
--- 1) Facility 키워드 마스터 확장 (special_offers 카테고리)
--- ═══════════════════════════════════════════════════════════════════
-
-INSERT INTO public.keyword (category_id, name, slug, group_name, display_order)
-SELECT kc.id, v.name, v.slug, 'Facility', v.display_order
-FROM public.keyword_category kc,
-     (VALUES
-        ('English-speaking',   'english_speaking',  10),
-        ('By Appointment',     'by_appointment',    20),
-        ('Walk-in Welcome',    'walk_in_welcome',   30),
-        ('Private Room',       'private_room',      40),
-        ('Pet Friendly',       'pet_friendly',      50),
-        ('Tax-free',           'tax_free',          60),
-        ('Wheelchair Access',  'wheelchair_access', 70)
-     ) AS v(name, slug, display_order)
-WHERE kc.slug = 'special_offers'
-ON CONFLICT (category_id, slug) DO NOTHING;
-
--- ═══════════════════════════════════════════════════════════════════
--- 2) 자동 매핑 (a) — salon.languages에서 파생
+-- 1) 자동 매핑 (a) — salon.languages에서 파생
 --    'english' ∈ languages → English-speaking
 -- ═══════════════════════════════════════════════════════════════════
 
@@ -42,7 +22,7 @@ WHERE 'english' = ANY(s.languages)
 ON CONFLICT DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════
--- 3) 자동 매핑 (b) — introduction 텍스트 키워드 매칭
+-- 2) 자동 매핑 (b) — introduction 텍스트 키워드 매칭
 -- ═══════════════════════════════════════════════════════════════════
 
 -- "Walk-ins welcome" → Walk-in Welcome
@@ -70,7 +50,7 @@ WHERE s.introduction ILIKE '%private%'
 ON CONFLICT DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════
--- 4) 수동 매핑 (TODO) — 데이터로부터 유추 불가능한 항목
+-- 3) 수동 매핑 (TODO) — 데이터로부터 유추 불가능한 항목
 -- ═══════════════════════════════════════════════════════════════════
 --
 -- Pet Friendly:       운영 중 살롱 인터뷰/사진 검수로 태깅

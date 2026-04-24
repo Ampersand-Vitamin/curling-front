@@ -49,17 +49,11 @@ const MOCK_DESIGNERS = [
   },
 ];
 
-interface DesignerCarouselProps {
-  cardSize?: "small" | "medium" | "large";
-}
-
-export default function DesignerCarousel({
-  cardSize = "small",
-}: DesignerCarouselProps) {
+export default function DesignerCarousel() {
   return (
     <div className="flex flex-col gap-4 pb-20">
       <p className="typo-h5 text-surface-950">
-        Popular Designer with Curly hair
+        Best Match for you
       </p>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide">
         {MOCK_DESIGNERS.map((designer) => (
@@ -71,7 +65,6 @@ export default function DesignerCarousel({
             profileImage={designer.profileImage}
             portfolioImage={designer.portfolioImage}
             highlightMessage={designer.highlightMessage}
-            size={cardSize}
           />
         ))}
       </div>

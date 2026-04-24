@@ -75,3 +75,12 @@ body {
   background: var(--color-surface-50);
   color: var(--color-surface-950);
 }
+
+/* 스크롤바만 시각적으로 숨김 (스크롤 동작은 유지) */
+.scrollbar-hide {
+  -ms-overflow-style: none;   /* IE/Edge */
+  scrollbar-width: none;      /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;              /* Chrome/Safari/Opera */
+}

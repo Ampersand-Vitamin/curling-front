@@ -28,9 +28,9 @@ export type FilterSection = {
 
 // Plan FR-05: FilterPopup에 렌더할 4개 카테고리의 표시 순서
 export const FILTER_SECTION_ORDER: readonly FilterCategorySlug[] = [
-  "languages",
   "hair_type",
   "treatment",
+  "languages",
   "special_offers",
 ] as const;
 
