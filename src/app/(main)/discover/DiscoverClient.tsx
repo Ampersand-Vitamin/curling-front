@@ -55,6 +55,7 @@ export default function DiscoverClient({ filterSections, salons, designerMapItem
           mode={mode}
           salons={salons}
           designerMapItems={designerMapItems}
+          pullBarVariant={pullBarVariant}
         />
       </div>
 
