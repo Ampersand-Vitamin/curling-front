@@ -3,6 +3,7 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import DesignerCarousel from "./DesignerCarousel";
+import type { DesignerListItem } from "@/lib/designers";
 
 export type PullBarVariant = "collapsed" | "compact" | "expanded";
 
@@ -13,11 +14,12 @@ const TOP_PADDING = 20;
 const EXPANDED_FALLBACK = 600;
 
 interface PullBarProps {
+  designers: DesignerListItem[];
   forceCollapsed?: boolean;
   onVariantChange?: (variant: PullBarVariant) => void;
 }
 
-export default function PullBar({ forceCollapsed = false, onVariantChange }: PullBarProps) {
+export default function PullBar({ designers, forceCollapsed = false, onVariantChange }: PullBarProps) {
   const [variant, setVariant] = useState<PullBarVariant>("compact");
   const [isDragging, setIsDragging] = useState(false);
   const [viewportHeight, setViewportHeight] = useState<number | null>(null);
@@ -129,7 +131,7 @@ export default function PullBar({ forceCollapsed = false, onVariantChange }: Pul
           }}
         >
           <div className="px-4 pt-2 pb-5">
-            <DesignerCarousel />
+            <DesignerCarousel designers={designers} />
           </div>
         </div>
       )}

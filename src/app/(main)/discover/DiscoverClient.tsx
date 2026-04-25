@@ -9,15 +9,16 @@ import FilterPopup from "./components/FilterPopup";
 import type { DiscoverMode } from "@/types/discover";
 import type { FilterSection } from "@/types/keyword";
 import type { Salon } from "@/types/salon";
-import type { DesignerMapItem } from "@/lib/designers";
+import type { DesignerMapItem, DesignerListItem } from "@/lib/designers";
 
 interface DiscoverClientProps {
   filterSections: FilterSection[];
   salons: Salon[];
   designerMapItems: DesignerMapItem[];
+  designers: DesignerListItem[];
 }
 
-export default function DiscoverClient({ filterSections, salons, designerMapItems }: DiscoverClientProps) {
+export default function DiscoverClient({ filterSections, salons, designerMapItems, designers }: DiscoverClientProps) {
   // Plan FR-09: slug 기반 Set. SearchHeader quick-filter는 Recommended PDCA에서 교체 예정이라
   // 현재는 label을 홀드할 수도 있으나 FilterPopup은 slug만 사용.
   const [activeKeywords, setActiveKeywords] = useState<Set<string>>(new Set());
@@ -100,6 +101,7 @@ export default function DiscoverClient({ filterSections, salons, designerMapItem
         {/* 하단 PullBar */}
         <div className="pointer-events-auto">
           <PullBar
+            designers={designers}
             forceCollapsed={showFilter}
             onVariantChange={setPullBarVariant}
           />

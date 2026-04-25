@@ -1,7 +1,10 @@
 // Design Ref: §3.4 — 디자이너 카드 (고정 212x225)
+// Plan FR-17 — id prop + <Link> 래핑으로 /designer/[id] 이동
+import Link from "next/link";
 import LanguageTag from "./LanguageTag";
 
 export interface DesignerCardProps {
+  id: string;
   name: string;
   role: string;
   languages: string[];
@@ -15,6 +18,7 @@ export interface DesignerCardProps {
 }
 
 export default function DesignerCard({
+  id,
   name,
   role,
   languages,
@@ -22,7 +26,11 @@ export default function DesignerCard({
   portfolioImage,
 }: DesignerCardProps) {
   return (
-    <div className="relative w-[212px] h-[225px] rounded-2xl overflow-hidden shrink-0 bg-surface-300">
+    <Link
+      href={`/designer/${id}`}
+      prefetch={false}
+      className="relative block w-[212px] h-[225px] rounded-2xl overflow-hidden shrink-0 bg-surface-300"
+    >
       {/* Portfolio Background */}
       <img
         src={portfolioImage}
@@ -51,6 +59,6 @@ export default function DesignerCard({
           ))}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

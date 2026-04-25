@@ -1056,3 +1056,40 @@ Figma 363:11455와 좌우 스크린샷 비교 (모바일 375 폭 기준).
 - `/pdca do designer-detail` — 전체 구현 가이드 (Session 1 시작)
 - 또는 `/pdca do designer-detail --scope module-1,module-2,module-3,module-4` — Session 1만
 - 구현 완료 후 `/pdca analyze designer-detail` — Gap 분석
+
+---
+
+## 14. 후속 PDCA 메모 (2026-04-25 추가)
+
+### 14.1 portfolio-entity (Path C) — 필수 후속
+
+**계기**: Figma node 363:11694 (Portfolio 탭) 분석에서 **이미지 카드별 제목 + 키워드 + ⭐**이 발견됨. 현 PDCA에서는 시각 placeholder도 두지 않고 **별도 PDCA로 완전 분리** (사용자 결정).
+
+**스코프 (별도 PDCA로 시작 예정)**:
+
+| 변경 | 내용 |
+|------|------|
+| **신규 테이블** | `portfolio` (id, designer_id FK, image_url, title, description?, display_order, is_pinned, created_at) |
+| **신규 N:M 테이블** | `portfolio_keyword` (portfolio_id FK, keyword_id FK → master `keyword` 재사용) |
+| **컬럼 제거** | `designer_profile.portfolio_images TEXT[]` (DROP) |
+| **도메인 타입** | `DesignerDetail.portfolioImages: string[]` → `portfolio: PortfolioItem[]` (with id, imageUrl, title, keywords) |
+| **getDesignerById** | portfolio JOIN 추가 (3-단계 fetch) |
+| **PortfolioHero** | 시그니처 `images: string[]` → `items: PortfolioItem[]`, `item.imageUrl` 사용 |
+| **PortfolioGrid** | 카드 모드 신설 — 이미지 + title + keyword chips + ⭐ |
+| **DesignerCard (Discover)** | `portfolioImage: portfolioImages[0]` → `portfolio[0].imageUrl` |
+| **시드** | `40_designers.sql`의 portfolio_images UPDATE 제거. 신규 `41_portfolios.sql` 작성 — 디자이너당 4장 = 600행 + 키워드 매핑 |
+| **마이그레이션 순서** | (1) portfolio 생성 → (2) portfolio_keyword 생성 → (3) 데이터 이전 (기존 array → row) → (4) 컬럼 DROP |
+
+**ERD 정합성**: `db-current-structure.md §6` 에 이미 "범위 밖" 으로 명시되어 있던 `portfolio` 엔티티의 실제 도입.
+
+**왜 별도 PDCA?**
+- 본 PDCA(designer-detail) 스코프 비대화 회피
+- portfolio 엔티티는 Salon Detail / Article 등 다른 라우트에서도 재사용될 가능성
+- 마이그레이션 + 시그니처 변경 + UI 카드 모드까지 1.5~2.5h 별도 사이클 가치
+
+### 14.2 그 외 후속
+
+- `salon-detail` — `/salon/[salonId]` 동일 패턴 적용
+- `map-pin-navigation` — MapView designer/salon 핀 클릭 → 상세 이동
+- `favorite-persistence` — favorite 테이블 + Auth + `useFavoriteToggle` 본문 교체 (DS-8)
+- `auth-identity-migration` — app_user 테이블 + display_name override 패턴 (db-current-structure.md §7)

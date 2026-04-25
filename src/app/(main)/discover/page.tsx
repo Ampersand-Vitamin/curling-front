@@ -2,20 +2,22 @@
 // Plan FR-03, SC-13
 import { getFilterKeywords } from "@/lib/keywords";
 import { getSalons } from "@/lib/salons";
-import { getDesignerMapItems } from "@/lib/designers";
+import { getDesignerMapItems, getBestMatchDesigners } from "@/lib/designers";
 import DiscoverClient from "./DiscoverClient";
 
 export default async function DiscoverPage() {
-  const [filterSections, salons, designerMapItems] = await Promise.all([
+  const [filterSections, salons, designerMapItems, designers] = await Promise.all([
     getFilterKeywords(),
     getSalons(),
     getDesignerMapItems(),
+    getBestMatchDesigners(10),
   ]);
   return (
     <DiscoverClient
       filterSections={filterSections}
       salons={salons}
       designerMapItems={designerMapItems}
+      designers={designers}
     />
   );
 }
