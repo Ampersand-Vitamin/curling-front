@@ -9,6 +9,7 @@ import type { DesignerDetail } from "@/lib/designers";
 import { useDesignerTabs } from "./hooks/useDesignerTabs";
 import { useFavoriteToggle } from "./hooks/useFavoriteToggle";
 import DetailHeader from "./components/DetailHeader";
+import DesignerTabs from "./components/DesignerTabs";
 import PortfolioHero from "./components/PortfolioHero";
 import DesignerInfoSection from "./components/DesignerInfoSection";
 import HighlightBubble from "./components/HighlightBubble";
@@ -32,14 +33,23 @@ export default function DesignerDetailClient({ designer }: Props) {
     (k) => k.categorySlug === "treatment",
   );
 
+  const salonLabel = designer.salon
+    ? designer.salon.address
+      ? `${designer.salon.name}, ${designer.salon.address}`
+      : designer.salon.name
+    : null;
+
   return (
     <div className="flex flex-col h-full overflow-y-auto pb-[76px] bg-surface-white">
-      <DetailHeader
-        name={designer.displayName}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        tabs={tabs}
-      />
+      <div className="sticky top-0 z-30">
+        <DetailHeader
+          name={designer.displayName}
+          profileImageUrl={designer.profileImageUrl}
+          salonLabel={salonLabel}
+          messageHref={`/messages/${designer.id}`}
+        />
+        <DesignerTabs activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
+      </div>
 
       {activeTab === "designer" && (
         <>
