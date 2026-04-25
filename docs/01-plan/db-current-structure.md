@@ -1,8 +1,8 @@
 # Curling DB — 현재 구조 스냅샷
 
-> **Source**: `supabase/migrations/20260421000001~5_*.sql` (commit `ae155b0`)
-> **Scope**: Phase 1 — Discover에 필요한 5개 테이블만 실제 생성됨
-> **Status**: 마이그레이션 적용 완료 · 시드 후 임시 컬럼 DROP 대기
+> **Source**: `supabase/migrations/20260421000001~5_*.sql` + `20260424000001~2_*.sql`
+> **Scope**: Phase 1 (5개 테이블) + designer-detail PDCA (designer_profile 컬럼 확장)
+> **Status**: 마이그레이션 적용 완료 · 시드 후 임시 컬럼 DROP 대기 · Auth 전 계층 분리 예정 (§7)
 
 ---
 
