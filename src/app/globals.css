@@ -59,6 +59,13 @@
   /* Alert (Figma: Curling/Alert) */
   --color-alert-100: #ecf09b;
   --color-alert-500: #c8ce5d;
+
+  /* Semantic (Figma: Color collection) */
+  --color-action-primary: var(--color-primary-600);
+  --color-icon-red-primary: var(--color-secondary-600);
+  --color-icon-black-primary: var(--color-surface-950);
+  --color-icon-black-secondary: var(--color-surface-600);
+  --color-icon-white-primary: #ffffff;
 }
 
 @keyframes fadeIn {
