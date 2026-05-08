@@ -27,8 +27,8 @@ type RawCategoryRow = {
 };
 
 /**
- * FilterPopup이 렌더할 4개 섹션을 서버에서 완성된 형태로 반환.
- * Plan FR-05: languages / hair_type / treatment / special_offers 순서 고정.
+ * FilterPopup이 렌더할 섹션들을 서버에서 완성된 형태로 반환.
+ * Plan FR-05: hair_type / treatment / languages / amenities / inclusivity 순서 고정.
  * Design DS-1: 클라이언트 useMemo 없이 props만으로 렌더 가능.
  */
 export async function getFilterKeywords(): Promise<FilterSection[]> {

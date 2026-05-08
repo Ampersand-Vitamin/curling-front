@@ -15,6 +15,7 @@ type RawListRow = {
   portfolio_images: string[];
   languages: string[];
   highlight_message: string | null;
+  salon_id: string | null;
 };
 
 /**
@@ -28,7 +29,7 @@ export async function getBestMatchDesigners(
     .from("designer_profile")
     .select(
       `id, display_name, role, profile_image_url, portfolio_images,
-       languages, highlight_message`,
+       languages, highlight_message, salon_id`,
     )
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -45,6 +46,40 @@ export async function getBestMatchDesigners(
     portfolioImages: r.portfolio_images ?? [],
     languages: r.languages ?? [],
     highlightMessage: r.highlight_message,
+    salonId: r.salon_id,
+  }));
+}
+
+/**
+ * 특정 살롱에 소속된 디자이너 전체 리스트.
+ * Discover 디자이너 핀 클릭 시 popup에 노출되는 카드 데이터로 사용.
+ * 클라이언트에서 on-demand로 호출됨.
+ */
+export async function getDesignersBySalon(
+  salonId: string,
+): Promise<DesignerListItem[]> {
+  const { data, error } = await supabase
+    .from("designer_profile")
+    .select(
+      `id, display_name, role, profile_image_url, portfolio_images,
+       languages, highlight_message, salon_id`,
+    )
+    .eq("salon_id", salonId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`[getDesignersBySalon] ${error.message}`);
+  }
+
+  return (data ?? []).map<DesignerListItem>((r: RawListRow) => ({
+    id: r.id,
+    displayName: r.display_name,
+    role: r.role,
+    profileImageUrl: r.profile_image_url,
+    portfolioImages: r.portfolio_images ?? [],
+    languages: r.languages ?? [],
+    highlightMessage: r.highlight_message,
+    salonId: r.salon_id,
   }));
 }
 

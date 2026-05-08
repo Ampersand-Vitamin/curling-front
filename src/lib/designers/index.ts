@@ -16,4 +16,8 @@ export type {
 } from "./types";
 
 export { getDesignerById } from "./queries";
-export { getBestMatchDesigners, getDesignerMapItems } from "./list";
+export {
+  getBestMatchDesigners,
+  getDesignerMapItems,
+  getDesignersBySalon,
+} from "./list";

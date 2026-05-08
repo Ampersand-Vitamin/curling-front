@@ -49,9 +49,10 @@ export default function PullBar({ designers, forceCollapsed = false, onVariantCh
   const handleRef = useRef<HTMLDivElement>(null);
 
   // variant 변경을 부모에게 전파 (DiscoverClient가 SearchHeader 숨김 처리)
+  // forceCollapsed 상태에서는 외부적으로 "collapsed"로 보고 (MapView my-location 위치 보정)
   useEffect(() => {
-    onVariantChange?.(variant);
-  }, [variant, onVariantChange]);
+    onVariantChange?.(forceCollapsed ? "collapsed" : variant);
+  }, [variant, forceCollapsed, onVariantChange]);
 
   const getVariantFromHeight = useCallback(
     (height: number): PullBarVariant => {

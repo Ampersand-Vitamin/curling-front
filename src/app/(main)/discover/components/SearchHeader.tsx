@@ -3,7 +3,6 @@
 import IconButton from "@/components/ui/IconButton";
 import SearchBar from "@/components/ui/SearchBar";
 import KeywordFilter from "./KeywordFilter";
-import { storageUrl } from "@/lib/storage";
 import type { DiscoverMode } from "@/types/discover";
 
 const KEYWORDS = [
@@ -14,10 +13,14 @@ const KEYWORDS = [
 
 function CloseIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M12 4L4 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M4 4L12 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src="/icons/cancel.svg"
+      alt=""
+      width={16}
+      height={16}
+      className="[filter:brightness(0)_invert(1)]"
+    />
   );
 }
 
@@ -46,8 +49,8 @@ export default function SearchHeader({
     <div className="flex flex-col w-full">
       {/* Search Row */}
       <div className="flex items-center gap-1 px-3 py-3">
-        <IconButton variant="dark" badge={filterCount > 0 ? filterCount : undefined} onClick={onFilterPress}>
-          <img src={storageUrl("asset/discover/filter_v2.svg")} alt="filter" width={20} height={20} />
+        <IconButton badge={filterCount > 0 ? filterCount : undefined} onClick={onFilterPress}>
+          <img src="/icons/filter.svg" alt="filter" width={20} height={20} />
         </IconButton>
         <SearchBar placeholder={showFilter ? "Search Keywords" : "Search salons"} />
         {showFilter ? (
@@ -61,7 +64,7 @@ export default function SearchHeader({
         ) : (
           <IconButton variant="light" onClick={onToggleMode}>
             <img
-              src={storageUrl(mode === "salon" ? "asset/discover/salon.svg" : "asset/discover/designer.svg")}
+              src={mode === "salon" ? "/icons/salon.svg" : "/icons/designer.svg"}
               alt={mode === "salon" ? "salon" : "designer"}
               width={20}
               height={20}

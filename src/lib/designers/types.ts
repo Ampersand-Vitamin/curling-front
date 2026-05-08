@@ -8,7 +8,7 @@
 export type DesignerKeyword = {
   slug: string;
   name: string;
-  /** 'treatment' | 'languages' | 'hair_type' | 'special_offers' | ... */
+  /** 'treatment' | 'languages' | 'hair_type' | 'amenities' | 'inclusivity' | ... */
   categorySlug: string;
 };
 
@@ -22,6 +22,8 @@ export type DesignerListItem = {
   portfolioImages: string[];
   languages: string[];
   highlightMessage: string | null;
+  /** 소속 살롱 id — Discover 디자이너 핀 클릭 시 살롱 단위 필터링용 */
+  salonId: string | null;
 };
 
 /** 디자이너 상세 페이지 전체 모델 */
