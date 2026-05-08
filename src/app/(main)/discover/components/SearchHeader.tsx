@@ -4,6 +4,7 @@ import IconButton from "@/components/ui/IconButton";
 import SearchBar from "@/components/ui/SearchBar";
 import KeywordFilter from "./KeywordFilter";
 import { storageUrl } from "@/lib/storage";
+import type { DiscoverMode } from "@/types/discover";
 
 const KEYWORDS = [
   { label: "English Speaker" },
@@ -23,17 +24,21 @@ function CloseIcon() {
 interface SearchHeaderProps {
   activeKeywords: Set<string>;
   showFilter: boolean;
+  mode: DiscoverMode;
   onToggleKeyword: (keyword: string) => void;
   onFilterPress: () => void;
   onFilterClose: () => void;
+  onToggleMode: () => void;
 }
 
 export default function SearchHeader({
   activeKeywords,
   showFilter,
+  mode,
   onToggleKeyword,
   onFilterPress,
   onFilterClose,
+  onToggleMode,
 }: SearchHeaderProps) {
   const filterCount = activeKeywords.size;
 
@@ -54,8 +59,13 @@ export default function SearchHeader({
             <CloseIcon />
           </button>
         ) : (
-          <IconButton variant="light">
-            <img src={storageUrl("asset/discover/salon.svg")} alt="salon" width={20} height={20} />
+          <IconButton variant="light" onClick={onToggleMode}>
+            <img
+              src={storageUrl(mode === "salon" ? "asset/discover/salon.svg" : "asset/discover/designer.svg")}
+              alt={mode === "salon" ? "salon" : "designer"}
+              width={20}
+              height={20}
+            />
           </IconButton>
         )}
       </div>

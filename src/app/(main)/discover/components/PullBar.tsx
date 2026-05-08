@@ -1,43 +1,67 @@
 // Design Ref: §3.1 — Pull Bar 컨테이너 (드래그 핸들로 3단계 전환)
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import DesignerCarousel from "./DesignerCarousel";
+import type { DesignerListItem } from "@/lib/designers";
 
-type PullBarVariant = "collapsed" | "compact" | "expanded";
+export type PullBarVariant = "collapsed" | "compact" | "expanded";
 
-// 각 variant별 컨텐츠 영역 높이 (px)
-const VARIANT_HEIGHTS: Record<PullBarVariant, number> = {
-  collapsed: 0,
-  compact: 260,
-  expanded: 440, //TODO: 하단 내비바 높이만큼 더해줘야 함
-};
-
-const SNAP_POINTS = [
-  VARIANT_HEIGHTS.collapsed,
-  VARIANT_HEIGHTS.compact,
-  VARIANT_HEIGHTS.expanded,
-];
-
-function getVariantFromHeight(height: number): PullBarVariant {
-  if (height <= SNAP_POINTS[0] + (SNAP_POINTS[1] - SNAP_POINTS[0]) / 2)
-    return "collapsed";
-  if (height <= SNAP_POINTS[1] + (SNAP_POINTS[2] - SNAP_POINTS[1]) / 2)
-    return "compact";
-  return "expanded";
-}
+// 부모 h-[calc(100dvh-76px)] - 핸들(~24px) - 상단 패딩(20px) 만큼을 expanded가 차지
+const BOTTOM_NAV_HEIGHT = 76;
+const HANDLE_HEIGHT = 24;
+const TOP_PADDING = 20;
+const EXPANDED_FALLBACK = 600;
 
 interface PullBarProps {
+  designers: DesignerListItem[];
   forceCollapsed?: boolean;
+  onVariantChange?: (variant: PullBarVariant) => void;
 }
 
-export default function PullBar({ forceCollapsed = false }: PullBarProps) {
+export default function PullBar({ designers, forceCollapsed = false, onVariantChange }: PullBarProps) {
   const [variant, setVariant] = useState<PullBarVariant>("compact");
   const [isDragging, setIsDragging] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  // expanded 높이를 뷰포트 기준 동적 계산
+  useEffect(() => {
+    const update = () => setViewportHeight(window.innerHeight);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const VARIANT_HEIGHTS: Record<PullBarVariant, number> = useMemo(
+    () => ({
+      collapsed: 0,
+      compact: 300,
+      expanded: viewportHeight
+        ? Math.max(400, viewportHeight - BOTTOM_NAV_HEIGHT - HANDLE_HEIGHT - TOP_PADDING)
+        : EXPANDED_FALLBACK,
+    }),
+    [viewportHeight],
+  );
+
   const [dragHeight, setDragHeight] = useState(VARIANT_HEIGHTS.compact);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const handleRef = useRef<HTMLDivElement>(null);
+
+  // variant 변경을 부모에게 전파 (DiscoverClient가 SearchHeader 숨김 처리)
+  useEffect(() => {
+    onVariantChange?.(variant);
+  }, [variant, onVariantChange]);
+
+  const getVariantFromHeight = useCallback(
+    (height: number): PullBarVariant => {
+      const { collapsed, compact, expanded } = VARIANT_HEIGHTS;
+      if (height <= collapsed + (compact - collapsed) / 2) return "collapsed";
+      if (height <= compact + (expanded - compact) / 2) return "compact";
+      return "expanded";
+    },
+    [VARIANT_HEIGHTS],
+  );
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -47,45 +71,42 @@ export default function PullBar({ forceCollapsed = false }: PullBarProps) {
       setDragHeight(VARIANT_HEIGHTS[variant]);
       handleRef.current?.setPointerCapture(e.pointerId);
     },
-    [variant]
+    [variant, VARIANT_HEIGHTS],
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
       if (!isDragging) return;
-      // 위로 드래그 = clientY 감소 = 높이 증가
       const delta = dragStartY.current - e.clientY;
       const newHeight = Math.max(
         0,
-        Math.min(VARIANT_HEIGHTS.expanded, dragStartHeight.current + delta)
+        Math.min(VARIANT_HEIGHTS.expanded, dragStartHeight.current + delta),
       );
       setDragHeight(newHeight);
     },
-    [isDragging]
+    [isDragging, VARIANT_HEIGHTS],
   );
 
   const handlePointerUp = useCallback(() => {
     if (!isDragging) return;
     setIsDragging(false);
-    // 가장 가까운 snap point로 전환
     const snapped = getVariantFromHeight(dragHeight);
     setVariant(snapped);
     setDragHeight(VARIANT_HEIGHTS[snapped]);
-  }, [isDragging, dragHeight]);
+  }, [isDragging, dragHeight, getVariantFromHeight, VARIANT_HEIGHTS]);
 
-  // variant가 외부에서 바뀔 때 dragHeight 동기화
   useEffect(() => {
     if (!isDragging) {
       setDragHeight(VARIANT_HEIGHTS[variant]);
     }
-  }, [variant, isDragging]);
+  }, [variant, isDragging, VARIANT_HEIGHTS]);
 
-  const contentHeight = forceCollapsed ? 0 : isDragging ? dragHeight : VARIANT_HEIGHTS[variant];
+  const contentHeight = forceCollapsed
+    ? 0
+    : isDragging
+      ? dragHeight
+      : VARIANT_HEIGHTS[variant];
   const showContent = contentHeight > 0;
-  const cardSize =
-    contentHeight > (VARIANT_HEIGHTS.compact + VARIANT_HEIGHTS.expanded) / 2
-      ? "medium"
-      : "small";
 
   return (
     <div className="flex flex-col rounded-t-2xl overflow-hidden bg-white">
@@ -110,12 +131,10 @@ export default function PullBar({ forceCollapsed = false }: PullBarProps) {
           }}
         >
           <div className="px-4 pt-2 pb-5">
-            <DesignerCarousel cardSize={cardSize} />
+            <DesignerCarousel designers={designers} />
           </div>
         </div>
       )}
-
-      {/* TODO: full 상태 — column 레이아웃 (디자인 미정) */}
     </div>
   );
 }

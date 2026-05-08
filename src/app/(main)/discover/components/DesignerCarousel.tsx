@@ -1,59 +1,41 @@
-// Design Ref: §3.5 — 섹션 타이틀 + 카드 수평 스크롤 리스트
+// Design Ref: §3.5, §4.22, FR-16 — 섹션 타이틀 + 카드 수평 스크롤 리스트
+// designer-detail PDCA: MOCK_DESIGNERS 제거, props 로 실 DB 데이터 받음
 import DesignerCard from "./DesignerCard";
+import { storageUrl } from "@/lib/storage";
+import type { DesignerListItem } from "@/lib/designers";
 
-const MOCK_DESIGNERS = [
-  {
-    id: "1",
-    name: "Sejin",
-    role: "Designer",
-    languages: ["english", "korean"] as const,
-    profileImage: "/mock/profile-sejin.jpg",
-    portfolioImage: "/mock/portfolio-sejin.jpg",
-    message: "98% of Curly hair women were satisfied with Sejin.",
-  },
-  {
-    id: "2",
-    name: "Jay",
-    role: "Designer",
-    languages: ["english", "korean"] as const,
-    profileImage: "/mock/profile-jay.jpg",
-    portfolioImage: "/mock/portfolio-jay.jpg",
-    message: "Jay has multiple experience with Curly hair.",
-  },
-  {
-    id: "3",
-    name: "Yuna",
-    role: "Designer",
-    languages: ["english", "korean"] as const,
-    profileImage: "/mock/profile-yuna.jpg",
-    portfolioImage: "/mock/portfolio-yuna.jpg",
-    message: "Yuna has multiple experience with Curly hair.",
-  },
-];
-
-interface DesignerCarouselProps {
-  cardSize?: "small" | "medium" | "large";
+interface Props {
+  designers: DesignerListItem[];
 }
 
-export default function DesignerCarousel({
-  cardSize = "small",
-}: DesignerCarouselProps) {
+export default function DesignerCarousel({ designers }: Props) {
+  if (designers.length === 0) {
+    return (
+      <div className="flex flex-col gap-4 pb-20">
+        <p className="typo-h5 text-surface-950">Best Match for you</p>
+        <p className="typo-body2 text-surface-500">
+          매칭되는 디자이너가 아직 없어요.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4 pb-20">
-      <p className="text-[18px] font-medium leading-[26px] tracking-[-0.18px] text-surface-950">
-        Popular Designer with Curly hair
-      </p>
+      <p className="typo-h5 text-surface-950">Best Match for you</p>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide">
-        {MOCK_DESIGNERS.map((designer) => (
+        {designers.map((d) => (
           <DesignerCard
-            key={designer.id}
-            name={designer.name}
-            role={designer.role}
-            languages={[...designer.languages]}
-            profileImage={designer.profileImage}
-            portfolioImage={designer.portfolioImage}
-            message={designer.message}
-            size={cardSize}
+            key={d.id}
+            id={d.id}
+            name={d.displayName}
+            role={d.role}
+            languages={d.languages}
+            profileImage={d.profileImageUrl ? storageUrl(d.profileImageUrl) : ""}
+            portfolioImage={
+              d.portfolioImages[0] ? storageUrl(d.portfolioImages[0]) : ""
+            }
+            highlightMessage={d.highlightMessage ?? undefined}
           />
         ))}
       </div>

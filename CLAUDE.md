@@ -81,6 +81,10 @@ type: feat | fix | chore | refactor | style | docs | test
 | `typo-caption2` | 11/13 | Regular (400) | -0.5% |
 | `typo-button` | 14/16 | Medium (500) | -1.5% |
 
+## 작업 규칙
+
+- **작업 후 `pnpm build` 검증을 실행하지 않는다.** 빌드 체크는 사용자가 직접 수행한다.
+
 ## Coding Conventions
 
 - TypeScript strict mode

@@ -24,3 +24,6 @@ Thumbs.db
 
 # MCP
 .mcp.json
+
+# 개인 워크플로우 (Codex Do 단계 위임용 — 팀 공유 대상 아님)
+AGENTS.md
