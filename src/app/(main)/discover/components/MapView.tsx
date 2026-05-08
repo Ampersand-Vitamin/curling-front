@@ -9,7 +9,6 @@ import {
   AdvancedMarker,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { storageUrl } from "@/lib/storage";
 import type { DiscoverMode } from "@/types/discover";
 import type { Salon } from "@/types/salon";
 import type { DesignerMapItem } from "@/lib/designers";
@@ -74,19 +73,6 @@ function UserLocationTracker({
   return null;
 }
 
-function MyLocationIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="3" fill="currentColor" />
-      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5" />
-      <line x1="12" y1="2" x2="12" y2="4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="12" y1="19.5" x2="12" y2="22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="2" y1="12" x2="4.5" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="19.5" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function MyLocationButton({
   userPos,
   setUserPos,
@@ -137,46 +123,81 @@ function MyLocationButton({
           "bottom 0.35s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s ease",
       }}
     >
-      <MyLocationIcon />
+      <img src="/icons/current.svg" alt="" width={22} height={22} />
     </button>
   );
 }
 
-function SalonPin() {
+// Figma Ref: 611:26561 — focused 상태는 secondary-400 배경 + 흰 아이콘 + 확대
+function PinTriangle({ isSelected }: { isSelected: boolean }) {
+  return isSelected ? (
+    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className="-mt-px">
+      <path d="M4 5L0 0H8L4 5Z" className="fill-secondary-400" />
+    </svg>
+  ) : (
+    <svg width="6" height="4" viewBox="0 0 6 4" fill="none" className="-mt-px">
+      <path d="M3 4L0 0H6L3 4Z" fill="white" />
+    </svg>
+  );
+}
+
+function SalonPin({ isSelected = false }: { isSelected?: boolean }) {
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-center justify-center rounded-full bg-surface-white p-1 shadow-[0px_2px_8px_rgba(0,0,0,0.15)]">
-        <img src={storageUrl("asset/discover/salon.svg")} alt="salon" width={16} height={16} />
-      </div>
-      <svg
-        width="6"
-        height="4"
-        viewBox="0 0 6 4"
-        fill="none"
-        className="-mt-px"
+    <div className="flex flex-col items-center transition-transform">
+      <div
+        className={`flex items-center justify-center rounded-full shadow-[0px_2px_8px_rgba(0,0,0,0.15)] ${
+          isSelected
+            ? "bg-secondary-400 px-2.5 py-1.5"
+            : "bg-surface-white pl-1.5 pr-2 py-1"
+        }`}
       >
-        <path d="M3 4L0 0H6L3 4Z" fill="white" />
-      </svg>
+        <img
+          src="/icons/salon.svg"
+          alt="salon"
+          width={isSelected ? 20 : 16}
+          height={isSelected ? 20 : 16}
+          className={isSelected ? "[filter:brightness(0)_invert(1)]" : ""}
+        />
+      </div>
+      <PinTriangle isSelected={isSelected} />
     </div>
   );
 }
 
-function DesignerPin({ count }: { count: number }) {
+function DesignerPin({
+  count,
+  isSelected = false,
+}: {
+  count: number;
+  isSelected?: boolean;
+}) {
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex items-center gap-1 rounded-full bg-surface-white pl-1.5 pr-2 py-1 shadow-[0px_2px_8px_rgba(0,0,0,0.15)]">
-        <img src={storageUrl("asset/discover/designer.svg")} alt="designer" width={16} height={16} />
-        <span className="typo-caption2 text-surface-900">{count}</span>
-      </div>
-      <svg
-        width="6"
-        height="4"
-        viewBox="0 0 6 4"
-        fill="none"
-        className="-mt-px"
+    <div className="flex flex-col items-center transition-transform">
+      <div
+        className={`flex items-center rounded-full shadow-[0px_2px_8px_rgba(0,0,0,0.15)] ${
+          isSelected
+            ? "bg-secondary-400 gap-1 px-2.5 py-1.5"
+            : "bg-surface-white gap-1 pl-1.5 pr-2 py-1"
+        }`}
       >
-        <path d="M3 4L0 0H6L3 4Z" fill="white" />
-      </svg>
+        <img
+          src="/icons/designer.svg"
+          alt="designer"
+          width={isSelected ? 20 : 16}
+          height={isSelected ? 20 : 16}
+          className={isSelected ? "[filter:brightness(0)_invert(1)]" : ""}
+        />
+        <span
+          className={
+            isSelected
+              ? "typo-caption text-surface-white"
+              : "typo-caption2 text-surface-900"
+          }
+        >
+          {count}
+        </span>
+      </div>
+      <PinTriangle isSelected={isSelected} />
     </div>
   );
 }
@@ -186,6 +207,8 @@ interface MapViewProps {
   salons: Salon[];
   designerMapItems: DesignerMapItem[];
   pullBarVariant?: PullBarVariant;
+  selectedPinId: string | null;
+  onPinSelect: (id: string | null) => void;
 }
 
 export default function MapView({
@@ -193,9 +216,14 @@ export default function MapView({
   salons,
   designerMapItems,
   pullBarVariant = "compact",
+  selectedPinId,
+  onPinSelect,
 }: MapViewProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const [userPos, setUserPos] = useState<LatLng | null>(null);
+
+  const togglePin = (pinId: string) =>
+    onPinSelect(selectedPinId === pinId ? null : pinId);
 
   const myLocationBottom = PULLBAR_HEIGHT[pullBarVariant] + 12;
   const myLocationVisible = pullBarVariant !== "expanded";
@@ -228,24 +256,41 @@ export default function MapView({
             </AdvancedMarker>
           )}
           {mode === "salon"
-            ? salons.map((salon) => (
-                <AdvancedMarker
-                  key={salon.id}
-                  position={{ lat: salon.latitude, lng: salon.longitude }}
-                  title={salon.name}
-                >
-                  <SalonPin />
-                </AdvancedMarker>
-              ))
-            : designerMapItems.map((item) => (
-                <AdvancedMarker
-                  key={item.salonId}
-                  position={{ lat: item.latitude, lng: item.longitude }}
-                  title={item.salonName}
-                >
-                  <DesignerPin count={item.designerCount} />
-                </AdvancedMarker>
-              ))}
+            ? salons.map((salon) => {
+                const pinId = `salon:${salon.id}`;
+                return (
+                  <AdvancedMarker
+                    key={salon.id}
+                    position={{ lat: salon.latitude, lng: salon.longitude }}
+                    title={salon.name}
+                    clickable
+                    onClick={() =>
+                      togglePin(pinId)
+                    }
+                  >
+                    <SalonPin isSelected={selectedPinId === pinId} />
+                  </AdvancedMarker>
+                );
+              })
+            : designerMapItems.map((item) => {
+                const pinId = `designer:${item.salonId}`;
+                return (
+                  <AdvancedMarker
+                    key={item.salonId}
+                    position={{ lat: item.latitude, lng: item.longitude }}
+                    title={item.salonName}
+                    clickable
+                    onClick={() =>
+                      togglePin(pinId)
+                    }
+                  >
+                    <DesignerPin
+                      count={item.designerCount}
+                      isSelected={selectedPinId === pinId}
+                    />
+                  </AdvancedMarker>
+                );
+              })}
         </Map>
         <MyLocationButton
           userPos={userPos}

@@ -62,7 +62,7 @@ function CategoryBlock({ section, activeKeywords, onToggle }: CategoryBlockProps
     );
   }
 
-  // 일반 카테고리 — 평면 렌더 (languages, hair_type, special_offers)
+  // 일반 카테고리 — 평면 렌더 (languages, hair_type, amenities, inclusivity)
   return (
     <div className="flex flex-col gap-2">
       <h3 className="typo-h6 text-surface-900">{section.displayName}</h3>

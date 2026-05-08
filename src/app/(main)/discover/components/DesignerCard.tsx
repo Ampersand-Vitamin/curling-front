@@ -1,7 +1,9 @@
-// Design Ref: §3.4 — 디자이너 카드 (고정 212x225)
+// Design Ref: §3.4 — 디자이너 카드 (small/large)
 // Plan FR-17 — id prop + <Link> 래핑으로 /designer/[id] 이동
 import Link from "next/link";
 import LanguageTag from "./LanguageTag";
+
+export type DesignerCardSize = "small" | "large";
 
 export interface DesignerCardProps {
   id: string;
@@ -15,7 +17,14 @@ export interface DesignerCardProps {
   ratingAvg?: number;
   reviewCount?: number;
   yearsOfExp?: number;
+  size?: DesignerCardSize;
 }
+
+// Figma Ref: 639:113347 popup-designer card 240×160
+const SIZE_CLASS: Record<DesignerCardSize, string> = {
+  small: "w-[212px] h-[225px]",
+  large: "w-[240px] h-[160px]",
+};
 
 export default function DesignerCard({
   id,
@@ -24,12 +33,13 @@ export default function DesignerCard({
   languages,
   profileImage,
   portfolioImage,
+  size = "small",
 }: DesignerCardProps) {
   return (
     <Link
       href={`/designer/${id}`}
       prefetch={false}
-      className="relative block w-[212px] h-[225px] rounded-2xl overflow-hidden shrink-0 bg-surface-300"
+      className={`relative block rounded-2xl overflow-hidden shrink-0 bg-surface-300 ${SIZE_CLASS[size]}`}
     >
       {/* Portfolio Background */}
       <img
