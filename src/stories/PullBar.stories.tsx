@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import PullBar from "../app/discover/components/PullBar";
+import PullBar from "../app/(main)/discover/components/PullBar";
 
 const meta = {
   title: "Discover/PullBar",

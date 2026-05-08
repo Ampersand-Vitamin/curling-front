@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import LanguageTag from "../app/discover/components/LanguageTag";
+import LanguageTag from "../app/(main)/discover/components/LanguageTag";
 
 const meta = {
   title: "Discover/LanguageTag",
