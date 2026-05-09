@@ -1,0 +1,128 @@
+{
+  "name": "Button",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "44:5879",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=44-5879"
+  },
+  "description": "텍스트 레이블만 가지는 기본 버튼. Primary / Neutral / Subtle 세 가지 변형.",
+
+  "components": {
+
+    "Button": {
+      "description": "단일 버튼 컴포넌트. variant × status × size 조합으로 스타일 결정.",
+      "props": {
+        "variant": {
+          "values": ["Primary", "Neutral", "Subtle"],
+          "default": "Primary"
+        },
+        "status": {
+          "values": ["Default", "Active", "Unabled"],
+          "default": "Default"
+        },
+        "size": {
+          "values": [56, 40],
+          "default": 56
+        },
+        "label": {
+          "type": "string",
+          "default": "Button"
+        }
+      },
+      "tokens": {
+        "layout": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "overflow": "clip",
+          "borderRadius": "size.radius.200",
+          "gap": "size.space.200"
+        },
+
+        "size_56": {
+          "height": 56,
+          "paddingX": "size.space.800",
+          "paddingY": "size.space.400",
+          "typography": "font.curling.h6"
+        },
+        "size_40": {
+          "height": 40,
+          "paddingX": "size.space.600",
+          "paddingY": "size.space.300",
+          "typography": "font.curling.button 1"
+        },
+
+        "variant_Primary": {
+          "status_Default": {
+            "background": "color.action.secondary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Active": {
+            "background": "color.action.primary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Unabled": {
+            "background": "color.text.caption",
+            "textColor": "color.text.tertiary"
+          }
+        },
+
+        "variant_Neutral": {
+          "status_Default": {
+            "background": "color.action.unselected",
+            "textColor": "color.text.primary"
+          },
+          "status_Active": {
+            "backdropBlur": "size.depth.800",
+            "background": "color.action.overlay-black",
+            "textColor": "color.text.inverse"
+          },
+          "status_Unabled": {
+            "background": "color.text.caption",
+            "textColor": "color.text.tertiary"
+          }
+        },
+
+        "variant_Subtle": {
+          "note": "배경 없이 backdrop-blur만 적용. 이미지·그라디언트 위에서 사용.",
+          "status_Default": {
+            "backdropBlur": "size.depth.800",
+            "background": null,
+            "textColor": "color.text.inverse"
+          },
+          "status_Active": {
+            "backdropBlur": "size.depth.800",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.inverse"
+          },
+          "status_Unabled": {
+            "backdropBlur": "size.depth.800",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.caption"
+          }
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.action.secondary":      "#3b3a3aff",
+    "color.action.primary":        "#e36a4bff",
+    "color.action.unselected":     "#f0efecff",
+    "color.action.overlay-black":  "#1717174d",
+    "color.action.overlay-white":  "#ffffff4d",
+    "color.text.primary":          "#171717ff",
+    "color.text.inverse":          "#ffffffff",
+    "color.text.caption":          "#b8b7b5ff",
+    "color.text.tertiary":         "#696867ff",
+    "size.space.200":              8,
+    "size.space.300":              12,
+    "size.space.400":              16,
+    "size.space.600":              24,
+    "size.space.800":              32,
+    "size.radius.200":             8,
+    "size.depth.800":              32,
+    "font.curling.h6":             { "fontSize": 16, "fontWeight": 500, "lineHeight": 24, "letterSpacing": -0.16 },
+    "font.curling.button 1":       { "fontSize": 14, "fontWeight": 500, "lineHeight": 16, "letterSpacing": -0.21 }
+  }
+}

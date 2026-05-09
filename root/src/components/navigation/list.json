@@ -1,0 +1,116 @@
+{
+  "name": "List",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Full=No": "118:7057",
+      "Full=Yes": "118:7522"
+    }
+  },
+  "components": {
+    "List": {
+      "props": {
+        "full": ["No", "Yes"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "width": 390,
+          "maxHeight_No": 387,
+          "maxHeight_Yes": 540,
+          "overflow": "clip",
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.250"
+        },
+        "background": "color.surface.white",
+        "content": {
+          "direction": "column",
+          "gap": "size.space.800"
+        },
+        "section": {
+          "direction": "column",
+          "gap": "size.space.400",
+          "header": {
+            "direction": "row",
+            "justifyContent": "space-between",
+            "title": {
+              "typography": "font.curling.h4",
+              "color": "color.text.primary"
+            },
+            "viewMore": {
+              "typography": "font.curling.caption",
+              "color": "color.text.caption",
+              "textDecoration": "underline"
+            }
+          },
+          "cardRow": {
+            "direction": "row",
+            "gap": "size.space.200",
+            "overflow": "scroll"
+          }
+        },
+        "sectionTypes": [
+          {
+            "type": "designer-big",
+            "card": "DesignerCard",
+            "cardVariant": "Big",
+            "cardSize": { "width": 220, "height": 320 }
+          },
+          {
+            "type": "designer-medium",
+            "card": "DesignerCard",
+            "cardVariant": "Medium",
+            "cardSize": { "width": 160, "height": 220 }
+          },
+          {
+            "type": "salon",
+            "card": "SalonCard",
+            "cardVariant": "Big",
+            "cardSize": { "width": 324, "height": 224 }
+          },
+          {
+            "type": "portfolio-big",
+            "card": "PortfolioCard",
+            "cardVariant": "Big",
+            "cardSize": { "width": 220, "height": 320 }
+          },
+          {
+            "type": "portfolio-small",
+            "card": "PortfolioCard",
+            "cardVariant": "Small",
+            "cardSize": { "width": 140, "height": 200 }
+          }
+        ],
+        "promoBlock": {
+          "height": 191,
+          "borderRadius": "size.radius.400",
+          "padding": "size.space.400",
+          "overflow": "clip",
+          "imageBg": "color.text.primary",
+          "titleRow": {
+            "direction": "row",
+            "alignItems": "end",
+            "gap": 10,
+            "title": {
+              "typography": "font.curling.h2",
+              "color": "color.icon.white.primary"
+            },
+            "linkButton": {
+              "padding": "size.space.200",
+              "borderRadius": "size.radius.full",
+              "backdropBlur": "size.blur.100",
+              "background": "color.action.overlay-white",
+              "icon": "arrown right up",
+              "iconSize": 24
+            }
+          }
+        },
+        "bottomFade": {
+          "position": "absolute bottom",
+          "height": 40,
+          "gradient": "gradient.gradients.surface 0-100"
+        }
+      }
+    }
+  }
+}

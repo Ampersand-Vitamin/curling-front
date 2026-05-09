@@ -1,0 +1,111 @@
+{
+  "name": "Map Icons",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "56:4694",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=56-4694"
+  },
+  "description": "지도 위 핀 마커 컴포넌트. Designer / Salon / my location 세 가지 모드, Default / Focused 두 가지 상태, Default / Multiple 두 가지 수량.",
+
+  "components": {
+
+    "MapIcon": {
+      "description": "지도 마커 아이콘. mode × status × number 조합으로 표현. 꼬리 달린 말풍선 형태(벡터 도형).",
+      "props": {
+        "mode": {
+          "values": ["Designer", "Salon", "my location"],
+          "default": "Designer"
+        },
+        "status": {
+          "values": ["Default", "Focused"],
+          "default": "Default",
+          "description": "Focused: 더 크고 브랜드 색상 배경."
+        },
+        "number": {
+          "values": ["Default", "Multiple"],
+          "default": "Default",
+          "description": "Multiple: 숫자 카운트 포함 pill 형태."
+        }
+      },
+      "tokens": {
+        "shadow": "effect.drop shadow.200",
+
+        "mode_Designer_or_Salon": {
+          "status_Default_number_Default": {
+            "shape": "pill with tail (vector)",
+            "containerSize": { "width": 30, "height": 24 },
+            "background": "color.action.unselected-white",
+            "iconSize": "size.icon.extra small",
+            "iconSrc_designer": "src/assets/icons/16/designer.svg",
+            "iconSrc_salon": "src/assets/icons/16/salon.svg"
+          },
+          "status_Default_number_Multiple": {
+            "shape": "pill with tail (vector)",
+            "containerSize": { "width": 30, "height": 28 },
+            "background": "color.action.unselected-white",
+            "gap": "size.space.100",
+            "iconSize": "size.icon.extra small",
+            "countTypography": "font.curling.caption2",
+            "countColor": "color.text.primary"
+          },
+          "status_Focused_number_Default": {
+            "shape": "pill with tail (vector)",
+            "containerSize_designer": { "width": 30, "height": 29 },
+            "containerSize_salon": { "width": 30, "height": 28 },
+            "background": "color.action.primary",
+            "paddingX": "size.space.400",
+            "paddingY": "size.space.200",
+            "iconSize": "size.icon.medium",
+            "iconSrc_designer": "src/assets/icons/24/designer.svg",
+            "iconSrc_salon": "src/assets/icons/24/salon.svg",
+            "countTypography": "font.curling.button 1",
+            "countColor": "color.text.inverse"
+          },
+          "status_Focused_number_Multiple": {
+            "shape": "pill with tail (vector)",
+            "containerSize": { "width": 30, "height": 28 },
+            "background": "color.action.primary",
+            "gap": "size.space.150",
+            "paddingX": "size.space.300",
+            "paddingY": "size.space.200",
+            "iconSize": "size.icon.medium",
+            "countTypography": "font.curling.button 1",
+            "countColor": "color.text.inverse"
+          }
+        },
+
+        "mode_my_location": {
+          "note": "원형 컨테이너. 내부 점 이미지 포함. 배경은 color.action.primary 50% 불투명도 — 별도 토큰 없음.",
+          "status_Default_number_Default": {
+            "shape": "circle",
+            "containerSize": { "width": 32, "height": 32 },
+            "background": "color.action.primary",
+            "backgroundOpacity": 0.5,
+            "padding": "size.space.200",
+            "iconSize": "size.icon.extra small"
+          }
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.action.primary":          "#e36a4bff",
+    "color.action.unselected-white": "#ffffffff",
+    "color.text.primary":            "#171717ff",
+    "color.text.inverse":            "#ffffffff",
+    "size.space.100":                4,
+    "size.space.150":                6,
+    "size.space.200":                8,
+    "size.space.300":                12,
+    "size.space.400":                16,
+    "size.icon.extra small":         16,
+    "size.icon.medium":              24,
+    "font.curling.caption2":         { "fontSize": 11, "fontWeight": 400, "lineHeight": 13, "letterSpacing": -0.055 },
+    "font.curling.button 1":         { "fontSize": 14, "fontWeight": 500, "lineHeight": 16, "letterSpacing": -0.21 },
+    "effect.drop shadow.200":        [
+      { "type": "dropShadow", "offsetX": 0, "offsetY": 1, "radius": 4, "spread": 0, "color": "#0c0c0d0d" },
+      { "type": "dropShadow", "offsetX": 0, "offsetY": 1, "radius": 4, "spread": 0, "color": "#0c0c0d1a" }
+    ]
+  }
+}

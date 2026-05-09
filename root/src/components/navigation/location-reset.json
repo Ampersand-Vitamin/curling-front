@@ -1,0 +1,47 @@
+{
+  "name": "LocationReset",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "40:1482"
+  },
+  "components": {
+    "LocationReset": {
+      "props": {},
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "width": 390,
+          "height": 58,
+          "alignItems": "end",
+          "justifyContent": "center",
+          "paddingX": "size.space.300",
+          "paddingY": "size.space.250"
+        },
+        "searchAreaPill": {
+          "background": "color.action.unselected-white",
+          "height": 28,
+          "paddingX": "size.space.200",
+          "paddingY": "size.space.100",
+          "borderRadius": "size.radius.full",
+          "gap": "size.space.100",
+          "icon": "search",
+          "iconSize": 16,
+          "label": {
+            "typography": "font.curling.caption",
+            "color": "color primitives.neutral.700"
+          }
+        },
+        "currentLocationButton": {
+          "position": "absolute right bottom",
+          "offsetRight": 12,
+          "padding": "size.space.300",
+          "borderRadius": "size.radius.full",
+          "backdropBlur": "size.blur.100",
+          "background": "color.action.overlay-white",
+          "icon": "current",
+          "iconSize": 24
+        }
+      }
+    }
+  }
+}

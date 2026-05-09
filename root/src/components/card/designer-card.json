@@ -1,0 +1,118 @@
+{
+  "name": "DesignerCard",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Big": "61:6650",
+      "Medium": "61:7213",
+      "Popup": "113:477"
+    }
+  },
+  "components": {
+    "DesignerCard": {
+      "props": {
+        "variant": ["Big", "Medium", "Popup"],
+        "hasChevrons": [true, false]
+      },
+      "tokens": {
+        "shared": {
+          "imageBackground": "color.icon.white.secondary",
+          "topGradient": "gradient.gradients.black 100-0",
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "layout": { "direction": "overlay" }
+        },
+        "variant_Big": {
+          "size": { "width": 220, "height": 320 },
+          "header": {
+            "position": "absolute top",
+            "padding": "size.space.300",
+            "gap": "size.space.200",
+            "avatar": { "size": 32 },
+            "name": {
+              "typography": "font.curling.h3",
+              "color": "color primitives.neutral.50"
+            },
+            "role": {
+              "typography": "font.curling.caption2",
+              "color": "color primitives.neutral.50",
+              "opacity": 0.8
+            }
+          },
+          "bottomKeywords": {
+            "position": "absolute bottom",
+            "padding": "size.space.300",
+            "gap": "size.space.100",
+            "chips": ["Language-M", "Keywords-M"]
+          },
+          "chevrons": {
+            "condition": "hasChevrons",
+            "position": "absolute, vertically centered",
+            "iconButtonVariant": "Overlay",
+            "iconButtonSize": 32
+          }
+        },
+        "variant_Medium": {
+          "size": { "width": 160, "height": 220 },
+          "header": {
+            "position": "absolute top",
+            "padding": "size.space.200",
+            "gap": "size.space.150",
+            "avatar": { "size": 32 },
+            "name": {
+              "typography": "font.curling.h5",
+              "color": "color primitives.neutral.50"
+            },
+            "role": {
+              "typography": "font.curling.caption2",
+              "color": "color primitives.neutral.50",
+              "opacity": 0.8
+            }
+          },
+          "bottomKeywords": {
+            "position": "absolute bottom",
+            "padding": "size.space.200",
+            "gap": "size.space.100",
+            "chips": ["Keywords-S"]
+          },
+          "chevrons": {
+            "condition": "hasChevrons",
+            "position": "absolute, vertically centered",
+            "iconButtonVariant": "Overlay",
+            "iconButtonSize": 32
+          }
+        },
+        "variant_Popup": {
+          "size": { "width": 240, "height": 160 },
+          "header": {
+            "position": "absolute top",
+            "padding": "size.space.200",
+            "gap": "size.space.150",
+            "avatar": { "size": 32 },
+            "name": {
+              "typography": "font.curling.h5",
+              "color": "color primitives.neutral.50"
+            },
+            "role": {
+              "typography": "font.curling.caption2",
+              "color": "color primitives.neutral.50",
+              "opacity": 0.8
+            }
+          },
+          "bottomKeywords": {
+            "position": "absolute bottom",
+            "padding": "size.space.200",
+            "gap": "size.space.100",
+            "chips": ["Keywords-S"]
+          },
+          "chevrons": {
+            "condition": "hasChevrons",
+            "position": "absolute, vertically centered, extends beyond card edges",
+            "iconButtonVariant": "Overlay",
+            "iconButtonSize": 32
+          }
+        }
+      }
+    }
+  }
+}

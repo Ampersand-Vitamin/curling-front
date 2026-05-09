@@ -1,0 +1,54 @@
+{
+  "name": "SegmentedControl",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "designer": "61:6630",
+      "portfolio": "61:6639"
+    }
+  },
+  "components": {
+    "SegmentedControl": {
+      "props": {
+        "property1": ["designer", "portfolio"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "width": 390,
+          "height": 44,
+          "alignItems": "center",
+          "justifyContent": "space-between",
+          "overflow": "clip"
+        },
+        "background": "color.background.canvas",
+        "borderBottom": {
+          "width": "size.stroke.devider",
+          "color": "color.border.subtle"
+        },
+        "segment": {
+          "flex": 1,
+          "direction": "column",
+          "gap": 8,
+          "alignItems": "center",
+          "justifyContent": "end",
+          "paddingBottom": 0.5
+        },
+        "label_active": {
+          "typography": "font.curling.h6",
+          "color": "color.text.primary"
+        },
+        "label_inactive": {
+          "typography": "font.curling.body",
+          "color": "color.text.caption"
+        },
+        "indicator": {
+          "height": 3,
+          "color": "color.action.primary",
+          "borderRadius": "size.radius.full",
+          "position": "absolute bottom"
+        }
+      }
+    }
+  }
+}
