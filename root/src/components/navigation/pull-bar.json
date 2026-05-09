@@ -1,0 +1,35 @@
+{
+  "name": "PullBar",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "40:1486"
+  },
+  "components": {
+    "PullBar": {
+      "props": {},
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "width": 390,
+          "height": 16,
+          "alignItems": "center",
+          "borderTopLeftRadius": "size.radius.400",
+          "borderTopRightRadius": "size.radius.400"
+        },
+        "handle": {
+          "background": "color.background.canvas",
+          "height": 16,
+          "paddingY": 6,
+          "borderTopLeftRadius": "size.radius.400",
+          "borderTopRightRadius": "size.radius.400"
+        },
+        "pill": {
+          "width": 40,
+          "height": 3,
+          "borderRadius": "size.radius.full",
+          "background": "color.icon.white.secondary"
+        }
+      }
+    }
+  }
+}

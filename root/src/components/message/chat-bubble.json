@@ -1,0 +1,101 @@
+{
+  "name": "ChatBubble",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Mode=Designer": "67:12064",
+      "Mode=Client": "67:12068"
+    }
+  },
+  "components": {
+    "ChatBubble": {
+      "props": {
+        "mode": ["Designer", "Client"],
+        "hasOptions": [true, false],
+        "bookingDetails": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.300",
+          "borderRadius": "size.radius.400"
+        },
+        "mode_Designer": {
+          "background": "color.background.canvas",
+          "maxWidth": 260,
+          "gap": "size.space.400",
+          "text": {
+            "typography": "font.curling.body",
+            "color": "color.text.secondary"
+          }
+        },
+        "mode_Client": {
+          "background": "color.action.primary",
+          "maxWidth": 270,
+          "gap": 0,
+          "text": {
+            "typography": "font.curling.body",
+            "color": "color.text.inverse"
+          }
+        },
+        "automatedOptions": {
+          "condition": "mode=Designer AND hasOptions=true",
+          "direction": "column",
+          "gap": "size.space.200",
+          "optionButton": {
+            "background": "color.action.unselected",
+            "paddingX": "size.space.600",
+            "paddingY": "size.space.300",
+            "borderRadius": "size.radius.200",
+            "overflow": "clip",
+            "fullWidth": true,
+            "typography": "font.curling.button",
+            "textColor": "color.text.primary"
+          }
+        },
+        "bookingDetails": {
+          "condition": "mode=Designer AND bookingDetails=true",
+          "direction": "column",
+          "gap": "size.space.250",
+          "detailsCard": {
+            "background": "color.background.surface-200",
+            "padding": "size.space.250",
+            "borderRadius": "size.radius.200",
+            "gap": "size.space.200",
+            "title": {
+              "typography": "font.curling.h6",
+              "color": "color.text.primary"
+            },
+            "rows": {
+              "direction": "column",
+              "gap": "size.space.100",
+              "row": {
+                "direction": "row",
+                "gap": 8,
+                "label": {
+                  "typography": "font.curling.body2",
+                  "color": "color.text.caption"
+                },
+                "value": {
+                  "typography": "font.curling.body2",
+                  "color": "color.text.secondary"
+                }
+              }
+            }
+          },
+          "confirmButton": {
+            "background": "color.action.secondary",
+            "paddingX": "size.space.600",
+            "paddingY": "size.space.300",
+            "borderRadius": "size.radius.200",
+            "overflow": "clip",
+            "fullWidth": true,
+            "typography": "font.curling.button",
+            "textColor": "color.text.inverse"
+          }
+        }
+      }
+    }
+  }
+}

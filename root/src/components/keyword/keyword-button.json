@@ -1,0 +1,279 @@
+{
+  "name": "Keyword Button",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "40:1557",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=40-1557"
+  },
+  "description": "키워드·언어 선택을 위한 pill 형태 칩 컴포넌트. variable이 크기와 타입을 결정. 앞뒤 아이콘 조합 가능.",
+
+  "components": {
+
+    "KeywordButton": {
+      "description": "variable × status × hasIconStart × hasXEnd 조합으로 모든 상태 표현. Language 계열은 flag prop으로 국기 이미지 전달.",
+      "props": {
+        "variable": {
+          "values": ["Keywords-L", "Keywords-M", "Keywords-S", "Language-L", "Language-M"],
+          "default": "Keywords-M",
+          "description": "크기와 타입 결정. Keywords-S는 텍스트 전용. Language는 국기 아이콘 사용."
+        },
+        "status": {
+          "values": ["Default", "Active", "Selected", "Inverse", "Overlay"],
+          "default": "Default"
+        },
+        "hasIconStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keywords-L/M 전용. 텍스트 앞 16px 아이콘 표시. Keywords-S, Language 계열에는 적용 없음."
+        },
+        "hasXEnd": {
+          "type": "boolean",
+          "default": false,
+          "description": "모든 variable 공통. 텍스트 뒤 cancel(X) 아이콘 표시."
+        },
+        "flags": {
+          "type": "ReactNode",
+          "description": "Language 계열 전용. 원형 국기 이미지 컴포넌트. null이면 기본 Korean flag 표시."
+        },
+        "icons": {
+          "type": "ReactNode",
+          "description": "Keywords 계열 전용. hasIconStart=true일 때 사용할 커스텀 아이콘. null이면 기본 아이콘 사용."
+        }
+      },
+
+      "tokens": {
+        "layout": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "borderRadius": "size.radius.full",
+          "overflow": "clip"
+        },
+
+        "iconStart": {
+          "size": "size.icon.extra small",
+          "src": "src/assets/icons/16/",
+          "note": "Keywords 계열 앞쪽 스타일 아이콘. 16px."
+        },
+        "iconEnd_cancel": {
+          "size": "size.icon.extra small",
+          "src": "src/assets/icons/16/cancel.svg",
+          "innerVectorSize": 8,
+          "note": "hasXEnd=true 시 표시되는 X 버튼. 16px 컨테이너 안 8px 벡터."
+        },
+
+        "variable_Keywords-S": {
+          "note": "텍스트 전용. hasIconStart 미지원.",
+          "layout": {
+            "paddingX": "size.space.200",
+            "paddingY": "size.space.100",
+            "gap": "size.space.100"
+          },
+          "typography": "font.curling.caption2",
+          "status_Default": {
+            "background": "color.action.unselected-white",
+            "border": "color.border.default",
+            "borderWidth": "size.stroke.devider",
+            "textColor": "color.text.secondary"
+          },
+          "status_Active": {
+            "background": "color.action.secondary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "background": "color.action.primary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "background": "color.action.unselected",
+            "textColor": "color.text.secondary"
+          },
+          "status_Overlay": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.inverse"
+          }
+        },
+
+        "variable_Keywords-M": {
+          "note": "기본 키워드 칩. 앞쪽 아이콘 선택적.",
+          "layout": {
+            "height": 28,
+            "paddingX": "size.space.200",
+            "paddingY": "size.space.150",
+            "gap": "size.space.100"
+          },
+          "typography": "font.curling.keywords",
+          "status_Default": {
+            "background": "color.action.unselected-white",
+            "border": "color.border.default",
+            "borderWidth": "size.stroke.devider",
+            "textColor": "color.text.secondary"
+          },
+          "status_Active": {
+            "background": "color.action.secondary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "background": "color.action.primary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "background": "color.action.unselected",
+            "textColor": "color.text.secondary"
+          },
+          "status_Overlay": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.inverse"
+          }
+        },
+
+        "variable_Keywords-L": {
+          "note": "Large. button 1 타이포그래피.",
+          "layout": {
+            "height": 32,
+            "paddingX": "size.space.300",
+            "paddingY": "size.space.200",
+            "gap": "size.space.150"
+          },
+          "typography": "font.curling.button 1",
+          "status_Default": {
+            "background": "color.action.unselected-white",
+            "border": "color.border.default",
+            "borderWidth": "size.stroke.devider",
+            "textColor": "color.text.secondary"
+          },
+          "status_Active": {
+            "background": "color.action.secondary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "background": "color.action.primary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "background": "color.action.unselected",
+            "textColor": "color.text.secondary"
+          },
+          "status_Overlay": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.inverse"
+          }
+        },
+
+        "variable_Language-M": {
+          "note": "국기 원형 이미지 + 언어명 텍스트. Overlay 시 칩이 더 작아짐(h=24, 국기 16px).",
+          "flag_Default_Active_Selected_Inverse": {
+            "size": "size.icon.small",
+            "shape": "circle"
+          },
+          "flag_Overlay": {
+            "size": "size.icon.extra small",
+            "shape": "circle",
+            "note": "Overlay 시 국기를 16px로 축소."
+          },
+          "layout_Default_Active_Selected_Inverse": {
+            "height": 28,
+            "paddingLeft": "size.space.100",
+            "paddingRight": "size.space.250",
+            "paddingY": "size.space.150",
+            "gap": "size.space.100"
+          },
+          "layout_Overlay": {
+            "height": 24,
+            "paddingLeft": "size.space.100",
+            "paddingRight": "size.space.250",
+            "paddingY": "size.space.100",
+            "gap": "size.space.100"
+          },
+          "typography": "font.curling.keywords",
+          "status_Default": {
+            "background": "color.action.unselected-white",
+            "textColor": "color.text.secondary"
+          },
+          "status_Active": {
+            "background": "color.action.secondary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "background": "color.action.primary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "background": "color.action.unselected",
+            "textColor": "color.text.secondary"
+          },
+          "status_Overlay": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.inverse"
+          }
+        },
+
+        "variable_Language-L": {
+          "note": "국기 24px. button 1 타이포그래피. 비대칭 패딩(pl=4, pr=12).",
+          "flag": {
+            "size": "size.icon.medium",
+            "shape": "circle"
+          },
+          "layout": {
+            "height": 32,
+            "paddingLeft": "size.space.100",
+            "paddingRight": "size.space.300",
+            "paddingY": "size.space.150",
+            "gap": "size.space.150"
+          },
+          "typography": "font.curling.button 1",
+          "status_Default": {
+            "background": "color.action.unselected-white",
+            "textColor": "color.text.secondary"
+          },
+          "status_Active": {
+            "background": "color.action.secondary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "background": "color.action.primary",
+            "textColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "background": "color.action.unselected",
+            "textColor": "color.text.secondary"
+          },
+          "status_Overlay": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "textColor": "color.text.inverse"
+          }
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.action.unselected-white":   "#ffffffff",
+    "color.action.unselected":         "#f0efecff",
+    "color.action.secondary":          "#3b3a3aff",
+    "color.action.primary":            "#e36a4bff",
+    "color.action.overlay-white":      "#ffffff4d",
+    "color.border.default":            "#b8b7b5ff",
+    "color.text.secondary":            "#3b3a3aff",
+    "color.text.inverse":              "#ffffffff",
+    "size.space.100":                  4,
+    "size.space.150":                  6,
+    "size.space.200":                  8,
+    "size.space.250":                  10,
+    "size.space.300":                  12,
+    "size.radius.full":                9999,
+    "size.stroke.devider":             0.5,
+    "size.blur.100":                   4,
+    "size.icon.extra small":           16,
+    "size.icon.small":                 20,
+    "size.icon.medium":                24,
+    "font.curling.caption2":           { "fontSize": 11, "fontWeight": 400, "lineHeight": 13, "letterSpacing": -0.055 },
+    "font.curling.keywords":           { "fontSize": 12, "fontWeight": 400, "lineHeight": 16, "letterSpacing": -0.06, "textCase": "capitalize" },
+    "font.curling.button 1":           { "fontSize": 14, "fontWeight": 500, "lineHeight": 16, "letterSpacing": -0.21 }
+  }
+}

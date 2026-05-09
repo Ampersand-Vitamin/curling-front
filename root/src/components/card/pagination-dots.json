@@ -1,0 +1,34 @@
+{
+  "name": "PaginationDots",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Default": "120:412"
+    }
+  },
+  "components": {
+    "PaginationDots": {
+      "props": {
+        "count": "number",
+        "activeIndex": "number"
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "gap": 4,
+          "align": "center"
+        },
+        "dot": {
+          "size": 6,
+          "borderRadius": "size.radius.full",
+          "status_inactive": {
+            "background": "color.text.caption"
+          },
+          "status_active": {
+            "background": "color.text.primary"
+          }
+        }
+      }
+    }
+  }
+}

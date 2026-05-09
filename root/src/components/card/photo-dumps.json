@@ -1,0 +1,63 @@
+{
+  "name": "PhotoDumps",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "photo 1": "59:6562",
+      "photo 2": "59:6559",
+      "photo 3": "59:6548",
+      "photo +3": "59:6552"
+    }
+  },
+  "components": {
+    "PhotoDumps": {
+      "props": {
+        "property1": ["photo 1", "photo 2", "photo 3", "photo +3"]
+      },
+      "tokens": {
+        "layout": {
+          "type": "grid",
+          "rows": 2,
+          "gap": 4,
+          "size": { "width": 248, "height": 160 }
+        },
+        "photoItem": {
+          "borderRadius": "size.radius.200",
+          "overflow": "clip",
+          "background": "color.image placeholder"
+        },
+        "property1_photo-1": {
+          "columns": 2,
+          "photo1": { "col": "2", "rowSpan": "1/span 2" }
+        },
+        "property1_photo-2": {
+          "columns": 2,
+          "photo1": { "col": "1", "rowSpan": "1/span 2" },
+          "photo2": { "col": "2", "rowSpan": "1/span 2" }
+        },
+        "property1_photo-3": {
+          "columns": 3,
+          "photo1": { "col": "1/span 2", "rowSpan": "1/span 2" },
+          "photo2": { "col": "3", "row": "1" },
+          "photo3": { "col": "3", "row": "2" }
+        },
+        "property1_photo-plus3": {
+          "columns": 3,
+          "photo1": { "col": "1/span 2", "rowSpan": "1/span 2" },
+          "photo2": { "col": "3", "row": "1" },
+          "photo3": {
+            "col": "3",
+            "row": "2",
+            "overlay": {
+              "backdropBlur": "size.blur.750",
+              "background": "color.action.overlay-white",
+              "text": "+3",
+              "typography": "font.curling.caption",
+              "color": "color.text.inverse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

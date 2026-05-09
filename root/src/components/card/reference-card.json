@@ -1,0 +1,75 @@
+{
+  "name": "ReferenceCard",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "selected=false, favorite=false": "66:10808",
+      "selected=false, favorite=true": "66:11124",
+      "selected=true, favorite=false": "66:10866",
+      "selected=true, favorite=true": "66:11134"
+    }
+  },
+  "components": {
+    "ReferenceCard": {
+      "props": {
+        "selected": [true, false],
+        "favorite": [true, false],
+        "selectionButton": [true, false],
+        "hasDesignerProfile": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "size": { "width": 114, "height": 156 },
+          "borderRadius": "size.radius.200",
+          "overflow": "clip",
+          "position": "relative"
+        },
+        "imageBackground": "color.image placeholder",
+        "bottomOverlay": {
+          "gradient": "gradient.gradients.blck 0-50",
+          "height": 36,
+          "padding": "size.space.150",
+          "gap": "size.space.100",
+          "direction": "row",
+          "align": "end",
+          "designerProfile": {
+            "condition": "hasDesignerProfile",
+            "avatar": { "size": 20 },
+            "name": {
+              "typography": "font.curling.caption",
+              "color": "color primitives.neutral.50"
+            }
+          },
+          "favoriteButton": {
+            "size": 20,
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "borderRadius": "size.radius.full",
+            "icon_default": "bookmark-outline",
+            "icon_favorite": "bookmark-fill",
+            "iconColor_default": "color.text.inverse",
+            "iconColor_favorite": "color.action.primary"
+          }
+        },
+        "selectionOverlay": {
+          "condition": "selectionButton",
+          "position": "absolute top",
+          "align": "end",
+          "unselected": {
+            "icon": "circle-stroke",
+            "iconSize": 24,
+            "padding": "size.space.200",
+            "containerSize": 32
+          },
+          "selected": {
+            "icon": "circle-fill",
+            "iconSize": 24,
+            "padding": "size.space.200",
+            "containerSize": 32,
+            "iconColor": "color.action.primary"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "name": "Icon Button",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "30:3390",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=30-3390"
+  },
+  "description": "아이콘 단독 원형 버튼. Primary / Subtle / Overlay / red-subtle 네 가지 변형.",
+
+  "components": {
+
+    "IconButton": {
+      "description": "아이콘만 포함하는 원형 버튼. virant × status × size 조합으로 스타일 결정.",
+      "props": {
+        "virant": {
+          "values": ["Primary", "Subtle", "Overlay", "red-subtle"],
+          "default": "Primary"
+        },
+        "status": {
+          "values": ["Default", "Active", "Selected", "Inverse"],
+          "default": "Default"
+        },
+        "size": {
+          "values": [48, 40, 32],
+          "default": 48
+        },
+        "icon": {
+          "type": "ReactNode",
+          "description": "24px 아이콘 (size 48/40 시 사용). src/assets/icons/24/ 참조."
+        },
+        "icon16": {
+          "type": "ReactNode",
+          "description": "16px 아이콘 (size 32 시 사용). src/assets/icons/16/ 참조."
+        }
+      },
+      "tokens": {
+        "layout": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "borderRadius": "size.radius.full"
+        },
+
+        "size_48": {
+          "padding": "size.space.300",
+          "iconSize": "size.icon.medium"
+        },
+        "size_40": {
+          "padding": "size.space.200",
+          "iconSize": "size.icon.medium"
+        },
+        "size_32": {
+          "containerSize": "size.space.800",
+          "padding": "size.space.200",
+          "iconSize": "size.icon.extra small"
+        },
+
+        "virant_Primary": {
+          "status_Default": {
+            "background": "color.action.unselected-white",
+            "border": "color.border.subtle",
+            "borderWidth": "size.stroke.devider",
+            "iconColor": "color.icon.black.primary"
+          },
+          "status_Active": {
+            "background": "color.action.secondary",
+            "iconColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "background": "color.action.primary",
+            "iconColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "background": "color.action.unselected",
+            "iconColor": "color.icon.black.primary"
+          }
+        },
+
+        "virant_Subtle": {
+          "note": "배경 없음. 아이콘 색만 상태에 따라 변경.",
+          "status_Default": {
+            "background": null,
+            "iconColor": "color.icon.black.primary"
+          },
+          "status_Active": {
+            "background": null,
+            "iconColor": "color.icon.black.primary"
+          },
+          "status_Inverse": {
+            "background": null,
+            "iconColor": "color.text.inverse"
+          }
+        },
+
+        "virant_Overlay": {
+          "note": "backdrop-blur 적용. 이미지·그라디언트 위에서 사용.",
+          "status_Default": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-black",
+            "iconColor": "color.text.inverse"
+          },
+          "status_Active": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-black",
+            "iconColor": "color.text.inverse"
+          },
+          "status_Selected": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-black",
+            "iconColor": "color.text.inverse"
+          },
+          "status_Inverse": {
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-white",
+            "iconColor": "color.icon.black.primary"
+          }
+        },
+
+        "virant_red-subtle": {
+          "note": "배경 없음. 아이콘을 브랜드 레드 색상으로 표시.",
+          "status_Selected": {
+            "background": null,
+            "iconColor": "color.icon.red.primary"
+          }
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.action.unselected-white":   "#ffffffff",
+    "color.action.secondary":          "#3b3a3aff",
+    "color.action.primary":            "#e36a4bff",
+    "color.action.unselected":         "#f0efecff",
+    "color.action.overlay-black":      "#1717174d",
+    "color.action.overlay-white":      "#ffffff4d",
+    "color.border.subtle":             "#f0efecff",
+    "color.icon.black.primary":        "#3b3a3aff",
+    "color.icon.red.primary":          "#e36a4bff",
+    "color.text.inverse":              "#ffffffff",
+    "size.space.200":                  8,
+    "size.space.300":                  12,
+    "size.space.800":                  32,
+    "size.radius.full":                9999,
+    "size.stroke.devider":             0.5,
+    "size.blur.100":                   4,
+    "size.icon.medium":                24,
+    "size.icon.extra small":           16
+  }
+}

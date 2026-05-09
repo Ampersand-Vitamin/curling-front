@@ -1,0 +1,112 @@
+{
+  "name": "SearchTab",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Discover": "49:1011",
+      "Style": "49:1110",
+      "Style-Overlay": "56:6210",
+      "Filter": "49:1442"
+    }
+  },
+  "components": {
+    "SearchTab": {
+      "props": {
+        "variant": ["Discover", "Style", "Style-Overlay", "Filter"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.100",
+          "padding": "size.space.300",
+          "width": 390
+        },
+        "variant_Discover": {
+          "filterButton": {
+            "size": 48,
+            "status": "Default",
+            "background": "color.action.unselected-white",
+            "border": { "width": "size.stroke.devider", "color": "color.border.subtle" }
+          },
+          "searchBar": {
+            "variant": "Primary",
+            "status": "Input off",
+            "hasImageSearch": false
+          },
+          "designerButton": {
+            "icon": "designer",
+            "iconSize": 24,
+            "padding": "size.space.300",
+            "borderRadius": "size.radius.full",
+            "background": "color.action.unselected-white",
+            "border": { "width": "size.stroke.devider", "color": "color.border.subtle" }
+          },
+          "favoriteButton": {
+            "virant": "48",
+            "status": "Default",
+            "background": "color.action.unselected-white"
+          }
+        },
+        "variant_Style": {
+          "filterButton": {
+            "size": 48,
+            "status": "Inverse",
+            "background": "color.action.unselected"
+          },
+          "searchBar": {
+            "variant": "Inverse",
+            "status": "Input off",
+            "hasImageSearch": true,
+            "imageSearchButton": {
+              "background": "color.action.unselected-white",
+              "border": { "width": "size.stroke.devider", "color": "color.border.subtle" }
+            }
+          },
+          "favoriteButton": {
+            "virant": "48",
+            "status": "Default",
+            "background": "color.action.unselected"
+          }
+        },
+        "variant_Style-Overlay": {
+          "shadow": "effect.drop shadow.400",
+          "filterButton": {
+            "size": 48,
+            "status": "Default",
+            "background": "color.action.unselected-white",
+            "border": { "width": "size.stroke.devider", "color": "color.border.subtle" },
+            "shadow": "effect.drop shadow.400"
+          },
+          "searchBar": {
+            "variant": "Primary",
+            "status": "Input off",
+            "hasImageSearch": true,
+            "shadow": "effect.drop shadow.400",
+            "imageSearchButton": {
+              "background": "color.action.unselected"
+            }
+          },
+          "favoriteButton": {
+            "virant": "48",
+            "status": "Default",
+            "background": "color.action.unselected-white",
+            "shadow": "effect.drop shadow.400"
+          }
+        },
+        "variant_Filter": {
+          "filterButton": {
+            "size": 48,
+            "status": "Inverse",
+            "background": "color.action.unselected"
+          },
+          "searchBar": {
+            "variant": "Inverse",
+            "status": "Input off",
+            "hasImageSearch": false
+          }
+        }
+      }
+    }
+  }
+}

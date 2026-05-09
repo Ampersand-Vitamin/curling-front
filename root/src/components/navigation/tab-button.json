@@ -1,0 +1,62 @@
+{
+  "name": "TabButton",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Discover/Default": "40:1605",
+      "Discover/Selected": "40:1610",
+      "Style/Default": "54:1229",
+      "Style/Selected": "54:1232",
+      "Message/Default": "54:1249",
+      "Message/Selected": "54:1252",
+      "My/Default": "54:1269",
+      "My/Selected": "54:1272"
+    }
+  },
+  "components": {
+    "TabButton": {
+      "props": {
+        "variant": ["Discover", "Style", "Message", "My"],
+        "property1": ["Default", "Selected"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "width": 84,
+          "paddingY": "size.space.100",
+          "alignItems": "center",
+          "borderRadius": "size.radius.400",
+          "overflow": "clip"
+        },
+        "iconButton": {
+          "size": 32,
+          "padding": "size.space.200",
+          "borderRadius": "size.radius.full",
+          "iconSize": 24,
+          "icon_Discover": "search",
+          "icon_Style": "style",
+          "icon_Message": "chat",
+          "icon_My": "avatar"
+        },
+        "label": {
+          "typography": "font.curling.caption",
+          "textAlign": "center",
+          "whitespace": "nowrap"
+        },
+        "state_Default": {
+          "iconColor": "color.text.tertiary",
+          "labelColor": "color.text.tertiary"
+        },
+        "state_Selected": {
+          "iconColor": "color.action.primary",
+          "labelColor": "color.text.primary"
+        },
+        "variant_My": {
+          "avatarSize": 20,
+          "avatarPadding": "size.space.100",
+          "note": "My tab uses Avatar component instead of icon"
+        }
+      }
+    }
+  }
+}
