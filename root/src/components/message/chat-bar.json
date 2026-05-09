@@ -1,0 +1,68 @@
+{
+  "name": "ChatBar",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Reference Open=No, Input=No": "67:11337",
+      "Reference Open=No, Input=Yes": "67:11447",
+      "Reference Open=Yes, Input=No": "67:11382",
+      "Reference Open=Yes, Input=Yes": "67:11785"
+    }
+  },
+  "components": {
+    "ChatBar": {
+      "props": {
+        "input": [true, false],
+        "referenceOpen": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "width": 390,
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.300",
+          "gap": "size.space.100",
+          "alignItems": "end"
+        },
+        "background": "color.background.canvas",
+        "borderTop": {
+          "width": "size.stroke.devider",
+          "color": "color.border.subtle"
+        },
+        "photoButton": {
+          "padding": "size.space.200",
+          "borderRadius": "size.radius.full",
+          "background": "color.action.unselected",
+          "icon": "photo",
+          "iconSize": 24
+        },
+        "textHolder": {
+          "component": "TextHolder",
+          "flex": 1
+        },
+        "actionButton": {
+          "padding": "size.space.200",
+          "borderRadius": "size.radius.full",
+          "iconSize": 24,
+          "variants": {
+            "input=false_referenceOpen=false": {
+              "background": "color.action.unselected",
+              "icon": "add",
+              "iconColor": "color.text.primary"
+            },
+            "input=false_referenceOpen=true": {
+              "background": "color.action.secondary",
+              "icon": "add",
+              "iconColor": "color.text.inverse"
+            },
+            "input=true": {
+              "background": "color.action.primary",
+              "icon": "send",
+              "iconColor": "color.text.inverse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

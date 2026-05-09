@@ -1,0 +1,31 @@
+{
+  "name": "TabBar",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Default": "54:1455",
+      "expanded": "54:2751"
+    }
+  },
+  "components": {
+    "TabBar": {
+      "props": {
+        "property1": ["Default", "expanded"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "width": 390,
+          "overflow": "clip"
+        },
+        "background": "color.background.canvas",
+        "children": {
+          "navigationBar": "NavigationBar",
+          "browserUI": {
+            "note": "iOS browser chrome simulation. Default: small URL pill + 20px home indicator. Expanded: full tab bar + 34px home indicator."
+          }
+        }
+      }
+    }
+  }
+}

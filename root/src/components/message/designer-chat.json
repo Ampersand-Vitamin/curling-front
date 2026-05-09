@@ -1,0 +1,38 @@
+{
+  "name": "DesignerChat",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "67:12189"
+  },
+  "components": {
+    "DesignerChat": {
+      "props": {
+        "hasOptions": [true, false],
+        "bookingDetails": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "width": 358,
+          "gap": "size.space.250",
+          "alignItems": "start"
+        },
+        "avatar": {
+          "size": 32,
+          "borderRadius": "size.radius.full"
+        },
+        "bubble": {
+          "component": "ChatBubble",
+          "mode": "Designer",
+          "maxWidth": 260
+        },
+        "time": {
+          "flex": 1,
+          "alignSelf": "end",
+          "typography": "font.curling.caption2",
+          "color": "color.text.tertiary"
+        }
+      }
+    }
+  }
+}

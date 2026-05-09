@@ -1,0 +1,221 @@
+{
+  "name": "Avatar",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "42:4962",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=42-4961"
+  },
+  "description": "사용자 또는 디자이너를 나타내는 원형 아바타 컴포넌트. Initials는 단일 문자(A, B, C)만 허용 — 복수 문자(AA, BB) 사용 금지.",
+
+  "components": {
+
+    "Avatar": {
+      "description": "기본 아바타 단일 컴포넌트. Image(사진) 또는 Initial(이니셜 텍스트) 타입 지원.",
+      "props": {
+        "type": {
+          "values": ["Image", "Initial"],
+          "default": "Image"
+        },
+        "size": {
+          "values": [20, 32, 40, 60],
+          "default": 40
+        },
+        "src": {
+          "type": "string",
+          "description": "type=Image일 때 사용되는 이미지 URL",
+          "required_when": "type === 'Image'"
+        },
+        "initial": {
+          "type": "string",
+          "description": "type=Initial일 때 표시되는 단일 문자 (예: 'A', 'B')",
+          "required_when": "type === 'Initial'",
+          "constraint": "단일 문자만 허용"
+        },
+        "alt": {
+          "type": "string",
+          "default": "",
+          "description": "이미지 접근성 텍스트"
+        }
+      },
+      "tokens": {
+        "shape": {
+          "borderRadius": "size.radius.full"
+        },
+        "sizes": {
+          "20": {
+            "width": "size.icon.small",
+            "height": "size.icon.small",
+            "resolvedValue": 20
+          },
+          "32": {
+            "width": "size.space.800",
+            "height": "size.space.800",
+            "resolvedValue": 32,
+            "note": "size.space.800(32px)을 크기 토큰으로 대용. icon 사이즈 스케일에 없는 값."
+          },
+          "40": {
+            "width": "size.icon.large",
+            "height": "size.icon.large",
+            "resolvedValue": 40
+          },
+          "60": {
+            "width": "size.icon.x-large",
+            "height": "size.icon.x-large",
+            "resolvedValue": 60
+          }
+        },
+        "type_Image": {
+          "overflow": "clip",
+          "objectFit": "cover",
+          "placeholderBackground": "color.image placeholder"
+        },
+        "type_Initial": {
+          "background": "color.background.inverse",
+          "textColor": "color.text.inverse",
+          "overflow": "clip",
+          "typography": {
+            "20": "font.curling.caption2",
+            "32": "font.curling.button 1",
+            "40": "font.curling.h6",
+            "60": "font.curling.h4"
+          }
+        }
+      }
+    },
+
+    "AvatarGroup": {
+      "description": "여러 아바타를 가로로 나열하는 그룹 컴포넌트. 초과 수량은 뱃지로 표시.",
+      "props": {
+        "spacing": {
+          "values": ["Spaced", "Overlap"],
+          "default": "Spaced"
+        },
+        "avatars": {
+          "type": "Avatar[]",
+          "description": "표시할 아바타 목록 (size는 항상 40 고정)"
+        },
+        "maxVisible": {
+          "type": "number",
+          "default": 3,
+          "description": "최대 노출 아바타 수. 초과 시 overflow 뱃지 표시."
+        },
+        "showOverflow": {
+          "type": "boolean",
+          "default": true,
+          "description": "초과 수량 뱃지 표시 여부"
+        }
+      },
+      "tokens": {
+        "avatarSize": "size.icon.large",
+        "spacing_Spaced": {
+          "gap": "size.space.100"
+        },
+        "spacing_Overlap": {
+          "itemOffset": "size.space.negative 200",
+          "itemShadow": "effect.drop shadow.200"
+        },
+        "overflowBadge": {
+          "background": "color.action.unselected",
+          "textColor": "color.text.tertiary",
+          "typography": "font.curling.body 2",
+          "borderRadius": "size.radius.200",
+          "paddingX": "size.space.100",
+          "paddingY": "size.space.100",
+          "minWidth": "size.space.600"
+        }
+      }
+    },
+
+    "AvatarBlock": {
+      "description": "아바타 + 이름 + 소속 살롱명을 조합한 블록 컴포넌트. Default(밝은 배경)와 Overlay(어두운 그라디언트 배경) 두 가지 변형.",
+      "props": {
+        "variant": {
+          "values": ["default", "overlay"],
+          "default": "default"
+        },
+        "src": {
+          "type": "string",
+          "description": "아바타 이미지 URL"
+        },
+        "name": {
+          "type": "string",
+          "default": "Name"
+        },
+        "salonName": {
+          "type": "string",
+          "default": "ABC Salon"
+        }
+      },
+      "tokens": {
+        "layout": {
+          "display": "flex",
+          "alignItems_default": "flex-start",
+          "alignItems_overlay": "flex-end",
+          "gap": "size.space.300"
+        },
+
+        "variant_default": {
+          "avatarSize": "size.icon.large",
+          "nameTypography": "font.curling.h6",
+          "nameColor": "color.text.secondary",
+          "salonTypography": "font.curling.caption",
+          "salonColor": "color.text.tertiary"
+        },
+
+        "variant_overlay": {
+          "avatarSize": "size.space.800",
+          "background": "gradient.gradients.blck 0-50",
+          "paddingTop": "size.space.400",
+          "paddingBottom": "size.space.200",
+          "paddingX": "size.space.200",
+          "nameTypography": "font.curling.body 2",
+          "nameColor": "color.text.inverse",
+          "salonTypography": "font.curling.caption2",
+          "salonColor": "color primitives.transparent.white 800",
+          "salonNote": "80% 불투명도 white. color.text.inverse에 별도 opacity 없으므로 transparent 프리미티브 직접 참조."
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.image placeholder":        "#e0dfddff",
+    "color.background.inverse":        "#3b3a3aff",
+    "color.text.inverse":              "#ffffffff",
+    "color.text.secondary":            "#3b3a3aff",
+    "color.text.tertiary":             "#696867ff",
+    "color.action.unselected":         "#f0efecff",
+    "color primitives.transparent.white 800": "#ffffffcc",
+    "size.icon.small":                 20,
+    "size.icon.large":                 40,
+    "size.space.100":                  4,
+    "size.space.150":                  6,
+    "size.space.200":                  8,
+    "size.space.300":                  12,
+    "size.space.400":                  16,
+    "size.space.600":                  24,
+    "size.space.800":                  32,
+    "size.icon.x-large":               60,
+    "size.space.negative 200":         -8,
+    "size.radius.200":                 8,
+    "size.radius.full":                9999,
+    "font.curling.caption2":           { "fontSize": 11, "fontWeight": 400, "lineHeight": 13, "letterSpacing": -0.055 },
+    "font.curling.button 1":           { "fontSize": 14, "fontWeight": 500, "lineHeight": 16, "letterSpacing": -0.21 },
+    "font.curling.body 2":             { "fontSize": 14, "fontWeight": 400, "lineHeight": 20, "letterSpacing": -0.14 },
+    "font.curling.caption":            { "fontSize": 12, "fontWeight": 400, "lineHeight": 16, "letterSpacing": -0.06 },
+    "font.curling.h6":                 { "fontSize": 16, "fontWeight": 500, "lineHeight": 24, "letterSpacing": -0.16 },
+    "font.curling.h4":                 { "fontSize": 20, "fontWeight": 500, "lineHeight": 28, "letterSpacing": -0.30 },
+    "effect.drop shadow.200":          [
+      { "type": "dropShadow", "offsetX": 0, "offsetY": 1, "radius": 4, "spread": 0, "color": "#0c0c0d0d" },
+      { "type": "dropShadow", "offsetX": 0, "offsetY": 1, "radius": 4, "spread": 0, "color": "#0c0c0d1a" }
+    ],
+    "gradient.gradients.blck 0-50":    {
+      "type": "linear",
+      "rotation": 180,
+      "stops": [
+        { "position": 0, "color": "#17171700" },
+        { "position": 1, "color": "#17171780" }
+      ]
+    }
+  }
+}

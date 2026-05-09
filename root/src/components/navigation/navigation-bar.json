@@ -1,0 +1,31 @@
+{
+  "name": "NavigationBar",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "40:1489"
+  },
+  "components": {
+    "NavigationBar": {
+      "props": {
+        "activeTab": ["Discover", "Style", "Message", "My"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "width": 390,
+          "paddingBottom": 8,
+          "gap": "size.space.100",
+          "justifyContent": "center",
+          "alignItems": "start"
+        },
+        "background": "color.background.canvas",
+        "tabs": {
+          "count": 4,
+          "labels": ["Discover", "Style", "Message", "My"],
+          "component": "TabButton",
+          "itemWidth": 84
+        }
+      }
+    }
+  }
+}

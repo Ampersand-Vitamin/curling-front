@@ -1,0 +1,85 @@
+{
+  "name": "PortfolioCard",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Big": "105:1194",
+      "Medium": "56:5248",
+      "Small": "105:1273"
+    }
+  },
+  "components": {
+    "PortfolioCard": {
+      "props": {
+        "variant": ["Big", "Medium", "Small"],
+        "hasDesignerProfile": [true, false],
+        "hasFavoriteBtn": [true, false],
+        "hasDescription": [true, false]
+      },
+      "tokens": {
+        "shared": {
+          "imageBackground": "color.image placeholder",
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "cardLayout": { "direction": "column" },
+          "cardToDescriptionGap": "size.space.250",
+          "topBlock": {
+            "padding": { "horizontal": "size.space.200", "top": "size.space.400", "bottom": "size.space.200" },
+            "favoriteButton": { "virant": "32", "status": "Default" }
+          },
+          "bottomOverlay": {
+            "gradient": "gradient.gradients.blck 0-50",
+            "padding": { "horizontal": "size.space.200", "top": "size.space.400", "bottom": "size.space.200" },
+            "gap": "size.space.200",
+            "avatar": { "size": 32 },
+            "salonName": {
+              "typography": "font.curling.caption2",
+              "color": "color.text.inverse",
+              "opacity": 0.8
+            }
+          },
+          "description": {
+            "gap": "size.space.100",
+            "title": {
+              "typography": "font.curling.h6",
+              "color": "color.text.secondary",
+              "maxLines": 1
+            },
+            "keywords": {
+              "typography": "font.curling.caption",
+              "color": "color.text.tertiary",
+              "maxLines": 2
+            }
+          }
+        },
+        "variant_Big": {
+          "size": { "width": 220, "height": 320 },
+          "bottomOverlay": {
+            "designerName": {
+              "typography": "font.curling.body 2",
+              "color": "color.text.inverse"
+            }
+          }
+        },
+        "variant_Medium": {
+          "size": { "width": 172, "height": 250 },
+          "bottomOverlay": {
+            "designerName": {
+              "typography": "font.curling.body 2",
+              "color": "color.text.inverse"
+            }
+          }
+        },
+        "variant_Small": {
+          "size": { "width": 140, "height": 200 },
+          "bottomOverlay": {
+            "designerName": {
+              "typography": "font.curling.caption",
+              "color": "color.text.inverse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

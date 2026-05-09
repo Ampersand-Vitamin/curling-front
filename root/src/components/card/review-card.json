@@ -1,0 +1,52 @@
+{
+  "name": "ReviewCard",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Default": "66:11335"
+    }
+  },
+  "components": {
+    "ReviewCard": {
+      "props": {
+        "rating": "number (1–5)"
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "gap": "size.space.250",
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.300",
+          "width": 280
+        },
+        "container": {
+          "background": "color.background.surface-200",
+          "borderRadius": "size.radius.200"
+        },
+        "starsRow": {
+          "direction": "row",
+          "gap": "size.space.100",
+          "star": {
+            "size": 16,
+            "activeColor": "color.action.primary",
+            "inactiveColor": "color.text.caption"
+          }
+        },
+        "textBlock": {
+          "direction": "column",
+          "gap": "size.space.100",
+          "title": {
+            "typography": "font.curling.h6",
+            "color": "color.text.primary",
+            "maxLines": 2
+          },
+          "body": {
+            "typography": "font.curling.caption",
+            "color": "color primitives.neutral.700",
+            "maxLines": 3
+          }
+        }
+      }
+    }
+  }
+}

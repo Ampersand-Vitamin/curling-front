@@ -1,0 +1,85 @@
+{
+  "name": "Portfolio",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Default": "66:11306"
+    }
+  },
+  "components": {
+    "Portfolio": {
+      "props": {
+        "hasCta": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "gap": "size.space.400",
+          "width": 358
+        },
+        "header": {
+          "layout": { "direction": "row", "gap": "size.space.300", "align": "center" },
+          "avatar": { "size": 40 },
+          "infoBlock": {
+            "designerName": {
+              "typography": "font.curling.h6",
+              "color": "color.text.secondary"
+            },
+            "salonName": {
+              "typography": "font.curling.caption",
+              "color": "color.text.tertiary"
+            }
+          },
+          "moreButton": {
+            "icon": "more",
+            "iconSize": 24,
+            "padding": "size.space.200",
+            "variant": "Subtle",
+            "size": 40
+          }
+        },
+        "imageBlock": {
+          "height": 400,
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "imageBackground": "color.image placeholder",
+          "chevronsOverlay": {
+            "padding": "size.space.250",
+            "iconButtonVariant": "Subtle",
+            "iconButtonSize": 40
+          }
+        },
+        "contentBlock": {
+          "layout": { "direction": "row", "align": "start", "justify": "space-between", "gap": "size.space.400" },
+          "infoColumn": {
+            "direction": "column",
+            "gap": "size.space.100",
+            "title": {
+              "typography": "font.curling.h5",
+              "color": "color.text.primary"
+            },
+            "keywords": {
+              "typography": "font.curling.body",
+              "color": "color.text.tertiary"
+            }
+          },
+          "favoriteButton": {
+            "virant": "48",
+            "status": "Default"
+          }
+        },
+        "cta": {
+          "condition": "hasCta",
+          "label": "View Designer Profile",
+          "typography": "font.curling.button 1",
+          "color": "color.text.primary",
+          "background": "color.action.unselected",
+          "borderRadius": "size.radius.200",
+          "paddingX": "size.space.600",
+          "paddingY": "size.space.300",
+          "width": "100%"
+        }
+      }
+    }
+  }
+}

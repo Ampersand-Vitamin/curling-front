@@ -1,0 +1,36 @@
+{
+  "name": "TextHolder",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Input=No": "67:11346",
+      "Input=Yes": "67:11348"
+    }
+  },
+  "components": {
+    "TextHolder": {
+      "props": {
+        "input": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "width": 262,
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.200",
+          "borderRadius": "size.radius.400",
+          "alignItems": "end"
+        },
+        "background": "color.background.surface-200",
+        "text": {
+          "typography": "font.curling.body",
+          "state_input-off": {
+            "color": "color.text.caption"
+          },
+          "state_input-on": {
+            "color": "color.text.primary"
+          }
+        }
+      }
+    }
+  }
+}

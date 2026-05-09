@@ -1,0 +1,63 @@
+{
+  "name": "Keywords List",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "44:6216",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=44-6216"
+  },
+  "description": "여러 KeywordButton을 배치하는 레이아웃 컨테이너. Lists(가로 스크롤)와 Filter(flex-wrap) 두 가지 모드.",
+
+  "components": {
+
+    "KeywordsList": {
+      "description": "property1으로 레이아웃 모드 선택. Lists는 Keywords-S 칩을 가로 나열, Filter는 Keywords-M 칩을 wrap 배치.",
+      "props": {
+        "property1": {
+          "values": ["Lists", "Filter"],
+          "default": "Lists"
+        },
+        "keywords": {
+          "type": "KeywordItem[]",
+          "description": "표시할 키워드 데이터 배열. 각 아이템은 label과 status를 포함."
+        }
+      },
+      "tokens": {
+        "layout_shared": {
+          "display": "flex",
+          "gap": "size.space.100",
+          "alignItems": "center",
+          "overflow": "clip"
+        },
+
+        "property1_Lists": {
+          "flexDirection": "row",
+          "flexWrap": "nowrap",
+          "note": "가로 단일 행 스크롤. 자식은 Keywords-S 칩 사용.",
+          "chipVariable": "Keywords-S",
+          "chipTypography": "font.curling.caption2",
+          "chipHasIconStart": false,
+          "chipHasXEnd": false
+        },
+
+        "property1_Filter": {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "alignContent": "center",
+          "note": "선택된 필터 목록. 자식은 Keywords-M 칩 사용. 항상 iconStart + xEnd 포함.",
+          "chipVariable": "Keywords-M",
+          "chipTypography": "font.curling.keywords",
+          "chipHasIconStart": true,
+          "chipHasXEnd": true,
+          "chipStatus_unselected": "Default",
+          "chipStatus_selected": "Selected"
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "size.space.100":            4,
+    "font.curling.caption2":     { "fontSize": 11, "fontWeight": 400, "lineHeight": 13, "letterSpacing": -0.055 },
+    "font.curling.keywords":     { "fontSize": 12, "fontWeight": 400, "lineHeight": 16, "letterSpacing": -0.06, "textCase": "capitalize" }
+  }
+}

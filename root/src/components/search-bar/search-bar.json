@@ -1,0 +1,75 @@
+{
+  "name": "SearchBar",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Primary/Input off": "40:1673",
+      "Primary/Input on": "48:703",
+      "Inverse/Input off": "48:640",
+      "Inverse/Input on": "48:674"
+    }
+  },
+  "components": {
+    "SearchBar": {
+      "props": {
+        "variant": ["Primary", "Inverse"],
+        "status": ["Input off", "Input on"],
+        "hasImageSearch": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "height": 48,
+          "borderRadius": "size.radius.full",
+          "overflow": "clip",
+          "paddingLeft": "size.space.400",
+          "paddingRight": "size.space.100"
+        },
+        "variant_Primary": {
+          "background": "color.action.unselected-white",
+          "border": {
+            "width": "size.stroke.border",
+            "color": "color.border.subtle"
+          }
+        },
+        "variant_Inverse": {
+          "background": "color.action.unselected"
+        },
+        "textArea": {
+          "paddingRight": "size.space.250",
+          "typography": "font.curling.body",
+          "status_Input-off": {
+            "color": "color.text.caption"
+          },
+          "status_Input-on": {
+            "color": "color.text.primary"
+          }
+        },
+        "searchIconButton": {
+          "padding": "size.space.200",
+          "icon": "search",
+          "iconSize": 24,
+          "borderRadius": "size.radius.full",
+          "status_Input-off": {
+            "iconColor": "color.text.caption"
+          },
+          "status_Input-on": {
+            "iconColor": "color.text.primary"
+          }
+        },
+        "imageSearchButton": {
+          "condition": "hasImageSearch AND status=Input off",
+          "padding": "size.space.200",
+          "icon": "photo",
+          "iconSize": 24,
+          "borderRadius": "size.radius.full",
+          "background": "color.action.unselected-white",
+          "border": {
+            "width": "size.stroke.devider",
+            "color": "color.border.subtle"
+          }
+        }
+      }
+    }
+  }
+}

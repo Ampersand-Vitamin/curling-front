@@ -1,0 +1,87 @@
+{
+  "name": "Favorite Button",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "38:3875",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=38-3875"
+  },
+  "description": "북마크(즐겨찾기) 아이콘 버튼. 크기(48/32/20) × 상태(Default/Active) 조합.",
+
+  "components": {
+
+    "FavoriteButton": {
+      "description": "bookmar 아이콘을 품은 원형 버튼. virant prop이 크기를 결정. backdrop-blur 항상 적용.",
+      "props": {
+        "virant": {
+          "values": [48, 32, 20],
+          "default": 48,
+          "description": "컨테이너 크기(px). 48이 기본 독립형, 32/20은 이미지 오버레이 전용."
+        },
+        "status": {
+          "values": ["Default", "Active"],
+          "default": "Default"
+        }
+      },
+      "tokens": {
+        "layout": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "borderRadius": "size.radius.full",
+          "backdropBlur": "size.blur.100"
+        },
+
+        "virant_48": {
+          "padding": "size.space.300",
+          "iconSrc": "src/assets/icons/24/bookmark.svg",
+          "iconSize": "size.icon.medium",
+          "status_Default": {
+            "background": "color.action.unselected"
+          },
+          "status_Active": {
+            "background": "color.action.primary-subtle"
+          }
+        },
+
+        "virant_32": {
+          "padding": "size.space.100",
+          "iconSrc": "src/assets/icons/24/bookmark.svg",
+          "iconSize": "size.icon.medium",
+          "note": "이미지 오버레이 전용. 배경은 반투명 흰색.",
+          "status_Default": {
+            "background": "color.action.overlay-white"
+          },
+          "status_Active": {
+            "background": "color.action.overlay-white"
+          }
+        },
+
+        "virant_20": {
+          "containerSize": "size.icon.small",
+          "iconSrc": "src/assets/icons/16/bookmark.svg",
+          "iconSize": "size.icon.extra small",
+          "note": "초소형. 이미지 오버레이 전용. 배경은 반투명 흰색.",
+          "status_Default": {
+            "background": "color.action.overlay-white"
+          },
+          "status_Active": {
+            "background": "color.action.overlay-white"
+          }
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.action.unselected":       "#f0efecff",
+    "color.action.primary-subtle":   "#f8efedff",
+    "color.action.overlay-white":    "#ffffff4d",
+    "size.space.100":                4,
+    "size.space.300":                12,
+    "size.radius.full":              9999,
+    "size.blur.100":                 4,
+    "size.icon.small":               20,
+    "size.icon.medium":              24,
+    "size.icon.extra small":         16
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "name": "BottomArea",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Bottom link=expanded": "118:2152",
+      "Bottom link=small": "118:3327"
+    }
+  },
+  "components": {
+    "BottomArea": {
+      "props": {
+        "bottomLink": ["expanded", "small"],
+        "hasPopupDesigner": [true, false],
+        "hasPopupSalon": [true, false],
+        "hasLocationOption": [true, false],
+        "hasHandle": [true, false],
+        "hasContent": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "width": 390,
+          "alignItems": "center",
+          "justifyContent": "end",
+          "overflow": "clip"
+        },
+        "popupDesigner": {
+          "condition": "hasPopupDesigner",
+          "direction": "column",
+          "gap": "size.space.200",
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.250",
+          "closeButton": {
+            "size": 32,
+            "padding": "size.space.200",
+            "borderRadius": "size.radius.full",
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-black",
+            "icon": "cancel",
+            "iconSize": 16
+          },
+          "cards": {
+            "direction": "row",
+            "gap": "size.space.200",
+            "card": "DesignerCard",
+            "cardVariant": "Popup",
+            "cardSize": { "width": 240, "height": 160 }
+          }
+        },
+        "popupSalon": {
+          "condition": "hasPopupSalon",
+          "direction": "column",
+          "gap": "size.space.200",
+          "paddingX": "size.space.400",
+          "paddingY": "size.space.250",
+          "closeButton": {
+            "size": 32,
+            "padding": "size.space.200",
+            "borderRadius": "size.radius.full",
+            "backdropBlur": "size.blur.100",
+            "background": "color.action.overlay-black",
+            "icon": "cancel",
+            "iconSize": 16
+          },
+          "card": "SalonCard",
+          "cardVariant": "Popup",
+          "cardSize": { "width": 330, "height": 160 }
+        },
+        "locationBar": {
+          "condition": "hasLocationOption",
+          "component": "LocationReset"
+        },
+        "tabBar": {
+          "direction": "column",
+          "width": 390,
+          "overflow": "clip",
+          "pullBar": {
+            "condition": "hasHandle",
+            "component": "PullBar"
+          },
+          "list": {
+            "condition": "hasContent",
+            "component": "List"
+          },
+          "navigationBar": {
+            "component": "NavigationBar"
+          },
+          "browserUI": {
+            "expanded_homeIndicatorHeight": 34,
+            "small_homeIndicatorHeight": 20
+          }
+        }
+      }
+    }
+  }
+}

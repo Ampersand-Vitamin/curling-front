@@ -1,0 +1,113 @@
+{
+  "name": "SalonCard",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Medium": "61:7613",
+      "Big": "61:7772",
+      "Small": "113:553"
+    }
+  },
+  "components": {
+    "SalonCard": {
+      "props": {
+        "variant": ["Medium", "Big", "Small"]
+      },
+      "tokens": {
+        "shared": {
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "imageBackground": "color.image placeholder"
+        },
+        "variant_Medium": {
+          "size": { "width": 358, "height": 302 },
+          "layout": { "direction": "column", "gap": "size.space.300" },
+          "imageBlock": {
+            "height": 160,
+            "borderRadius": "size.radius.400",
+            "chevronsOverlay": {
+              "padding": "size.space.200",
+              "iconButtonVariant": "Overlay",
+              "iconButtonSize": 32
+            }
+          },
+          "contentBlock": {
+            "padding": "size.space.300",
+            "gap": "size.space.200",
+            "salonName": {
+              "typography": "font.curling.h5",
+              "color": "color.text.primary",
+              "maxLines": 1
+            },
+            "address": {
+              "typography": "font.curling.body",
+              "color": "color.text.secondary",
+              "maxLines": 1
+            },
+            "footer": {
+              "layout": "row, space-between",
+              "ctaButton": {
+                "label": "Look Around",
+                "variant": "Primary",
+                "status": "Default",
+                "size": 40
+              },
+              "linkIconButton": {
+                "padding": "size.space.300",
+                "icon": "arrow-right-up",
+                "iconSize": 24
+              }
+            }
+          }
+        },
+        "variant_Big": {
+          "size": { "width": 358, "height": 224 },
+          "layout": { "direction": "overlay" },
+          "bottomOverlay": {
+            "gradient": "gradient.gradients.blck 0-50",
+            "padding": "size.space.300",
+            "gap": "size.space.200",
+            "salonName": {
+              "typography": "font.curling.h6",
+              "color": "color.text.inverse"
+            },
+            "locationRow": {
+              "typography": "font.curling.caption",
+              "color": "color.text.inverse",
+              "opacity": 0.8,
+              "separator": "|"
+            },
+            "keywords": {
+              "layout": "row wrap",
+              "gap": "size.space.100",
+              "chips": ["Language-M", "Keywords-M"]
+            },
+            "favoriteButton": {
+              "virant": "32",
+              "status": "Default"
+            }
+          }
+        },
+        "variant_Small": {
+          "size": { "width": 330, "height": 160 },
+          "layout": { "direction": "overlay" },
+          "bottomOverlay": {
+            "gradient": "gradient.gradients.blck 0-50",
+            "padding": "size.space.300",
+            "gap": "size.space.100",
+            "salonName": {
+              "typography": "font.curling.h6",
+              "color": "color.text.inverse"
+            },
+            "locationRow": {
+              "typography": "font.curling.caption",
+              "color": "color.text.inverse",
+              "opacity": 0.8,
+              "separator": "|"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "ServiceCard",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "Default": "66:11316"
+    }
+  },
+  "components": {
+    "ServiceCard": {
+      "props": {},
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.400",
+          "padding": "size.space.300",
+          "width": 358
+        },
+        "container": {
+          "background": "color.background.surface-200",
+          "borderRadius": "size.radius.200"
+        },
+        "leftColumn": {
+          "direction": "column",
+          "gap": "size.space.150",
+          "keywordsRow": {
+            "direction": "row",
+            "gap": "size.space.100",
+            "chips": ["Language-M", "Keywords-M"]
+          },
+          "serviceName": {
+            "typography": "font.curling.h6",
+            "color": "color.text.primary"
+          }
+        },
+        "rightColumn": {
+          "direction": "column",
+          "align": "end",
+          "fromLabel": {
+            "typography": "font.curling.caption",
+            "color": "color.text.tertiary"
+          },
+          "price": {
+            "typography": "font.curling.body",
+            "color": "color.text.primary"
+          }
+        }
+      }
+    }
+  }
+}

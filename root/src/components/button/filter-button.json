@@ -1,0 +1,97 @@
+{
+  "name": "Filter Button",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeId": "40:1548",
+    "url": "https://www.figma.com/design/Nd9ToDBR2rj4DUYXcaSphP/Curling-Design-System?node-id=40-1548"
+  },
+  "description": "필터 아이콘 원형 버튼. Selected 상태에서 뱃지 카운터 표시.",
+
+  "components": {
+
+    "FilterButton": {
+      "description": "filter 아이콘 버튼. Selected 시 우상단에 카운트 뱃지 오버레이.",
+      "props": {
+        "size": {
+          "values": [48, 40],
+          "default": 48
+        },
+        "status": {
+          "values": ["Default", "Inverse", "Selected"],
+          "default": "Default"
+        },
+        "badgeCount": {
+          "type": "number",
+          "description": "status=Selected일 때 뱃지에 표시할 숫자",
+          "required_when": "status === 'Selected'"
+        }
+      },
+      "tokens": {
+        "layout": {
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "borderRadius": "size.radius.full",
+          "position": "relative"
+        },
+
+        "iconSrc": "src/assets/icons/24/filter.svg",
+        "iconSize": "size.icon.medium",
+
+        "size_48": {
+          "padding": "size.space.300"
+        },
+        "size_40": {
+          "padding": "size.space.200"
+        },
+
+        "status_Default": {
+          "background": "color.action.unselected-white",
+          "border": "color.border.subtle",
+          "borderWidth": "size.stroke.devider"
+        },
+        "status_Inverse": {
+          "background": "color.action.unselected"
+        },
+        "status_Selected": {
+          "background": "color.action.secondary"
+        },
+
+        "badge": {
+          "note": "status=Selected 시에만 표시. 아이콘 우상단 오버레이.",
+          "position": "absolute",
+          "top": 0,
+          "right": "size.space.negative 100",
+          "containerSize": "size.space.450",
+          "borderRadius": "size.radius.full",
+          "background": "color.action.primary",
+          "overflow": "clip",
+          "paddingX": "size.space.125",
+          "paddingY": "size.space.050",
+          "typography": "font.curling.caption2",
+          "textColor": "color.text.inverse"
+        }
+      }
+    }
+  },
+
+  "tokenResolutions": {
+    "color.action.unselected-white":   "#ffffffff",
+    "color.action.unselected":         "#f0efecff",
+    "color.action.secondary":          "#3b3a3aff",
+    "color.action.primary":            "#e36a4bff",
+    "color.border.subtle":             "#f0efecff",
+    "color.text.inverse":              "#ffffffff",
+    "size.space.050":                  2,
+    "size.space.100":                  4,
+    "size.space.125":                  5,
+    "size.space.200":                  8,
+    "size.space.300":                  12,
+    "size.space.450":                  18,
+    "size.space.negative 100":         -4,
+    "size.radius.full":                9999,
+    "size.stroke.devider":             0.5,
+    "size.icon.medium":                24,
+    "font.curling.caption2":           { "fontSize": 11, "fontWeight": 400, "lineHeight": 13, "letterSpacing": -0.055 }
+  }
+}
