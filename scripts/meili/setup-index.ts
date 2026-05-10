@@ -15,8 +15,8 @@ async function main() {
   // 1. 인덱스 생성 (이미 있으면 그대로)
   console.log(`[setup] ensuring index "${DESIGNERS_INDEX}" (primaryKey=${PRIMARY_KEY}) ...`);
   try {
-    const task = await client.createIndex(DESIGNERS_INDEX, { primaryKey: PRIMARY_KEY });
-    await client.waitForTask(task.taskUid, { timeOutMs: 60_000 });
+    await client.createIndex(DESIGNERS_INDEX, { primaryKey: PRIMARY_KEY })
+      .waitTask({ timeout: 60_000 });
     console.log("[setup] index created");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -30,8 +30,8 @@ async function main() {
   // 2. settings 적용
   console.log("[setup] applying settings (searchable / filterable / embedders) ...");
   const settings = designersSettings();
-  const task = await client.index(DESIGNERS_INDEX).updateSettings(settings);
-  await client.waitForTask(task.taskUid, { timeOutMs: SETTINGS_TIMEOUT_MS });
+  await client.index(DESIGNERS_INDEX).updateSettings(settings)
+    .waitTask({ timeout: SETTINGS_TIMEOUT_MS });
 
   // 3. 검증
   const stats = await client.index(DESIGNERS_INDEX).getStats();

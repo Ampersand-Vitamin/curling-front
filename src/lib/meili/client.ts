@@ -5,7 +5,7 @@
 //   - 'server-only' 패키지가 없으므로 import 시 환경 가드만 둠.
 //   - Server Action / Server Component / scripts/ 안에서만 import.
 
-import { MeiliSearch } from "meilisearch";
+import { Meilisearch } from "meilisearch";
 
 function ensureServer() {
   if (typeof window !== "undefined") {
@@ -24,13 +24,13 @@ function readEnv(name: string, hint?: string): string {
   return v;
 }
 
-let _admin: MeiliSearch | null = null;
+let _admin: Meilisearch | null = null;
 
 /** master key 사용 — 인덱싱/세팅 변경/검색 전부 가능. server only. */
-export function getMeiliAdminClient(): MeiliSearch {
+export function getMeiliAdminClient(): Meilisearch {
   ensureServer();
   if (_admin) return _admin;
-  _admin = new MeiliSearch({
+  _admin = new Meilisearch({
     host: readEnv("MEILI_HOST", "예: http://localhost:7700"),
     apiKey: readEnv("MEILI_MASTER_KEY", "Docker compose 의 MEILI_MASTER_KEY 와 동일"),
   });
@@ -38,6 +38,6 @@ export function getMeiliAdminClient(): MeiliSearch {
 }
 
 /** 향후 search-only key 전환 시 분기점. 현재는 admin 과 동일 인스턴스 반환. */
-export function getMeiliSearchClient(): MeiliSearch {
+export function getMeilisearchClient(): Meilisearch {
   return getMeiliAdminClient();
 }

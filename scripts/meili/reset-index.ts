@@ -10,8 +10,7 @@ async function main() {
   const client = getMeiliAdminClient();
   console.log(`[reset] deleting index "${DESIGNERS_INDEX}" ...`);
   try {
-    const task = await client.deleteIndex(DESIGNERS_INDEX);
-    await client.waitForTask(task.taskUid, { timeOutMs: 60_000 });
+    await client.deleteIndex(DESIGNERS_INDEX).waitTask({ timeout: 60_000 });
     console.log("[reset] deleted");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

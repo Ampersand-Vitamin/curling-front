@@ -48,10 +48,8 @@ async function main() {
 
   for (let i = 0; i < docs.length; i += BATCH_SIZE) {
     const batch = docs.slice(i, i + BATCH_SIZE);
-    const task = await index.addDocuments(batch, { primaryKey: PRIMARY_KEY });
-    const finished = await meili.waitForTask(task.taskUid, {
-      timeOutMs: TASK_TIMEOUT_MS,
-    });
+    const finished = await index.addDocuments(batch, { primaryKey: PRIMARY_KEY })
+      .waitTask({ timeout: TASK_TIMEOUT_MS });
     if (finished.status !== "succeeded") {
       console.error("[index] batch failed:", finished);
       process.exit(1);
