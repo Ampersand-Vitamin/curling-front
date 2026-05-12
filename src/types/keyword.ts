@@ -6,6 +6,8 @@ export type Keyword = {
   slug: string;
   group_name: string | null;
   display_order: number;
+  /** 1: 기본 노출, 2: "More" 안에 숨김 (filter spec v3) */
+  tier: 1 | 2;
 };
 
 export type KeywordGroup = {
@@ -15,8 +17,8 @@ export type KeywordGroup = {
 
 export type FilterCategorySlug =
   | "languages"
-  | "hair_type"
-  | "treatment"
+  | "specialty"
+  | "service"
   | "amenities"
   | "inclusivity";
 
@@ -27,21 +29,21 @@ export type FilterSection = {
   groups?: KeywordGroup[];
 };
 
-// Plan FR-05: FilterPopup에 렌더할 카테고리의 표시 순서
-// special_offers는 amenities + inclusivity로 분리됨 (seed 31_keywords_v2.sql)
+// FilterPopup 표시 순서 — filter spec v3 (Language / Specialty / Service / Amenities / Inclusivity)
+// price_range, location 은 칩 외의 UI(슬라이더/지도)라 keyword 테이블에 없음
 export const FILTER_SECTION_ORDER: readonly FilterCategorySlug[] = [
-  "hair_type",
-  "treatment",
   "languages",
+  "specialty",
+  "service",
   "amenities",
   "inclusivity",
 ] as const;
 
-// Plan FR-05: slug → UI 표시명 매핑
+// slug → UI 표시명 매핑
 export const FILTER_SECTION_DISPLAY_NAME: Record<FilterCategorySlug, string> = {
   languages: "Language",
-  hair_type: "Hair Type",
-  treatment: "Service",
+  specialty: "Specialty",
+  service: "Service",
   amenities: "Amenities",
-  inclusivity: "Inclusivity",
+  inclusivity: "Inclusivity & Values",
 };

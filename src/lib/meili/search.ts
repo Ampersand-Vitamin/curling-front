@@ -4,7 +4,7 @@
 // → UI 컴포넌트는 그대로 <img src=> 가능.
 
 import { storageUrl } from "@/lib/storage";
-import { getMeiliSearchClient } from "./client";
+import { getMeilisearchClient } from "./client";
 import {
   DESIGNERS_INDEX,
   EMBEDDER_NAME,
@@ -71,7 +71,7 @@ export async function searchDesigners(
   // 빈 검색 + 빈 필터 → 평점순 정렬 (디자인의 초기 그리드)
   const ratio = isEmpty ? 0 : params.semanticRatio ?? 0.5;
 
-  const client = getMeiliSearchClient();
+  const client = getMeilisearchClient();
   const res = await client.index(DESIGNERS_INDEX).search<MeiliSearchHit>(
     params.q,
     {

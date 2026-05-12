@@ -3,6 +3,8 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import DesignerCarousel from "./DesignerCarousel";
+import SalonCarousel, { type SalonCarouselItem } from "./SalonCarousel";
+import type { LatLng } from "@/lib/geo";
 import type { DesignerListItem } from "@/lib/designers";
 
 export type PullBarVariant = "collapsed" | "compact" | "expanded";
@@ -13,14 +15,54 @@ const HANDLE_HEIGHT = 24;
 const TOP_PADDING = 20;
 const EXPANDED_FALLBACK = 600;
 
-interface PullBarProps {
+export interface KeywordSection {
+  /** keyword slug — key 용 */
+  slug: string;
+  title: string;
   designers: DesignerListItem[];
-  forceCollapsed?: boolean;
-  onVariantChange?: (variant: PullBarVariant) => void;
 }
 
-export default function PullBar({ designers, forceCollapsed = false, onVariantChange }: PullBarProps) {
-  const [variant, setVariant] = useState<PullBarVariant>("compact");
+export interface SalonKeywordSection {
+  slug: string;
+  title: string;
+  items: SalonCarouselItem[];
+}
+
+interface PullBarProps {
+  /** "Best Match for you" 섹션 디자이너 (recommend placeholder).
+   *  빈 배열이면 섹션 자체 숨김 — 필터 적용 시 키워드 섹션만 노출되는 케이스. */
+  designers: DesignerListItem[];
+  /** 활성 키워드별 OR 매칭 디자이너 섹션 목록 */
+  keywordSections?: KeywordSection[];
+  /** 활성 키워드별 OR 매칭 살롱 섹션 목록 */
+  salonSections?: SalonKeywordSection[];
+  /** 사용자 현재 위치 — 각 캐러셀 거리 정렬에 사용 */
+  userLocation?: LatLng | null;
+  forceCollapsed?: boolean;
+  /** 사용자 드래그 변경 시 호출 (controlled — variant prop이 단일 진실 공급원) */
+  onVariantChange?: (variant: PullBarVariant) => void;
+  /** controlled variant. 미지정 시 내부 state 사용 */
+  variant?: PullBarVariant;
+}
+
+export default function PullBar({
+  designers,
+  keywordSections,
+  salonSections,
+  userLocation = null,
+  forceCollapsed = false,
+  onVariantChange,
+  variant: variantProp,
+}: PullBarProps) {
+  const [variantState, setVariantState] = useState<PullBarVariant>("compact");
+  const variant = variantProp ?? variantState;
+  const setVariant = useCallback(
+    (next: PullBarVariant) => {
+      if (variantProp === undefined) setVariantState(next);
+      onVariantChange?.(next);
+    },
+    [variantProp, onVariantChange],
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [viewportHeight, setViewportHeight] = useState<number | null>(null);
 
@@ -47,12 +89,6 @@ export default function PullBar({ designers, forceCollapsed = false, onVariantCh
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const handleRef = useRef<HTMLDivElement>(null);
-
-  // variant 변경을 부모에게 전파 (DiscoverClient가 SearchHeader 숨김 처리)
-  // forceCollapsed 상태에서는 외부적으로 "collapsed"로 보고 (MapView my-location 위치 보정)
-  useEffect(() => {
-    onVariantChange?.(forceCollapsed ? "collapsed" : variant);
-  }, [variant, forceCollapsed, onVariantChange]);
 
   const getVariantFromHeight = useCallback(
     (height: number): PullBarVariant => {
@@ -125,14 +161,38 @@ export default function PullBar({ designers, forceCollapsed = false, onVariantCh
       {/* Content Section — 드래그 중 실시간 높이, 릴리즈 시 스프링 전환 */}
       {showContent && (
         <div
-          className="bg-white overflow-hidden"
+          className="bg-white"
           style={{
             height: contentHeight,
+            overflowY: isDragging ? "hidden" : "auto",
             transition: isDragging ? "none" : "height 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
           }}
         >
-          <div className="px-4 pt-2 pb-5">
-            <DesignerCarousel designers={designers} />
+          <div className="flex flex-col gap-6 px-4 pt-2 pb-20">
+            {designers.length > 0 && (
+              <DesignerCarousel
+                designers={designers}
+                userLocation={userLocation}
+              />
+            )}
+            {keywordSections?.map((s) => (
+              <DesignerCarousel
+                key={`d-${s.slug}`}
+                title={s.title}
+                designers={s.designers}
+                showViewMore
+                userLocation={userLocation}
+              />
+            ))}
+            {salonSections?.map((s) => (
+              <SalonCarousel
+                key={`s-${s.slug}`}
+                title={s.title}
+                items={s.items}
+                showViewMore
+                userLocation={userLocation}
+              />
+            ))}
           </div>
         </div>
       )}

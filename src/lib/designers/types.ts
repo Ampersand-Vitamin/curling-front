@@ -24,6 +24,10 @@ export type DesignerListItem = {
   highlightMessage: string | null;
   /** 소속 살롱 id — Discover 디자이너 핀 클릭 시 살롱 단위 필터링용 */
   salonId: string | null;
+  /** 살롱 위치 — DesignerCarousel 거리 정렬용. 살롱 미배정 시 null */
+  salonLatLng: { lat: number; lng: number } | null;
+  /** 디자이너에 연결된 키워드 slug 목록 — 클라이언트 필터 매칭용 */
+  keywordSlugs: string[];
 };
 
 /** 디자이너 상세 페이지 전체 모델 */

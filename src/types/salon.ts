@@ -7,4 +7,8 @@ export interface Salon {
   latitude: number;
   longitude: number;
   phone?: string;
+  /** 살롱에 직접 연결된 keyword slug (salon_keyword 조인 결과).
+   *  amenities / inclusivity 등 살롱 단위 속성에만 해당.
+   *  디자이너 키워드 union 매칭은 호출 측에서 처리. */
+  keywordSlugs: string[];
 }

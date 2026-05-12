@@ -10,7 +10,9 @@ export default async function DiscoverPage() {
     getFilterKeywords(),
     getSalons(),
     getDesignerMapItems(),
-    getBestMatchDesigners(10),
+    // 클라이언트에서 활성 필터로 AND 매칭하므로 풀을 크게 가져옴.
+    // (작은 limit이면 top N 안에 모든 활성 slug를 보유한 디자이너가 없을 확률이 높음)
+    getBestMatchDesigners(200),
   ]);
   return (
     <DiscoverClient

@@ -16,7 +16,39 @@ type RawListRow = {
   languages: string[];
   highlight_message: string | null;
   salon_id: string | null;
+  salon: { latitude: number | string; longitude: number | string } | null;
+  designer_keyword:
+    | { keyword: { slug: string } | null }[]
+    | null;
 };
+
+const LIST_SELECT = `
+  id, display_name, role, profile_image_url, portfolio_images,
+  languages, highlight_message, salon_id,
+  salon:salon_id ( latitude, longitude ),
+  designer_keyword ( keyword:keyword_id ( slug ) )
+`;
+
+function toListItem(r: RawListRow): DesignerListItem {
+  const keywordSlugs = (r.designer_keyword ?? [])
+    .map((row) => row.keyword?.slug)
+    .filter((s): s is string => Boolean(s));
+  const salonLatLng = r.salon
+    ? { lat: Number(r.salon.latitude), lng: Number(r.salon.longitude) }
+    : null;
+  return {
+    id: r.id,
+    displayName: r.display_name,
+    role: r.role,
+    profileImageUrl: r.profile_image_url,
+    portfolioImages: r.portfolio_images ?? [],
+    languages: r.languages ?? [],
+    highlightMessage: r.highlight_message,
+    salonId: r.salon_id,
+    salonLatLng,
+    keywordSlugs,
+  };
+}
 
 /**
  * Discover 캐러셀용 디자이너 리스트.
@@ -27,10 +59,7 @@ export async function getBestMatchDesigners(
 ): Promise<DesignerListItem[]> {
   const { data, error } = await supabase
     .from("designer_profile")
-    .select(
-      `id, display_name, role, profile_image_url, portfolio_images,
-       languages, highlight_message, salon_id`,
-    )
+    .select(LIST_SELECT)
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -38,16 +67,9 @@ export async function getBestMatchDesigners(
     throw new Error(`[getBestMatchDesigners] ${error.message}`);
   }
 
-  return (data ?? []).map<DesignerListItem>((r: RawListRow) => ({
-    id: r.id,
-    displayName: r.display_name,
-    role: r.role,
-    profileImageUrl: r.profile_image_url,
-    portfolioImages: r.portfolio_images ?? [],
-    languages: r.languages ?? [],
-    highlightMessage: r.highlight_message,
-    salonId: r.salon_id,
-  }));
+  return (data ?? []).map<DesignerListItem>((r) =>
+    toListItem(r as unknown as RawListRow),
+  );
 }
 
 /**
@@ -60,10 +82,7 @@ export async function getDesignersBySalon(
 ): Promise<DesignerListItem[]> {
   const { data, error } = await supabase
     .from("designer_profile")
-    .select(
-      `id, display_name, role, profile_image_url, portfolio_images,
-       languages, highlight_message, salon_id`,
-    )
+    .select(LIST_SELECT)
     .eq("salon_id", salonId)
     .order("created_at", { ascending: false });
 
@@ -71,16 +90,9 @@ export async function getDesignersBySalon(
     throw new Error(`[getDesignersBySalon] ${error.message}`);
   }
 
-  return (data ?? []).map<DesignerListItem>((r: RawListRow) => ({
-    id: r.id,
-    displayName: r.display_name,
-    role: r.role,
-    profileImageUrl: r.profile_image_url,
-    portfolioImages: r.portfolio_images ?? [],
-    languages: r.languages ?? [],
-    highlightMessage: r.highlight_message,
-    salonId: r.salon_id,
-  }));
+  return (data ?? []).map<DesignerListItem>((r) =>
+    toListItem(r as unknown as RawListRow),
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────
