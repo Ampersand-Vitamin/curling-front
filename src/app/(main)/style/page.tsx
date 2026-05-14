@@ -13,7 +13,7 @@ export default async function StylePage() {
   try {
     initialResult = await searchStyle({ q: "", limit: 30 });
   } catch (err) {
-    console.warn("[StylePage] initial search failed — Meilisearch 미실행/미인덱싱?", err);
+    console.warn("[StylePage] initial search failed — portfolio table / RPC 점검", err);
     initialResult = {
       hits: [],
       totalEstimated: 0,

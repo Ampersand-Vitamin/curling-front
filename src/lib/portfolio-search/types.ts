@@ -3,8 +3,9 @@
 //
 // search_portfolios RPC 의 RETURNS TABLE 과 1:1 대응.
 
-export const EMBED_MODEL = "text-embedding-3-large" as const;
-export const EMBED_DIMENSIONS = 1536 as const;
+// Design Ref: §3 — Option B (CLIP unified). text-embedding-3-large 대체.
+export const EMBED_MODEL = "Xenova/clip-vit-large-patch14" as const;
+export const EMBED_DIMENSIONS = 768 as const;
 export const RPC_NAME = "search_portfolios" as const;
 
 /** RPC 의 raw 반환 row (snake_case) */
