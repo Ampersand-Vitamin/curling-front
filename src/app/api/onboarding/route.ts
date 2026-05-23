@@ -10,39 +10,28 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const {
-    accountMode,
-    name,
-    gender,
-    hairType,
-    hairLength,
-    hairConcerns,
-    hairHistory,
-    languages,
-    preferredStyles,
-  } = body;
 
   const { error } = await supabaseAdmin
-    .from("onboarding_profiles")
+    .from("hair_profiles")
     .upsert(
       {
         user_id: session.user.id,
-        account_mode: accountMode,
-        name,
-        gender,
-        hair_type: hairType,
-        hair_length: hairLength,
-        hair_concerns: hairConcerns,
-        hair_history: hairHistory,
-        languages,
-        preferred_styles: preferredStyles,
+        account_mode:     body.accountMode,
+        name:             body.name,
+        gender:           body.gender,
+        hair_type:        body.hairType,
+        hair_length:      body.hairLength,
+        hair_concerns:    body.hairConcerns,    // string[]
+        hair_history:     body.hairHistory,     // string[]
+        languages:        body.languages,       // string[]
+        preferred_styles: body.preferredStyles, // string[]
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" }
     );
 
   if (error) {
-    console.error("Onboarding save error:", error);
+    console.error("hair_profiles upsert error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
@@ -57,11 +46,12 @@ export async function GET() {
   }
 
   const { data, error } = await supabaseAdmin
-    .from("onboarding_profiles")
+    .from("hair_profiles")
     .select("*")
     .eq("user_id", session.user.id)
     .single();
 
+  // PGRST116 = row not found (온보딩 미완료)
   if (error && error.code !== "PGRST116") {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -11,7 +11,7 @@ export async function GET() {
 
   // 온보딩 완료 여부 확인
   const { data } = await supabaseAdmin
-    .from("onboarding_profiles")
+    .from("hair_profiles")
     .select("id")
     .eq("user_id", session.user.id)
     .single();

@@ -63,7 +63,7 @@ create table if not exists next_auth.verification_tokens (
 -- 온보딩 프로필 테이블
 -- ============================================
 
-create table if not exists public.onboarding_profiles (
+create table if not exists public.hair_profiles (
   id uuid not null default uuid_generate_v4(),
   user_id uuid not null unique,
   account_mode text,              -- 'client' | 'designer'
@@ -77,17 +77,17 @@ create table if not exists public.onboarding_profiles (
   preferred_styles text[],
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint pk_onboarding_profiles primary key (id)
+  constraint pk_hair_profiles primary key (id)
 );
 
 -- RLS: 본인 데이터만 조회/수정 가능
-alter table public.onboarding_profiles enable row level security;
+alter table public.hair_profiles enable row level security;
 
 create policy "Users can view own profile"
-  on public.onboarding_profiles for select
+  on public.hair_profiles for select
   using (auth.uid()::text = user_id::text);
 
 create policy "Service role can do all"
-  on public.onboarding_profiles for all
+  on public.hair_profiles for all
   using (true)
   with check (true);
