@@ -1,0 +1,44 @@
+{
+  "name": "MoreChip",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "language=Eng": "188:549",
+      "language=Kor": "188:563"
+    }
+  },
+  "components": {
+    "MoreChip": {
+      "description": "Expandable 'More' chip used at the end of a keyword/language chip list. Shows a + icon and 'More' / '더보기' label. Has a visible border.",
+      "props": {
+        "language": ["Eng", "Kor"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.200",
+          "paddingX": "size.space.300",
+          "paddingY": "size.space.250",
+          "borderRadius": "size.radius.400",
+          "border": {
+            "width": "size.stroke.border",
+            "color": "color.border.default"
+          }
+        },
+        "icon": {
+          "asset": "assets/icons/add",
+          "size": "size.icon.xsmall"
+        },
+        "label": {
+          "typography": "font.h6",
+          "color": "color.text.primary"
+        },
+        "content": {
+          "language_Eng": "More",
+          "language_Kor": "더보기"
+        }
+      }
+    }
+  }
+}

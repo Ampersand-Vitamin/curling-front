@@ -1,0 +1,52 @@
+{
+  "name": "TextInput",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "placeholderIn=No": "188:680",
+      "placeholderIn=Yes": "188:682"
+    }
+  },
+  "components": {
+    "TextInput": {
+      "description": "Onboarding text input field. Shows placeholder text when empty, primary text color when filled. Optional trailing chevron icon for dropdown usage.",
+      "props": {
+        "placeholderIn": "boolean",
+        "dropdown": "boolean"
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.250",
+          "height": 56,
+          "paddingLeft": "size.space.400",
+          "paddingRight": "size.space.250",
+          "paddingY": "size.space.400",
+          "borderRadius": "size.radius.400",
+          "background": "color.background.surface-200",
+          "width": 358
+        },
+        "state_empty": {
+          "text": {
+            "typography": "font.h6",
+            "color": "color.text.caption",
+            "placeholder": "Your name or nickname"
+          }
+        },
+        "state_filled": {
+          "text": {
+            "typography": "font.h6",
+            "color": "color.text.primary"
+          }
+        },
+        "dropdown_chevron": {
+          "asset": "assets/icons/chevron-down",
+          "size": 24,
+          "padding": "size.space.200",
+          "borderRadius": "size.radius.full"
+        }
+      }
+    }
+  }
+}

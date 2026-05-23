@@ -1,86 +1,124 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { storageUrl } from "@/lib/storage";
-
-const SPLASH_IMAGES = [
-  "asset/onboarding/splash-bg.png",
-  "asset/onboarding/splash-bg-2.png",
-  "asset/onboarding/splash-bg-3.png",
-];
+import { signIn } from "next-auth/react";
 
 export default function SplashPage() {
   const router = useRouter();
   const [phase, setPhase] = useState<"splash" | "login">("splash");
-  const bgImage = useMemo(
-    () => storageUrl(SPLASH_IMAGES[Math.floor(Math.random() * SPLASH_IMAGES.length)]),
-    [],
-  );
+  const [showTagline, setShowTagline] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setPhase("login"), 2000);
-    return () => clearTimeout(timer);
+    const t1 = setTimeout(() => setPhase("login"), 100);        // symbol moves up
+    const t2 = setTimeout(() => setShowTagline(true), 800);     // tagline fades in (100 + 700ms transition)
+    const t3 = setTimeout(() => setShowButtons(true), 1300);    // buttons cascade in (800 + 500ms delay)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
-
-  const handleBrowse = () => {
-    router.push("/discover");
-  };
 
   return (
     <div className="relative w-full max-w-[400px] h-full overflow-hidden bg-surface-950">
-      {/* 배경 이미지 — 랜덤 */}
+      {/* Background */}
       <Image
-        src={bgImage}
+        src="/images/splash.jpg"
         alt=""
         fill
+        className="object-cover opacity-50"
         priority
-        className="object-cover"
       />
 
-      {/* 로고 — splash: 중앙, login: 위로 이동 */}
+      {/* Symbol — moves from vertical center to ~14% from top */}
       <div
         className={`absolute inset-x-0 flex justify-center transition-all duration-700 ease-out ${
-          phase === "splash" ? "top-[40%]" : "top-[22%]"
+          phase === "splash" ? "top-1/2 -translate-y-1/2" : "top-[14%] translate-y-0"
         }`}
       >
-        <img
-          src={storageUrl("asset/onboarding/curling-logo.svg")}
+        <Image
+          src="/images/curling-logo.svg"
           alt="Curling"
-          className={`w-[148px] h-[90px] transition-opacity duration-700 ${
-            phase === "splash" ? "opacity-0 animate-[fadeIn_0.8s_0.3s_forwards]" : "opacity-100"
-          }`}
+          width={148}
+          height={148}
+          priority
         />
       </div>
 
-      {/* 로그인 버튼 */}
-      <div
-        className={`absolute inset-x-0 bottom-[100px] px-5 flex flex-col gap-2.5 transition-all duration-700 ease-out ${
-          phase === "login"
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-10 pointer-events-none"
-        }`}
-      >
-        <button
-          type="button"
-          className="flex items-center justify-center h-[60px] rounded-lg bg-surface-50 typo-h6 text-surface-950"
+      {/* Login content */}
+      <div className={`absolute inset-x-0 bottom-[60px] flex flex-col items-center gap-24 ${showTagline || showButtons ? "" : "pointer-events-none"}`}>
+        {/* Tagline — opacity only, no movement */}
+        <p
+          className={`typo-h4 text-surface-50 text-center transition-opacity duration-500 ${
+            showTagline ? "opacity-100" : "opacity-0"
+          }`}
         >
-          Continue with Google
-        </button>
-        <button
-          type="button"
-          className="flex items-center justify-center h-[60px] rounded-lg backdrop-blur-[15px] bg-surface-500/20 typo-h6 text-surface-50"
-        >
-          Continue with Email
-        </button>
-        <button
-          type="button"
-          onClick={handleBrowse}
-          className="flex items-center justify-center h-[60px] rounded-lg typo-h6 text-surface-300 underline"
-        >
-          Browse without Account
-        </button>
+          Find a hair stylist in Korea<br />
+          who understands your hair
+        </p>
+
+        {/* Buttons — staggered top to bottom, 20px lift */}
+        <div className="w-[326px] flex flex-col gap-3">
+          <div
+            className={`transition-all duration-500 ${showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
+            style={{ transitionDelay: showButtons ?"0ms" : "0ms" }}
+          >
+            <button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl: "/onboarding/account-mode" })}
+              className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#f2f2f2]"
+            >
+              <Image src="/images/google-logo.svg" alt="Google" width={20} height={20} unoptimized />
+              <span className="flex-1 text-center font-[var(--font-roboto)] font-medium text-[14px] leading-5 text-surface-950">
+                Continue with Google
+              </span>
+            </button>
+          </div>
+
+          <div
+            className={`transition-all duration-500 ${showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
+            style={{ transitionDelay: showButtons ?"80ms" : "0ms" }}
+          >
+            <button
+              type="button"
+              onClick={() => signIn("kakao", { callbackUrl: "/onboarding/account-mode" })}
+              className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#fee500]"
+            >
+              <Image src="/images/kakao-logo.png" alt="Kakao" width={20} height={19} />
+              <span className="flex-1 text-center font-[var(--font-roboto)] font-medium text-[14px] leading-5 text-[rgba(0,0,0,0.85)]">
+                Login with Kakao
+              </span>
+            </button>
+          </div>
+
+          <div
+            className={`transition-all duration-500 ${showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
+            style={{ transitionDelay: showButtons ?"160ms" : "0ms" }}
+          >
+            <button
+              type="button"
+              className="w-full flex items-center justify-center h-11 px-6 rounded-xl bg-surface-800"
+            >
+              <span className="font-[var(--font-roboto)] font-medium text-[14px] leading-5 text-white">
+                Continue with Email
+              </span>
+            </button>
+          </div>
+
+          <div
+            className={`transition-all duration-500 ${showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
+            style={{ transitionDelay: showButtons ?"240ms" : "0ms" }}
+          >
+            <button
+              type="button"
+              onClick={() => router.push("/discover")}
+              className="w-full flex items-center justify-center h-11"
+            >
+              <span className="font-[var(--font-roboto)] font-medium text-[14px] leading-5 text-white">
+                Browse without Account
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,62 @@
+{
+  "name": "AccountMode",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "variant=Default": "197:426",
+      "variant=Client": "197:428",
+      "variant=Stylist": "197:433"
+    }
+  },
+  "components": {
+    "AccountMode": {
+      "description": "Two-card account mode selector shown during onboarding. Default shows both as clickable. Client highlights 'Find Stylists', Stylist highlights 'I'm a Stylist'. Each card is a full-bleed image with SemiBold H2 label at bottom-left.",
+      "props": {
+        "variant": ["Default", "Client", "Stylist"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.250",
+          "width": 358
+        },
+        "card": {
+          "flex": 1,
+          "height": 226,
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "padding": "size.space.250",
+          "align": "end",
+          "justify": "start"
+        },
+        "card_findStylists": {
+          "image_default": "images/account-mode/find-stylists.png",
+          "image_active": "images/account-mode/find-stylists-active.jpg",
+          "label": "Find\nStylists",
+          "typography": "font.h2",
+          "color": "color.text.inverse"
+        },
+        "card_imAStylist": {
+          "image_default": "images/account-mode/im-a-stylist.png",
+          "image_active": "images/account-mode/im-a-stylist-active.png",
+          "label": "I'm a\nStylist",
+          "typography": "font.h2",
+          "color": "color.text.inverse"
+        },
+        "variant_Default": {
+          "findStylists": { "image": "default", "interactive": true },
+          "imAStylist": { "image": "default", "interactive": true }
+        },
+        "variant_Client": {
+          "findStylists": { "image": "active", "interactive": false },
+          "imAStylist": { "image": "default", "interactive": true }
+        },
+        "variant_Stylist": {
+          "findStylists": { "image": "default", "interactive": true },
+          "imAStylist": { "image": "active", "interactive": false }
+        }
+      }
+    }
+  }
+}

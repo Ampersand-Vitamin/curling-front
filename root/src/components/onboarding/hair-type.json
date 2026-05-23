@@ -1,0 +1,91 @@
+{
+  "name": "HairType",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "variant=Default": "197:781",
+      "variant=straight": "197:783",
+      "variant=wavy": "197:792",
+      "variant=curly": "197:801",
+      "variant=coily": "197:810"
+    }
+  },
+  "components": {
+    "HairType": {
+      "description": "2×2 hair type selection grid. Each cell is a full-bleed photo card with centered H5 label and a drop shadow on the text. Selected variant uses a zoomed/cropped version of that hair type's image and is non-interactive. Other cells remain interactive.",
+      "props": {
+        "variant": ["Default", "straight", "wavy", "curly", "coily"]
+      },
+      "tokens": {
+        "layout": {
+          "display": "grid",
+          "columns": 2,
+          "gap": "size.space.200",
+          "width": 358
+        },
+        "cell": {
+          "height": 180,
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "align": "center",
+          "justify": "center",
+          "paddingY": "size.space.250"
+        },
+        "label": {
+          "typography": "font.h5",
+          "color": "color.text.inverse",
+          "align": "center",
+          "shadow": "effect.drop-shadow.300"
+        },
+        "images": {
+          "straight": {
+            "default": "images/hair-type/straight-hair.jpg",
+            "selected": "images/hair-type/straight-hair-selected.jpg"
+          },
+          "wavy": {
+            "default": "images/hair-type/wavy-hair.jpg",
+            "selected": "images/hair-type/wavy-hair-selected.jpg"
+          },
+          "curly": {
+            "default": "images/hair-type/curly-hair.jpg",
+            "selected": "images/hair-type/curly-hair-selected.jpg"
+          },
+          "coily": {
+            "default": "images/hair-type/coily-hair.jpg",
+            "selected": "images/hair-type/coily-hair-selected.jpg"
+          }
+        },
+        "variant_Default": {
+          "straight": { "image": "default", "interactive": true },
+          "wavy": { "image": "default", "interactive": true },
+          "curly": { "image": "default", "interactive": true },
+          "coily": { "image": "default", "interactive": true }
+        },
+        "variant_straight": {
+          "straight": { "image": "selected", "interactive": false },
+          "wavy": { "image": "default", "interactive": true },
+          "curly": { "image": "default", "interactive": true },
+          "coily": { "image": "default", "interactive": true }
+        },
+        "variant_wavy": {
+          "straight": { "image": "default", "interactive": true },
+          "wavy": { "image": "selected", "interactive": false },
+          "curly": { "image": "default", "interactive": true },
+          "coily": { "image": "default", "interactive": true }
+        },
+        "variant_curly": {
+          "straight": { "image": "default", "interactive": true },
+          "wavy": { "image": "default", "interactive": true },
+          "curly": { "image": "selected", "interactive": false },
+          "coily": { "image": "default", "interactive": true }
+        },
+        "variant_coily": {
+          "straight": { "image": "default", "interactive": true },
+          "wavy": { "image": "default", "interactive": true },
+          "curly": { "image": "default", "interactive": true },
+          "coily": { "image": "selected", "interactive": false }
+        }
+      }
+    }
+  }
+}

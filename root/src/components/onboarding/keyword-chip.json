@@ -1,0 +1,53 @@
+{
+  "name": "KeywordChip",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "status=Default": "188:480",
+      "status=Hover": "188:537"
+    }
+  },
+  "components": {
+    "KeywordChip": {
+      "description": "Onboarding keyword/language selection chip. Shows a flag icon and label. Hover (selected) state uses primary action color.",
+      "props": {
+        "status": ["Default", "Hover"],
+        "hasFlag": "boolean",
+        "hasIcon": "boolean"
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.200",
+          "paddingX": "size.space.300",
+          "paddingY": "size.space.250",
+          "borderRadius": "size.radius.400",
+          "height": "auto"
+        },
+        "status_Default": {
+          "background": "color.background.surface-200",
+          "icon": {
+            "flag": "assets/icons/flag-korean",
+            "size": "size.icon.small"
+          },
+          "label": {
+            "typography": "font.h6",
+            "color": "color.text.primary"
+          }
+        },
+        "status_Hover": {
+          "background": "color.action.primary",
+          "icon": {
+            "flag": "assets/icons/flag-korean",
+            "size": "size.icon.small"
+          },
+          "label": {
+            "typography": "font.h6",
+            "color": "color.text.inverse"
+          }
+        }
+      }
+    }
+  }
+}
