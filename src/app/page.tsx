@@ -64,7 +64,7 @@ export default function SplashPage() {
           >
             <button
               type="button"
-              onClick={() => signIn("google", { callbackUrl: "/onboarding/account-mode" })}
+              onClick={() => signIn("google", { callbackUrl: "/auth/redirect" })}
               className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#f2f2f2]"
             >
               <Image src="/images/google-logo.svg" alt="Google" width={20} height={20} unoptimized />
@@ -80,7 +80,7 @@ export default function SplashPage() {
           >
             <button
               type="button"
-              onClick={() => signIn("kakao", { callbackUrl: "/onboarding/account-mode" })}
+              onClick={() => signIn("kakao", { callbackUrl: "/auth/redirect" })}
               className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#fee500]"
             >
               <Image src="/images/kakao-logo.png" alt="Kakao" width={20} height={19} />
