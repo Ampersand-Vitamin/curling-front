@@ -9,20 +9,6 @@ interface PortfolioCardProps {
   onFavoriteClick?: (id: string) => void;
 }
 
-function BookmarkIcon({ filled = false }: { filled?: boolean }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path
-        d="M5 3.5h10v13l-5-3-5 3v-13z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-        fill={filled ? "currentColor" : "none"}
-      />
-    </svg>
-  );
-}
-
 export default function PortfolioCard({ card, onFavoriteClick }: PortfolioCardProps) {
   return (
     <Link
@@ -44,9 +30,10 @@ export default function PortfolioCard({ card, onFavoriteClick }: PortfolioCardPr
           e.preventDefault();
           onFavoriteClick?.(card.id);
         }}
-        className="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-surface-950/30 backdrop-blur-md text-white"
+        className="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-surface-white/30 backdrop-blur-sm text-white"
       >
-        <BookmarkIcon filled={card.isFavorited} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/bookmark.svg" alt="" width={24} height={24} className="[filter:brightness(0)_invert(1)]" />
       </button>
 
       <div className="absolute inset-x-0 bottom-0 px-2 pt-4 pb-2 bg-gradient-to-t from-surface-950/80 via-surface-950/40 to-transparent">

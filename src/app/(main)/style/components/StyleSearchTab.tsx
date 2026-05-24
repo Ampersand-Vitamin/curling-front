@@ -18,26 +18,6 @@ interface StyleSearchTabProps {
   onPhotoClear?: () => void;
 }
 
-function FilterIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M3 5h14M5 10h10M7 15h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function BookmarkIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path
-        d="M5 3.5h10v13l-5-3-5 3v-13z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 export default function StyleSearchTab({
   query,
@@ -58,7 +38,8 @@ export default function StyleSearchTab({
         onClick={onFilterClick}
         className="flex items-center justify-center size-12 rounded-full bg-surface-200 text-surface-900 shrink-0"
       >
-        <FilterIcon />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/filter.svg" alt="" width={20} height={20} />
       </button>
 
       {photoMode ? (
@@ -83,7 +64,8 @@ export default function StyleSearchTab({
         onClick={onFavoriteClick}
         className="flex items-center justify-center size-12 rounded-full bg-surface-200 text-surface-900 shrink-0"
       >
-        <BookmarkIcon />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/bookmark.svg" alt="" width={20} height={20} className="opacity-50" />
       </button>
     </div>
   );

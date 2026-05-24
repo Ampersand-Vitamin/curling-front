@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import StyleSearchTab from "./components/StyleSearchTab";
+import StyleFilterPopup, { STYLE_SLUG_MAP } from "./components/StyleFilterPopup";
 import RecommendedKeywords from "./components/RecommendedKeywords";
 import PortfolioGrid from "./components/PortfolioGrid";
 import { searchStyle, searchStyleByImage } from "@/lib/style/actions";
@@ -34,6 +35,7 @@ export default function StyleClient({
   const [isLoading, setIsLoading] = useState(false);
   // Design Ref: §6.2 — photo 검색 모드. null 이면 text 모드.
   const [photoSearch, setPhotoSearch] = useState<PhotoSearchState | null>(null);
+  const [showFilter, setShowFilter] = useState(false);
 
   // 동시성 가드: 이전 요청이 늦게 도착해도 최신만 반영
   const requestIdRef = useRef(0);
@@ -79,19 +81,32 @@ export default function StyleClient({
     }
   }, []);
 
+  // 필터 slug → 자연어 이름으로 변환하여 검색 쿼리에 합성
+  // (DB strict filter 가 아닌, CLIP 텍스트 검색으로 정성적 매칭)
+  const filterQuery = useMemo(() => {
+    if (activeSlugs.size === 0) return "";
+    return Array.from(activeSlugs)
+      .map((slug) => STYLE_SLUG_MAP.get(slug) ?? slug.replace(/_/g, " "))
+      .join(" ");
+  }, [activeSlugs]);
+
+  const combinedQuery = useMemo(() => {
+    return [query, filterQuery].filter(Boolean).join(" ");
+  }, [query, filterQuery]);
+
   // 텍스트 검색은 디바운스. 단, photo 모드에서는 텍스트 검색 비활성.
   useEffect(() => {
     if (photoSearch) return;
     const handle = setTimeout(() => {
-      runSearch(query, Array.from(activeSlugs), 0);
+      runSearch(combinedQuery, [], 0);
     }, QUERY_DEBOUNCE_MS);
     return () => clearTimeout(handle);
-  }, [query, activeSlugs, runSearch, photoSearch]);
+  }, [combinedQuery, runSearch, photoSearch]);
 
   // 사진 또는 키워드 칩 변경 시 photo 모드면 재검색
   useEffect(() => {
     if (!photoSearch) return;
-    runPhotoSearch(photoSearch.file, Array.from(activeSlugs));
+    runPhotoSearch(photoSearch.file, []);
   }, [photoSearch, activeSlugs, runPhotoSearch]);
 
   // preview URL cleanup
@@ -106,6 +121,14 @@ export default function StyleClient({
       const next = new Set(prev);
       if (next.has(slug)) next.delete(slug);
       else next.add(slug);
+      return next;
+    });
+  }, []);
+
+  const onRemoveKeyword = useCallback((slug: string) => {
+    setActiveSlugs((prev) => {
+      const next = new Set(prev);
+      next.delete(slug);
       return next;
     });
   }, []);
@@ -132,14 +155,14 @@ export default function StyleClient({
   }, []);
 
   return (
-    <div className="flex flex-col h-full bg-surface-50">
+    <div className="relative flex flex-col h-full bg-surface-50">
       <div className="sticky top-0 z-20 flex flex-col items-center bg-surface-50 pt-4 pb-2.5">
         <StyleSearchTab
           query={query}
           onQueryChange={setQuery}
           onSubmit={() => runSearch(query, Array.from(activeSlugs), 0)}
           isLoading={isLoading}
-          onFilterClick={() => {}}
+          onFilterClick={() => setShowFilter(true)}
           onFavoriteClick={() => {}}
           onFileSelect={onFileSelect}
           photoMode={
@@ -169,6 +192,23 @@ export default function StyleClient({
               : "No designers yet"
         }
       />
+
+      {/* Filter overlay + popup */}
+      {showFilter && (
+        <>
+          <div className="absolute inset-0 backdrop-blur-sm z-30" />
+          <div className="absolute inset-0 z-30 bg-gradient-to-b from-surface-950/30 via-surface-950/70 to-surface-950/80" />
+          <div className="absolute inset-x-3 top-3 bottom-3 z-40">
+            <StyleFilterPopup
+              activeKeywords={activeSlugs}
+              onToggle={onToggleKeyword}
+              onRemove={onRemoveKeyword}
+              onClose={() => setShowFilter(false)}
+              onApply={() => setShowFilter(false)}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
