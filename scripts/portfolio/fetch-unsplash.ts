@@ -153,6 +153,26 @@ type KeywordRow = {
   category_slug: string;
 };
 
+type SupabaseKeywordRow = {
+  id: string;
+  slug: string;
+  name: string;
+  keyword_category: { slug: string } | { slug: string }[];
+};
+
+function toKeywordRow(row: SupabaseKeywordRow): KeywordRow {
+  const category = Array.isArray(row.keyword_category)
+    ? row.keyword_category[0]
+    : row.keyword_category;
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    category_slug: category.slug,
+  };
+}
+
 async function fetchKeywords(categories: string[]): Promise<KeywordRow[]> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -167,12 +187,7 @@ async function fetchKeywords(categories: string[]): Promise<KeywordRow[]> {
     .in("keyword_category.slug", categories);
   if (error) throw new Error(`[fetch/keyword] ${error.message}`);
 
-  return (data ?? []).map((r: { id: string; slug: string; name: string; keyword_category: { slug: string } }) => ({
-    id: r.id,
-    slug: r.slug,
-    name: r.name,
-    category_slug: r.keyword_category.slug,
-  }));
+  return ((data ?? []) as SupabaseKeywordRow[]).map(toKeywordRow);
 }
 
 async function main() {
