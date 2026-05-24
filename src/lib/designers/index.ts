@@ -13,6 +13,7 @@ export type {
   DesignerListItem,
   DesignerLinks,
   DesignerMapItem,
+  DesignerPortfolioPreview,
 } from "./types";
 
 export { getDesignerById } from "./queries";

@@ -5,7 +5,11 @@
 // 기존 src/lib/designers.ts 의 getDesignerMapItems 를 본 파일로 이전.
 
 import { supabase } from "@/lib/supabase";
-import type { DesignerListItem, DesignerMapItem } from "./types";
+import type {
+  DesignerListItem,
+  DesignerMapItem,
+  DesignerPortfolioPreview,
+} from "./types";
 
 type RawListRow = {
   id: string;
@@ -25,6 +29,7 @@ type RawListRow = {
 type RawPortfolioRow = {
   designer_id: string;
   image_path: string;
+  keywords: string[] | null;
 };
 
 const LIST_SELECT = `
@@ -36,7 +41,7 @@ const LIST_SELECT = `
 
 function toListItem(
   r: RawListRow,
-  representativePortfolioImage?: string,
+  portfolioPreviews: DesignerPortfolioPreview[] = [],
 ): DesignerListItem {
   const keywordSlugs = (r.designer_keyword ?? [])
     .map((row) => row.keyword?.slug)
@@ -44,14 +49,18 @@ function toListItem(
   const salonLatLng = r.salon
     ? { lat: Number(r.salon.latitude), lng: Number(r.salon.longitude) }
     : null;
+  const portfolioImages =
+    portfolioPreviews.length > 0
+      ? portfolioPreviews.map((p) => p.imagePath)
+      : (r.portfolio_images ?? []);
+
   return {
     id: r.id,
     displayName: r.display_name,
     role: r.role,
     profileImageUrl: r.profile_image_url,
-    portfolioImages: representativePortfolioImage
-      ? [representativePortfolioImage]
-      : (r.portfolio_images ?? []),
+    portfolioImages,
+    portfolioPreviews,
     languages: r.languages ?? [],
     highlightMessage: r.highlight_message,
     salonId: r.salon_id,
@@ -60,7 +69,7 @@ function toListItem(
   };
 }
 
-async function attachRepresentativePortfolioImages(
+async function attachPortfolioPreviews(
   rows: RawListRow[],
   caller: string,
 ): Promise<DesignerListItem[]> {
@@ -69,7 +78,7 @@ async function attachRepresentativePortfolioImages(
   const designerIds = rows.map((r) => r.id);
   const { data, error } = await supabase
     .from("portfolio")
-    .select("designer_id, image_path")
+    .select("designer_id, image_path, keywords")
     .in("designer_id", designerIds)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: true });
@@ -78,14 +87,17 @@ async function attachRepresentativePortfolioImages(
     throw new Error(`[${caller}:portfolio] ${error.message}`);
   }
 
-  const representativeByDesigner = new Map<string, string>();
+  const previewsByDesigner = new Map<string, DesignerPortfolioPreview[]>();
   for (const row of (data ?? []) as RawPortfolioRow[]) {
-    if (!representativeByDesigner.has(row.designer_id)) {
-      representativeByDesigner.set(row.designer_id, row.image_path);
-    }
+    const previews = previewsByDesigner.get(row.designer_id) ?? [];
+    previews.push({
+      imagePath: row.image_path,
+      keywordSlugs: row.keywords ?? [],
+    });
+    previewsByDesigner.set(row.designer_id, previews);
   }
 
-  return rows.map((r) => toListItem(r, representativeByDesigner.get(r.id)));
+  return rows.map((r) => toListItem(r, previewsByDesigner.get(r.id) ?? []));
 }
 
 /**
@@ -105,7 +117,7 @@ export async function getBestMatchDesigners(
     throw new Error(`[getBestMatchDesigners] ${error.message}`);
   }
 
-  return attachRepresentativePortfolioImages(
+  return attachPortfolioPreviews(
     (data ?? []) as unknown as RawListRow[],
     "getBestMatchDesigners",
   );
@@ -129,7 +141,7 @@ export async function getDesignersBySalon(
     throw new Error(`[getDesignersBySalon] ${error.message}`);
   }
 
-  return attachRepresentativePortfolioImages(
+  return attachPortfolioPreviews(
     (data ?? []) as unknown as RawListRow[],
     "getDesignersBySalon",
   );

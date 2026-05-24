@@ -12,6 +12,11 @@ export type DesignerKeyword = {
   categorySlug: string;
 };
 
+export type DesignerPortfolioPreview = {
+  imagePath: string;
+  keywordSlugs: string[];
+};
+
 /** 캐러셀/리스트용 경량 모델 (Best Match for you, 향후 검색 결과 등) */
 export type DesignerListItem = {
   id: string;
@@ -20,6 +25,8 @@ export type DesignerListItem = {
   profileImageUrl: string | null;
   /** Hero 첫 슬라이드 = portfolioImages[0]. 시드 규칙상 최소 1개 보장 */
   portfolioImages: string[];
+  /** Discover 필터 문맥에 맞는 카드 배경 선택용 portfolio rows */
+  portfolioPreviews: DesignerPortfolioPreview[];
   languages: string[];
   highlightMessage: string | null;
   /** 소속 살롱 id — Discover 디자이너 핀 클릭 시 살롱 단위 필터링용 */

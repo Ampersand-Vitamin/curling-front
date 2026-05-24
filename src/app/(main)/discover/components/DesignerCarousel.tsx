@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import DesignerCard from "./DesignerCard";
 import { storageUrl } from "@/lib/storage";
 import { haversineKm, type LatLng } from "@/lib/geo";
+import { selectDesignerPortfolioImage } from "@/lib/designers/selectPortfolioImage";
 import type { DesignerListItem } from "@/lib/designers";
 
 interface Props {
@@ -20,6 +21,8 @@ interface Props {
   emptyMessage?: string;
   /** 사용자 현재 위치 — 있으면 가까운 거리순 정렬, 없으면 자연 순서 */
   userLocation?: LatLng | null;
+  /** 현재 섹션/필터와 맞는 portfolio 이미지를 우선 선택 */
+  portfolioKeywordSlugs?: string[];
 }
 
 export default function DesignerCarousel({
@@ -29,6 +32,7 @@ export default function DesignerCarousel({
   onViewMore,
   emptyMessage = "매칭되는 디자이너가 아직 없어요.",
   userLocation = null,
+  portfolioKeywordSlugs = [],
 }: Props) {
   // 기본 정렬: 사용자 위치로부터 가까운 살롱 순.
   // 살롱 좌표가 없는 디자이너는 뒤로 밀어둠.
@@ -78,7 +82,7 @@ export default function DesignerCarousel({
               languages={d.languages}
               profileImage={d.profileImageUrl ? storageUrl(d.profileImageUrl) : ""}
               portfolioImage={
-                d.portfolioImages[0] ? storageUrl(d.portfolioImages[0]) : ""
+                selectDesignerPortfolioImage(d, portfolioKeywordSlugs)
               }
               highlightMessage={d.highlightMessage ?? undefined}
             />
