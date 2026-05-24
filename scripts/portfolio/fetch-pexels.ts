@@ -52,7 +52,24 @@ function parseArgs() {
 // Keyword → Pexels query
 // ─────────────────────────────────────────────────────────────
 
-function buildQuery(keywordName: string, categorySlug: string): string {
+// slug 별 검색어 override — Pexels 가 잘못 해석하는 키워드 정교화
+const QUERY_OVERRIDES: Record<string, string> = {
+  big_chop:           "short natural hair big chop haircut result salon",
+  bleach_and_tone:    "bleached blonde hair toning result salon close-up",
+  coily_hair_4a_4c:   "coily kinky hair type 4c natural texture close-up",
+  afro_textured_hair: "afro textured natural hair close-up portrait",
+  locs:               "dreadlocks locs hairstyle salon portrait",
+  coily_hair_care:    "coily natural hair care routine styling result",
+  digital_perm:       "digital perm curly hairstyle salon result",
+  head_spa:           "hair head spa treatment salon scalp massage",
+  mixed_texture_hair: "mixed texture curly straight hair close-up portrait",
+  curly_hair_3a_3c:   "curly hair type 3a 3b 3c ringlets close-up",
+  taper:              "taper fade haircut men close-up barber",
+  undercut:           "undercut hairstyle close-up shaved sides",
+};
+
+function buildQuery(keywordName: string, categorySlug: string, keywordSlug?: string): string {
+  if (keywordSlug && QUERY_OVERRIDES[keywordSlug]) return QUERY_OVERRIDES[keywordSlug];
   const name = keywordName.trim();
   if (categorySlug === "hair_type") return `${name} hair`;
   if (categorySlug === "hair_color") return `${name} hair color`;
@@ -225,7 +242,7 @@ async function main() {
 
   for (let i = 0; i < keywords.length; i++) {
     const kw = keywords[i];
-    const query = buildQuery(kw.name, kw.category_slug);
+    const query = buildQuery(kw.name, kw.category_slug, kw.slug);
     const folder = join(outRoot, kw.slug);
 
     let existing = 0;

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curling Front · 팀 작업 분담 가이드</title>
+<style>
+  :root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --border: #e6e1d8;
+    --text: #2b2620;
+    --text-muted: #6b6359;
+    --primary: #8b6f4e;
+    --accent: #3b6ea5;
+    --warn: #c75a3c;
+    --code-bg: #f1ede5;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 32px 16px 80px;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+  header { margin-bottom: 32px; }
+  h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .subtitle { color: var(--text-muted); font-size: 15px; }
+  h2 {
+    font-size: 20px;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  h3 { font-size: 16px; margin: 20px 0 8px; }
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .assign-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .assign-grid { grid-template-columns: 1fr; }
+  }
+  .assign-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .assign-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .assign-card .title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  code, .path {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 8px 0;
+  }
+  pre code { background: transparent; padding: 0; }
+  ol, ul { padding-left: 20px; margin: 8px 0; }
+  li { margin-bottom: 6px; }
+  .callout {
+    border-left: 3px solid var(--warn);
+    background: #fdf3ef;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0 0;
+    font-size: 14px;
+  }
+  .callout strong { color: var(--warn); }
+  .rule-list li::marker { color: var(--primary); font-weight: 700; }
+  .footer-note {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Curling Front · 팀 작업 분담 가이드</h1>
+    <p class="subtitle">충돌(conflict)을 피하기 위한 영역별 작업 규칙</p>
+  </header>
+
+  <section>
+    <h2>작업 분담</h2>
+    <div class="assign-grid">
+      <div class="assign-card">
+        <div class="label">Track 1</div>
+        <div class="title">온보딩 (Onboarding)</div>
+        <div>작업 경로</div>
+        <pre><code>src/app/(main)/designer/[designerId]/page.tsx</code></pre>
+      </div>
+      <div class="assign-card">
+        <div class="label">Track 2</div>
+        <div class="title">스타일 (Style)</div>
+        <div>작업 경로</div>
+        <pre><code>src/app/(main)/style/</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="badge">!</span> 충돌 방지 규칙</h2>
+    <ol class="rule-list">
+      <li><strong>main 브랜치에서 직접 작업 금지.</strong> 반드시 별도 브랜치를 만들 것.</li>
+      <li>본인이 맡은 경로 안의 <strong>새 파일</strong>은 자유롭게 추가해도 OK.</li>
+      <li>본인 경로 <strong>밖에 이미 존재하는 공용 파일</strong>을 수정해야 한다면, 충돌 가능성이 있으니 조심히 작업! 또는 공유.</li>
+      <li>전에 올린 <code>.svg</code> 파일은 <code>public/</code> 하위에 있음 — 그대로 참조해서 사용.</li>
+    </ol>
+    <div class="callout">
+      <strong>주의:</strong> 공용 컴포넌트, 디자인 토큰, 글로벌 스타일(<code>globals.css</code>), 공유 타입 등은
+      수정하지말고 사용만!
+    </div>
+  </section>
+
+  <section>
+    <h2>Git 작업 흐름</h2>
+
+    <h3>1. 작업 시작 전 — main 최신화</h3>
+<pre><code>git checkout main
+git pull</code></pre>
+
+    <h3>2. 새 브랜치 생성</h3>
+<pre><code>git checkout -b "브랜치명"</code></pre>
+    <p style="font-size:13px;color:var(--text-muted);margin:4px 0 0;">
+      예시: <code>feat/onboarding-designer</code>, <code>feat/style-page</code>
+    </p>
+
+    <h3>3. 작업 후 push</h3>
+<pre><code>git push</code></pre>
+    <p style="font-size:13px;color:var(--text-muted);margin:4px 0 0;">
+      만약 처음 push라 거절된다면:
+    </p>
+<pre><code>git push -u origin "브랜치명"</code></pre>
+
+    <h3>4. PR 생성 → 리뷰 → squash merge</h3>
+    <ul>
+      <li>PR 제목 형식: <code>feat: 디스커버 페이지 맵뷰 추가</code> 같이 커밋 컨벤션과 동일하게.</li>
+      <li>리뷰어 1명 이상 승인 후 merge.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>참고: 브랜치 네이밍</h2>
+    <ul>
+      <li><code>feat/&lt;feature&gt;</code> — 새 기능</li>
+      <li><code>fix/&lt;issue&gt;</code> — 버그 수정</li>
+      <li><code>chore/&lt;task&gt;</code> — 잡일/설정</li>
+    </ul>
+  </section>
+
+  <p class="footer-note">충돌 발생 시 절대 강제 push 금지 · 팀에 공유 후 함께 해결</p>
+
+</div>
+</body>
+</html>

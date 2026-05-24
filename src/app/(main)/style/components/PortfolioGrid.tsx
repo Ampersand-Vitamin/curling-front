@@ -14,8 +14,9 @@ interface PortfolioGridProps {
 }
 
 /**
- * CSS columns 기반 2-column masonry.
- * 카드 자체는 `break-inside-avoid` 로 컬럼 사이 분할 방지.
+ * 2-column interleaved grid (좌→우 교차 배치).
+ * CSS columns 가 아닌 수동 split — 아이템이 좌→우→좌→우 순서로 배치되어
+ * 결과 변경 시 양쪽 컬럼 모두 시각적으로 업데이트됨.
  * 무한 스크롤은 sentinel + IntersectionObserver.
  */
 export default function PortfolioGrid({
@@ -41,8 +42,13 @@ export default function PortfolioGrid({
     return () => obs.disconnect();
   }, [onLoadMore, hasMore]);
 
+  // 중복 id 제거 (loadMore offset 겹침 또는 RPC 결과 중복 방어)
+  const uniqueCards = cards.filter(
+    (c, i, arr) => arr.findIndex((x) => x.id === c.id) === i,
+  );
+
   // 빈 결과 + 로딩 중: 중앙 spinner (초기 검색 / 결과 0건 케이스)
-  if (cards.length === 0 && isLoading) {
+  if (uniqueCards.length === 0 && isLoading) {
     return (
       <div className="px-4 py-16 w-full flex items-center justify-center">
         <GridSpinner />
@@ -50,7 +56,7 @@ export default function PortfolioGrid({
     );
   }
 
-  if (cards.length === 0 && !isLoading) {
+  if (uniqueCards.length === 0 && !isLoading) {
     return (
       <div className="px-4 py-10 w-full text-center typo-body2 text-surface-500">
         {emptyMessage}
@@ -60,20 +66,23 @@ export default function PortfolioGrid({
 
   return (
     <div className="px-4 py-2.5 w-full">
-      {/* 카드 있는 상태에서 재검색 중: dim + pointer-events 차단 */}
+      {/* 좌→우 교차 배치: 홀수 idx 왼쪽, 짝수 idx 오른쪽 */}
       <div
-        className={`columns-2 gap-2 [column-fill:_balance] transition-opacity ${
+        className={`flex gap-2 transition-opacity ${
           isLoading ? "opacity-50 pointer-events-none" : "opacity-100"
         }`}
         aria-busy={isLoading}
       >
-        {cards.map((card) => (
-          <PortfolioCard
-            key={card.id}
-            card={card}
-            onFavoriteClick={onFavoriteClick}
-          />
-        ))}
+        <div className="flex-1 flex flex-col gap-2">
+          {uniqueCards.filter((_, i) => i % 2 === 0).map((card) => (
+            <PortfolioCard key={card.id} card={card} onFavoriteClick={onFavoriteClick} />
+          ))}
+        </div>
+        <div className="flex-1 flex flex-col gap-2">
+          {uniqueCards.filter((_, i) => i % 2 === 1).map((card) => (
+            <PortfolioCard key={card.id} card={card} onFavoriteClick={onFavoriteClick} />
+          ))}
+        </div>
       </div>
       {hasMore && (
         <div ref={sentinelRef} className="h-10 flex items-center justify-center">

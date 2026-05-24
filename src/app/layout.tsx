@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import ClarityProvider from "@/components/ClarityProvider";
 import "./globals.css";
 
 // Design Ref: §5 — Pretendard via next/font/local, weight 400/500/600
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pretendard.variable} h-full antialiased`}>
       <body className="h-full flex justify-center bg-surface-950 font-pretendard overflow-hidden">
+        <ClarityProvider />
         {children}
       </body>
     </html>
