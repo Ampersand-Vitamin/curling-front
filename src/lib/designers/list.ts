@@ -16,7 +16,6 @@ type RawListRow = {
   display_name: string;
   role: string;
   profile_image_url: string | null;
-  portfolio_images: string[];
   languages: string[];
   highlight_message: string | null;
   salon_id: string | null;
@@ -33,7 +32,7 @@ type RawPortfolioRow = {
 };
 
 const LIST_SELECT = `
-  id, display_name, role, profile_image_url, portfolio_images,
+  id, display_name, role, profile_image_url,
   languages, highlight_message, salon_id,
   salon:salon_id ( latitude, longitude ),
   designer_keyword ( keyword:keyword_id ( slug ) )
@@ -49,17 +48,12 @@ function toListItem(
   const salonLatLng = r.salon
     ? { lat: Number(r.salon.latitude), lng: Number(r.salon.longitude) }
     : null;
-  const portfolioImages =
-    portfolioPreviews.length > 0
-      ? portfolioPreviews.map((p) => p.imagePath)
-      : (r.portfolio_images ?? []);
-
   return {
     id: r.id,
     displayName: r.display_name,
     role: r.role,
     profileImageUrl: r.profile_image_url,
-    portfolioImages,
+    portfolioImages: portfolioPreviews.map((p) => p.imagePath),
     portfolioPreviews,
     languages: r.languages ?? [],
     highlightMessage: r.highlight_message,
