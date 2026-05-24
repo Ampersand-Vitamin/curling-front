@@ -5,7 +5,6 @@
 //
 // server-only. Server Action 에서만 호출.
 
-import { embedText } from "./clip";
 import { EMBED_DIMENSIONS } from "./types";
 
 function ensureServer() {
@@ -23,6 +22,7 @@ export async function embedQuery(query: string): Promise<number[] | null> {
   const trimmed = query.trim();
   if (!trimmed) return null;
 
+  const { embedText } = await import("./clip");
   const v = await embedText(trimmed);
   if (v.length !== EMBED_DIMENSIONS) {
     throw new Error(`[portfolio-search/embed] unexpected dims: ${v.length}`);

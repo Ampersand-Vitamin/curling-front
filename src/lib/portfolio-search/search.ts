@@ -15,7 +15,6 @@
 import { storageUrl } from "@/lib/storage";
 import { getPortfolioAdminClient } from "./client";
 import { embedQuery } from "./embed";
-import { embedImage } from "./clip";
 import {
   RPC_NAME,
   type PortfolioRpcRow,
@@ -112,6 +111,7 @@ export async function searchPortfoliosByImage(
   );
 
   // (1) CLIP image embedding (768d)
+  const { embedImage } = await import("./clip");
   const queryImageEmbedding = await embedImage(params.imageBuffer);
 
   // (2) RPC — query_text 빈, query_embedding null, query_image_embedding 채움
