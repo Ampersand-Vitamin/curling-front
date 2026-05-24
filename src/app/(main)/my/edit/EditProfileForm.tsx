@@ -87,7 +87,7 @@ type Profile = {
   created_at: string | null;
 } | null;
 
-type Props = { profile: Profile; email: string; avatarUrl: string | null };
+type Props = { profile: Profile; email: string; avatarUrl: string | null; sessionName: string };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -126,13 +126,14 @@ function Dropdown({
   }
 
   return (
-    <div className="flex flex-col gap-[10px] w-full">
+    <div className="flex flex-col gap-2.5 w-full">
       <p className="typo-button text-surface-950">{label}</p>
-      <div className="bg-surface-200 rounded-[16px] overflow-hidden w-full">
+      <div className="bg-surface-200 rounded-2xl overflow-hidden w-full">
         <button
           type="button"
           onClick={() => onToggle(id)}
-          className="h-[44px] flex items-center gap-[10px] pl-4 pr-[10px] w-full"
+          style={{ minHeight: 44, paddingRight: 12 }}
+          className="flex items-center gap-2.5 pl-4 w-full"
         >
           <span
             className={`flex-1 typo-button text-left truncate ${
@@ -155,13 +156,14 @@ function Dropdown({
         </button>
 
         {open && (
-          <div className="px-3 pb-3 flex flex-col gap-4 max-h-[260px] overflow-y-auto scrollbar-hidden">
+          <div className="px-3 pb-3 flex flex-col gap-2 max-h-64 overflow-y-auto scrollbar-hidden">
             {options.map((opt) => (
               <button
                 key={opt}
                 type="button"
                 onClick={() => handleSelect(opt)}
-                className={`rounded-[8px] p-[10px] w-full text-left typo-body2 transition-colors ${
+                style={{ padding: 10 }}
+                className={`rounded-lg w-full text-left typo-body2 transition-colors ${
                   selected.includes(opt)
                     ? "bg-surface-800 text-white"
                     : "bg-white text-surface-800"
@@ -195,7 +197,8 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="bg-surface-200 rounded-[16px] h-[44px] pl-4 pr-[10px] typo-button text-surface-950 placeholder:text-surface-400 outline-none w-full"
+        style={{ minHeight: 44 }}
+        className="bg-surface-200 rounded-2xl pl-4 pr-2.5 typo-button text-surface-950 placeholder:text-surface-400 outline-none w-full"
       />
     </div>
   );
@@ -207,21 +210,21 @@ function ReadRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-white py-3 flex items-center gap-2">
       <span className="typo-button text-surface-950 shrink-0 whitespace-nowrap">{label}</span>
-      <span className="flex-1 typo-button text-surface-600 text-right truncate">{value || "—"}</span>
+      <span className="flex-1 typo-button text-surface-600 truncate" style={{ textAlign: "right" }}>{value || "—"}</span>
     </div>
   );
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-export function EditProfileForm({ profile, email, avatarUrl }: Props) {
+export function EditProfileForm({ profile, email, avatarUrl, sessionName }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
-  const [name, setName] = useState(profile?.name ?? "");
+  const [name, setName] = useState(profile?.name ?? sessionName);
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [age, setAge] = useState(profile?.age ?? "");
   const [gender, setGender] = useState(profile?.gender ?? "");
@@ -256,7 +259,10 @@ export function EditProfileForm({ profile, email, avatarUrl }: Props) {
         const fd = new FormData();
         fd.append("file", pendingFile);
         const r = await fetch("/api/profile/avatar", { method: "POST", body: fd });
-        if (!r.ok) console.error("Avatar upload failed:", await r.text());
+        if (!r.ok) {
+          const msg = await r.text();
+          console.error("Avatar upload failed:", msg);
+        }
       }
 
       const res = await fetch("/api/onboarding", {
@@ -277,7 +283,16 @@ export function EditProfileForm({ profile, email, avatarUrl }: Props) {
           preferredStyles: profile?.preferred_styles ?? [],
         }),
       });
-      if (res.ok) router.back();
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Save failed:", err);
+        alert(`저장 실패: ${err.error ?? "Unknown error"}`);
+        return;
+      }
+
+      router.push("/my");
+      router.refresh();
     } finally {
       setSaving(false);
     }
@@ -287,16 +302,19 @@ export function EditProfileForm({ profile, email, avatarUrl }: Props) {
     <div className="bg-white min-h-full flex flex-col">
 
       {/* Sticky header */}
-      <div className="sticky top-0 bg-white z-10 pt-16 pb-[10px] relative flex items-center justify-center">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          aria-label="Go back"
-          className="absolute left-4 p-1 text-surface-950"
-        >
-          <ChevronLeftIcon size={24} />
-        </button>
-        <p className="typo-h6 text-surface-600">Profile Setting</p>
+      <div className="sticky top-0 bg-white z-10 pt-16 pb-2.5">
+        <div className="relative flex items-center justify-center">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="p-1 text-surface-950"
+            style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }}
+          >
+            <ChevronLeftIcon size={24} />
+          </button>
+          <p className="typo-h6 text-surface-600">Profile Setting</p>
+        </div>
       </div>
 
       {/* Content */}
@@ -304,8 +322,8 @@ export function EditProfileForm({ profile, email, avatarUrl }: Props) {
 
         {/* Profile Info */}
         <div className="flex flex-col items-center gap-3 py-4">
-          <div className="relative">
-            <div className="w-[100px] h-[100px] shrink-0 rounded-full overflow-hidden border border-surface-400 bg-surface-300 text-surface-500 flex items-center justify-center">
+          <div className="relative shrink-0" style={{ width: 100, height: 100, minWidth: 100 }}>
+            <div className="rounded-full overflow-hidden border border-surface-400 bg-surface-300 text-surface-500 flex items-center justify-center" style={{ width: 100, height: 100 }}>
               {displayAvatar ? (
                 <Image
                   src={displayAvatar}
@@ -326,9 +344,10 @@ export function EditProfileForm({ profile, email, avatarUrl }: Props) {
               type="button"
               aria-label="Change profile photo"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-white border border-surface-400 flex items-center justify-center text-surface-600"
+              className="bg-white border border-surface-400 flex items-center justify-center text-surface-600"
+              style={{ position: "absolute", bottom: 0, right: 0, width: 24, height: 24, borderRadius: "50%" }}
             >
-              <SettingIcon size={12} />
+              <SettingIcon size={14} />
             </button>
             <input
               ref={fileInputRef}

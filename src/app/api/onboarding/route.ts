@@ -11,25 +11,31 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  const { error } = await supabaseAdmin.rpc("upsert_hair_profile", {
-    p_user_id:          session.user.id,
-    p_account_mode:     body.accountMode,
-    p_name:             body.name,
-    p_gender:           body.gender,
-    p_hair_type:        body.hairType,
-    p_hair_length:      body.hairLength,
-    p_hair_concerns:    body.hairConcerns,
-    p_hair_history:     body.hairHistory,
-    p_languages:        body.languages,
-    p_preferred_styles: body.preferredStyles,
-    // profile-only fields (undefined when not sent → Postgres DEFAULT NULL → preserves existing)
-    ...(body.bio        !== undefined && { p_bio:        body.bio }),
-    ...(body.age        !== undefined && { p_age:        body.age }),
-    ...(body.hairColor  !== undefined && { p_hair_color: body.hairColor }),
-  });
+  const payload: Record<string, unknown> = {
+    user_id:          session.user.id,
+    account_mode:     body.accountMode   ?? null,
+    name:             body.name          ?? "",
+    gender:           body.gender        ?? "",
+    hair_type:        body.hairType      ?? "",
+    hair_length:      body.hairLength    ?? "",
+    hair_concerns:    body.hairConcerns  ?? [],
+    hair_history:     body.hairHistory   ?? [],
+    languages:        body.languages     ?? [],
+    preferred_styles: body.preferredStyles ?? [],
+    updated_at:       new Date().toISOString(),
+  };
+
+  // bio/age/hair_color: null이면 기존 값 보존 (온보딩 흐름), 값이 있으면 덮어씀
+  if (body.bio       != null) payload.bio        = body.bio;
+  if (body.age       != null) payload.age        = body.age;
+  if (body.hairColor != null) payload.hair_color = body.hairColor;
+
+  const { error } = await supabaseAdmin
+    .from("hair_profiles")
+    .upsert(payload, { onConflict: "user_id" });
 
   if (error) {
-    console.error("upsert_hair_profile rpc error:", error.message, error.code);
+    console.error("upsert hair_profile error:", error.message, error.code);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
@@ -43,14 +49,15 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabaseAdmin.rpc("get_hair_profile", {
-    p_user_id: session.user.id,
-  });
+  const { data: profile, error } = await supabaseAdmin
+    .from("hair_profiles")
+    .select("*")
+    .eq("user_id", session.user.id)
+    .maybeSingle();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const profile = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
-  return NextResponse.json({ profile });
+  return NextResponse.json({ profile: profile ?? null });
 }

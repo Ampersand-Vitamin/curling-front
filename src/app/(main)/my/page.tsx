@@ -53,10 +53,11 @@ export default async function MyPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/");
 
-  const { data: rpcData } = await supabaseAdmin.rpc("get_hair_profile", {
-    p_user_id: session.user.id,
-  });
-  const profile = Array.isArray(rpcData) ? (rpcData[0] ?? null) : (rpcData ?? null);
+  const { data: profile } = await supabaseAdmin
+    .from("hair_profiles")
+    .select("*")
+    .eq("user_id", session.user.id)
+    .maybeSingle();
 
   const displayName = (profile?.name as string | null) || session.user.name || "User";
   const avatarUrl = (profile?.avatar_url as string | null) ?? session.user.image;
@@ -93,9 +94,9 @@ export default async function MyPage() {
 
           {/* Avatar + name + bio */}
           <div className="flex flex-col items-center gap-3 w-full">
-            <div className="w-[100px] h-[100px] rounded-full overflow-hidden shrink-0 border border-surface-400 bg-surface-300 text-surface-500 flex items-center justify-center">
+            <div className="rounded-full overflow-hidden shrink-0 border border-surface-400 bg-surface-300 text-surface-500 flex items-center justify-center" style={{ width: 120, height: 120, minWidth: 120 }}>
               {avatarUrl ? (
-                <Image src={avatarUrl} alt={displayName} width={100} height={100} className="object-cover size-full" />
+                <Image src={avatarUrl} alt={displayName} width={120} height={120} className="object-cover w-full h-full" />
               ) : (
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
                   <circle cx="12" cy="9" r="4" />
