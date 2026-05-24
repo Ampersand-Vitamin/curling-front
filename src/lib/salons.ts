@@ -1,5 +1,10 @@
 // Design Ref: MapView 핀 마커용 살롱 데이터 서버 fetch
-import { supabase } from "./supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 import type { Salon } from "@/types/salon";
 
 type RawSalonRow = {

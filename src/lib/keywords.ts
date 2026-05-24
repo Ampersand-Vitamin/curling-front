@@ -1,6 +1,11 @@
 // Design Ref: §4.2 — FilterPopup이 바로 렌더 가능한 형태로 서버에서 shape 완료
 // Plan FR-02, DS-1, DS-5
-import { supabase } from "./supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 import type {
   FilterCategorySlug,
   FilterSection,
