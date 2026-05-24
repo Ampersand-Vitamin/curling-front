@@ -7,7 +7,12 @@
 //   (3) portfolio rows
 // → Promise.all 로 병렬 실행 후 도메인 모델로 변환.
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 import type {
   DesignerDetail,
   DesignerKeyword,

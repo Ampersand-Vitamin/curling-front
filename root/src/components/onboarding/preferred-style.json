@@ -1,0 +1,43 @@
+{
+  "name": "PreferredStyle",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "status=Default": "236:894",
+      "status=Selected": "236:893"
+    }
+  },
+  "components": {
+    "PreferredStyle": {
+      "description": "Onboarding preferred-style photo card. Used in a masonry/column grid. Default shows the image as-is. Selected adds a 50% black overlay and a frosted-glass star bookmark button (20px, top-right). Tapping a card toggles selection.",
+      "props": {
+        "selected": "boolean",
+        "src": "string (image URL)",
+        "alt": "string"
+      },
+      "tokens": {
+        "card": {
+          "width": 114,
+          "height": 201,
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "shadow": "effect.drop-shadow.400"
+        },
+        "overlay": {
+          "background": "rgba(0,0,0,0.5)",
+          "status": "Selected only"
+        },
+        "bookmark": {
+          "size": 20,
+          "borderRadius": "size.radius.full",
+          "background": "action.overlay-white",
+          "backdropBlur": "size.blur.100",
+          "icon": "assets/icons/star",
+          "position": "top-right",
+          "padding": "size.space.100",
+          "status": "Selected only"
+        }
+      }
+    }
+  }
+}

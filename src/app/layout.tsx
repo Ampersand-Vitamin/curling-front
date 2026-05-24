@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Roboto } from "next/font/google";
 import ClarityProvider from "@/components/ClarityProvider";
 import "./globals.css";
 
-// Design Ref: §5 — Pretendard via next/font/local, weight 400/500/600
 const pretendard = localFont({
   src: "../../node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2",
   variable: "--font-pretendard-variable",
   display: "swap",
   weight: "400 600",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["500"],
+  variable: "--font-roboto",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${pretendard.variable} h-full antialiased`}>
+    <html lang="en" className={`${pretendard.variable} ${roboto.variable} h-full antialiased`}>
       <body className="h-full flex justify-center bg-surface-950 font-pretendard overflow-hidden">
         <ClarityProvider />
         {children}

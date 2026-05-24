@@ -1,0 +1,49 @@
+{
+  "name": "DropdownOption",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "status=Default": "188:756",
+      "status=Selected": "188:853"
+    }
+  },
+  "components": {
+    "DropdownOption": {
+      "description": "Single option row inside a dropdown list. Selected state adds a visible border. Optional leading icon.",
+      "props": {
+        "status": ["Default", "Selected"],
+        "hasIconStart": "boolean"
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.250",
+          "padding": "size.space.250",
+          "borderRadius": "size.radius.200",
+          "background": "color.background.canvas",
+          "width": 338
+        },
+        "status_Default": {
+          "border": "none"
+        },
+        "status_Selected": {
+          "border": {
+            "width": "size.stroke.border",
+            "color": "color.border.default"
+          }
+        },
+        "label": {
+          "typography": "font.body2",
+          "color": "color.text.secondary",
+          "flex": 1,
+          "truncate": true
+        },
+        "icon": {
+          "size": "size.icon.small",
+          "color": "color.text.secondary"
+        }
+      }
+    }
+  }
+}

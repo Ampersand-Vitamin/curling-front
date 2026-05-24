@@ -1,0 +1,75 @@
+{
+  "name": "Dropdown",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "open=No": "188:981",
+      "open=Yes": "188:983",
+      "open=Open3 (item selected, open)": "201:407",
+      "open=Open4 (item selected, closed)": "201:470"
+    }
+  },
+  "components": {
+    "Dropdown": {
+      "description": "Gender / option dropdown for onboarding. Four states: closed empty, open empty, open with selection, closed with selection. Options list has a scrollbar indicator. Options: Female, Male, Non-binary, Prefer not to Say.",
+      "props": {
+        "open": ["No", "Yes", "Open3", "Open4"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "column",
+          "background": "color.background.surface-200",
+          "borderRadius": "size.radius.400",
+          "overflow": "clip",
+          "width": 358
+        },
+        "trigger": {
+          "height": 56,
+          "paddingLeft": "size.space.400",
+          "paddingRight": "size.space.250",
+          "paddingY": "size.space.400",
+          "label": {
+            "typography": "font.h6",
+            "flex": 1,
+            "truncate": true
+          },
+          "label_placeholder": {
+            "color": "color.text.caption"
+          },
+          "label_selected": {
+            "color": "color.text.primary"
+          },
+          "chevron": {
+            "asset": "assets/icons/chevron-down",
+            "size": 24,
+            "open_asset": "assets/icons/chevron-up"
+          }
+        },
+        "options_container": {
+          "direction": "row",
+          "paddingX": "size.space.300",
+          "paddingBottom": "size.space.300",
+          "gap": "size.space.100",
+          "maxHeight": 260,
+          "background": "color.background.surface-200"
+        },
+        "options_list": {
+          "direction": "column",
+          "gap": "size.space.100",
+          "flex": 1
+        },
+        "scrollbar": {
+          "width": 8,
+          "thumb": {
+            "width": 4,
+            "borderRadius": "size.radius.200",
+            "color": "#d9d9d9"
+          }
+        },
+        "option": {
+          "ref": "DropdownOption"
+        }
+      }
+    }
+  }
+}

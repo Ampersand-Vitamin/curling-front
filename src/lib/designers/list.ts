@@ -4,7 +4,12 @@
 // 캐러셀(Best Match for you)용 + MapView designer-mode 마커용.
 // 기존 src/lib/designers.ts 의 getDesignerMapItems 를 본 파일로 이전.
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 import type {
   DesignerListItem,
   DesignerMapItem,
