@@ -9,7 +9,7 @@ export default function DonePage() {
 
   async function handleStart() {
     try {
-      await fetch("/api/onboarding", {
+      const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -24,8 +24,12 @@ export default function DonePage() {
           preferredStyles: store.preferredStyles,
         }),
       });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        console.error("Onboarding save failed:", res.status, body);
+      }
     } catch (e) {
-      console.error("Failed to save onboarding:", e);
+      console.error("Onboarding save error:", e);
     }
     router.push("/discover");
   }

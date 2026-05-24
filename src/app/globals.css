@@ -68,9 +68,31 @@
   --color-icon-white-primary: #ffffff;
 }
 
+/* Avatar size tokens — defined on :root so var() works everywhere */
+:root {
+  --avatar-sm: 20px;
+  --avatar-md: 60px;
+  --avatar-xl: 100px;
+}
+
+@utility size-avatar-xl {
+  width: var(--avatar-xl);
+  height: var(--avatar-xl);
+}
+
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
 }
 
 body {

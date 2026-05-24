@@ -9,14 +9,12 @@ export async function GET() {
     redirect("/");
   }
 
-  // 온보딩 완료 여부 확인
-  const { data } = await supabaseAdmin
-    .from("hair_profiles")
-    .select("id")
-    .eq("user_id", session.user.id)
-    .single();
+  const { data } = await supabaseAdmin.rpc("get_hair_profile", {
+    p_user_id: session.user.id,
+  });
 
-  if (data) {
+  const profile = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
+  if (profile) {
     redirect("/discover");
   } else {
     redirect("/onboarding/account-mode");

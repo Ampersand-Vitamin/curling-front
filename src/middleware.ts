@@ -5,8 +5,8 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const { pathname } = req.nextUrl;
 
-  // 온보딩은 로그인 필수
-  if (pathname.startsWith("/onboarding") && !isLoggedIn) {
+  // 로그인 필수 페이지
+  if ((pathname.startsWith("/onboarding") || pathname === "/my") && !isLoggedIn) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
@@ -19,5 +19,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/", "/onboarding/:path*"],
+  matcher: ["/", "/onboarding/:path*", "/my"],
 };
