@@ -22,6 +22,11 @@ type RawListRow = {
     | null;
 };
 
+type RawPortfolioRow = {
+  designer_id: string;
+  image_path: string;
+};
+
 const LIST_SELECT = `
   id, display_name, role, profile_image_url, portfolio_images,
   languages, highlight_message, salon_id,
@@ -29,7 +34,10 @@ const LIST_SELECT = `
   designer_keyword ( keyword:keyword_id ( slug ) )
 `;
 
-function toListItem(r: RawListRow): DesignerListItem {
+function toListItem(
+  r: RawListRow,
+  representativePortfolioImage?: string,
+): DesignerListItem {
   const keywordSlugs = (r.designer_keyword ?? [])
     .map((row) => row.keyword?.slug)
     .filter((s): s is string => Boolean(s));
@@ -41,13 +49,43 @@ function toListItem(r: RawListRow): DesignerListItem {
     displayName: r.display_name,
     role: r.role,
     profileImageUrl: r.profile_image_url,
-    portfolioImages: r.portfolio_images ?? [],
+    portfolioImages: representativePortfolioImage
+      ? [representativePortfolioImage]
+      : (r.portfolio_images ?? []),
     languages: r.languages ?? [],
     highlightMessage: r.highlight_message,
     salonId: r.salon_id,
     salonLatLng,
     keywordSlugs,
   };
+}
+
+async function attachRepresentativePortfolioImages(
+  rows: RawListRow[],
+  caller: string,
+): Promise<DesignerListItem[]> {
+  if (rows.length === 0) return [];
+
+  const designerIds = rows.map((r) => r.id);
+  const { data, error } = await supabase
+    .from("portfolio")
+    .select("designer_id, image_path")
+    .in("designer_id", designerIds)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`[${caller}:portfolio] ${error.message}`);
+  }
+
+  const representativeByDesigner = new Map<string, string>();
+  for (const row of (data ?? []) as RawPortfolioRow[]) {
+    if (!representativeByDesigner.has(row.designer_id)) {
+      representativeByDesigner.set(row.designer_id, row.image_path);
+    }
+  }
+
+  return rows.map((r) => toListItem(r, representativeByDesigner.get(r.id)));
 }
 
 /**
@@ -67,8 +105,9 @@ export async function getBestMatchDesigners(
     throw new Error(`[getBestMatchDesigners] ${error.message}`);
   }
 
-  return (data ?? []).map<DesignerListItem>((r) =>
-    toListItem(r as unknown as RawListRow),
+  return attachRepresentativePortfolioImages(
+    (data ?? []) as unknown as RawListRow[],
+    "getBestMatchDesigners",
   );
 }
 
@@ -90,8 +129,9 @@ export async function getDesignersBySalon(
     throw new Error(`[getDesignersBySalon] ${error.message}`);
   }
 
-  return (data ?? []).map<DesignerListItem>((r) =>
-    toListItem(r as unknown as RawListRow),
+  return attachRepresentativePortfolioImages(
+    (data ?? []) as unknown as RawListRow[],
+    "getDesignersBySalon",
   );
 }
 

@@ -1,6 +1,7 @@
 // Design Ref: §3.4 — 디자이너 카드 (small/large)
 // Plan FR-17 — id prop + <Link> 래핑으로 /designer/[id] 이동
 import Link from "next/link";
+import SafeImage from "@/components/SafeImage";
 import LanguageTag from "./LanguageTag";
 
 export type DesignerCardSize = "small" | "large";
@@ -42,9 +43,10 @@ export default function DesignerCard({
       className={`relative block rounded-2xl overflow-hidden shrink-0 bg-surface-300 ${SIZE_CLASS[size]}`}
     >
       {/* Portfolio Background */}
-      <img
+      <SafeImage
         src={portfolioImage}
         alt={`${name}'s portfolio`}
+        fallback="portfolio"
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -60,7 +62,12 @@ export default function DesignerCard({
             </span>
           </div>
           <div className="size-[30px] rounded-full overflow-hidden shrink-0 bg-surface-400">
-            <img src={profileImage} alt={name} className="w-full h-full object-cover" />
+            <SafeImage
+              src={profileImage}
+              alt={name}
+              fallback="profile"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
         <div className="flex gap-1">
