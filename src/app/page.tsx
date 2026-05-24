@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { signIn } from "next-auth/react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SplashPage() {
   const router = useRouter();
+  const supabase = createClient();
   const [phase, setPhase] = useState<"splash" | "login">("splash");
   const [showTagline, setShowTagline] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
@@ -64,7 +65,7 @@ export default function SplashPage() {
           >
             <button
               type="button"
-              onClick={() => signIn("google", { callbackUrl: "/auth/redirect" })}
+              onClick={() => supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${location.origin}/auth/callback?next=/auth/redirect` } })}
               className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#f2f2f2]"
             >
               <Image src="/images/google-logo.svg" alt="Google" width={20} height={20} unoptimized />
@@ -80,7 +81,7 @@ export default function SplashPage() {
           >
             <button
               type="button"
-              onClick={() => signIn("kakao", { callbackUrl: "/auth/redirect" })}
+              onClick={() => supabase.auth.signInWithOAuth({ provider: "kakao", options: { redirectTo: `${location.origin}/auth/callback?next=/auth/redirect` } })}
               className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#fee500]"
             >
               <Image src="/images/kakao-logo.png" alt="Kakao" width={20} height={19} />

@@ -14,13 +14,13 @@ type Language = {
 };
 
 const INITIAL_LANGUAGES: Language[] = [
-  { code: "ko", label: "한국어", flag: "/images/flags/korean.svg" },
-  { code: "en", label: "English", flag: "/images/flags/british.svg" },
-  { code: "zh", label: "中文", flag: "/images/flags/chinese.svg" },
-  { code: "yue", label: "广东话", flag: "/images/flags/hongkong.svg" },
-  { code: "ja", label: "日本語", flag: "/images/flags/japanese.svg" },
-  { code: "ar", label: "العربية", flag: "/images/flags/saudi.svg" },
-  { code: "fr", label: "Français", flag: "/images/flags/french.svg" },
+  { code: "ko", label: "한국어", flag: "/flags/korean-flag.svg" },
+  { code: "en", label: "English", flag: "/flags/british-flag.svg" },
+  { code: "zh", label: "中文", flag: "/flags/chinese-flag.svg" },
+  { code: "yue", label: "广东话", flag: "/flags/hong-kong-flag.svg" },
+  { code: "ja", label: "日本語", flag: "/flags/japanese-flag.svg" },
+  { code: "ar", label: "العربية", flag: "/flags/saudi-flag.svg" },
+  { code: "fr", label: "Français", flag: "/flags/french-flag.svg" },
 ];
 
 const EXTRA_LANGUAGES: Language[] = [

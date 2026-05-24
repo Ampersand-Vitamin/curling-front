@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { auth } from "@/lib/auth";
-import { supabaseAdmin } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,13 +8,13 @@ import { AccountActions } from "./AccountActions";
 import { SettingIcon } from "@/components/icons/SettingIcon";
 
 const LANGUAGE_MAP: Record<string, { label: string; flag?: string }> = {
-  ko:  { label: "한국어",   flag: "/images/flags/korean.svg" },
-  en:  { label: "English",  flag: "/images/flags/british.svg" },
-  zh:  { label: "中文",     flag: "/images/flags/chinese.svg" },
-  yue: { label: "广东话",   flag: "/images/flags/hongkong.svg" },
-  ja:  { label: "日本語",   flag: "/images/flags/japanese.svg" },
-  ar:  { label: "العربية", flag: "/images/flags/saudi.svg" },
-  fr:  { label: "Français", flag: "/images/flags/french.svg" },
+  ko:  { label: "한국어",   flag: "/flags/korean-flag.svg" },
+  en:  { label: "English",  flag: "/flags/british-flag.svg" },
+  zh:  { label: "中文",     flag: "/flags/chinese-flag.svg" },
+  yue: { label: "广东话",   flag: "/flags/hong-kong-flag.svg" },
+  ja:  { label: "日本語",   flag: "/flags/japanese-flag.svg" },
+  ar:  { label: "العربية", flag: "/flags/saudi-flag.svg" },
+  fr:  { label: "Français", flag: "/flags/french-flag.svg" },
 };
 
 const HAIR_TYPE_LABEL: Record<string, string> = {
@@ -50,17 +49,18 @@ const SUPPORT_ITEMS = ["FAQ", "Customer Service"] as const;
 const SETTINGS_ITEMS = ["Setting", "Notification", "Terms and policies", "Version information"] as const;
 
 export default async function MyPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/");
 
-  const { data: profile } = await supabaseAdmin
+  const { data: profile } = await supabase
     .from("hair_profiles")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .maybeSingle();
 
-  const displayName = (profile?.name as string | null) || session.user.name || "User";
-  const avatarUrl = (profile?.avatar_url as string | null) ?? session.user.image;
+  const displayName = (profile?.name as string | null) || user.user_metadata?.full_name || "User";
+  const avatarUrl = (profile?.avatar_url as string | null) ?? user.user_metadata?.avatar_url;
   const bio = `Hi! This is ${displayName}.`;
 
   const chips: Chip[] = [];

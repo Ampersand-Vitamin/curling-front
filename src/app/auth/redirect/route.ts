@@ -1,16 +1,16 @@
-import { auth } from "@/lib/auth";
-import { supabaseAdmin } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export async function GET() {
-  const session = await auth();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user?.id) {
+  if (!user) {
     redirect("/");
   }
 
-  const { data } = await supabaseAdmin.rpc("get_hair_profile", {
-    p_user_id: session.user.id,
+  const { data } = await supabase.rpc("get_hair_profile", {
+    p_user_id: user.id,
   });
 
   const profile = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
