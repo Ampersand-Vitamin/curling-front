@@ -4,6 +4,7 @@
 // 단건 디자이너 상세 조회. supabase-js chain 2단계로 분리:
 //   (1) designer_profile + salon (nested select)
 //   (2) designer_keyword + keyword + keyword_category
+//   (3) portfolio rows
 // → Promise.all 로 병렬 실행 후 도메인 모델로 변환.
 
 import { supabase } from "@/lib/supabase";
@@ -29,16 +30,20 @@ type RawDesigner = {
   languages: string[];
   other_links: Record<string, unknown> | null;
   profile_image_url: string | null;
-  portfolio_images: string[];
   salon: RawSalon;
 };
 
 type RawKeywordRow = {
+  relation_type: "specialty" | "experience";
   keyword: {
     slug: string;
     name: string;
     category: { slug: string } | null;
   } | null;
+};
+
+type RawPortfolioRow = {
+  image_path: string;
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -47,13 +52,13 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export async function getDesignerById(id: string): Promise<DesignerDetail | null> {
   if (!UUID_RE.test(id)) return null;
 
-  const [profileRes, keywordRes] = await Promise.all([
+  const [profileRes, keywordRes, portfolioRes] = await Promise.all([
     supabase
       .from("designer_profile")
       .select(
         `id, display_name, role, bio, highlight_message, years_of_exp,
          rating_avg, review_count, is_verified, languages, other_links,
-         profile_image_url, portfolio_images,
+         profile_image_url,
          salon:salon_id ( id, name, address )`,
       )
       .eq("id", id)
@@ -61,20 +66,30 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
     supabase
       .from("designer_keyword")
       .select(
-        `keyword:keyword_id (
+        `relation_type,
+         keyword:keyword_id (
            slug, name,
            category:category_id ( slug )
          )`,
       )
       .eq("designer_id", id),
+    supabase
+      .from("portfolio")
+      .select("image_path")
+      .eq("designer_id", id)
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true }),
   ]);
 
-  if (profileRes.error || keywordRes.error || !profileRes.data) {
+  if (profileRes.error || keywordRes.error || portfolioRes.error || !profileRes.data) {
     if (profileRes.error) {
       console.warn("[getDesignerById] profile error", profileRes.error.message);
     }
     if (keywordRes.error) {
       console.warn("[getDesignerById] keyword error", keywordRes.error.message);
+    }
+    if (portfolioRes.error) {
+      console.warn("[getDesignerById] portfolio error", portfolioRes.error.message);
     }
     return null;
   }
@@ -82,16 +97,22 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
   return toDomain(
     profileRes.data as unknown as RawDesigner,
     (keywordRes.data ?? []) as unknown as RawKeywordRow[],
+    (portfolioRes.data ?? []) as unknown as RawPortfolioRow[],
   );
 }
 
-function toDomain(raw: RawDesigner, kwRows: RawKeywordRow[]): DesignerDetail {
+function toDomain(
+  raw: RawDesigner,
+  kwRows: RawKeywordRow[],
+  portfolioRows: RawPortfolioRow[],
+): DesignerDetail {
   const keywords: DesignerKeyword[] = kwRows
     .filter((r) => r.keyword && r.keyword.category)
     .map((r) => ({
       slug: r.keyword!.slug,
       name: r.keyword!.name,
       categorySlug: r.keyword!.category!.slug,
+      relationType: r.relation_type,
     }));
 
   return {
@@ -107,7 +128,7 @@ function toDomain(raw: RawDesigner, kwRows: RawKeywordRow[]): DesignerDetail {
     languages: raw.languages ?? [],
     otherLinks: (raw.other_links ?? {}) as DesignerLinks,
     profileImageUrl: raw.profile_image_url,
-    portfolioImages: raw.portfolio_images ?? [],
+    portfolioImages: portfolioRows.map((r) => r.image_path),
     salon: raw.salon
       ? { id: raw.salon.id, name: raw.salon.name, address: raw.salon.address }
       : null,

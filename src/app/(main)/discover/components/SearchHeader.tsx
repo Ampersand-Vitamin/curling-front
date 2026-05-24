@@ -52,7 +52,10 @@ export default function SearchHeader({
         <IconButton badge={filterCount > 0 ? filterCount : undefined} onClick={onFilterPress}>
           <img src="/icons/filter.svg" alt="filter" width={20} height={20} />
         </IconButton>
-        <SearchBar placeholder={showFilter ? "Search Keywords" : "Search salons"} />
+        <SearchBar
+          placeholder={showFilter ? "Search Keywords" : "Search salons"}
+          onClick={showFilter ? undefined : onFilterPress}
+        />
         {showFilter ? (
           <button
             type="button"

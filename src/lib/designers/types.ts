@@ -10,6 +10,12 @@ export type DesignerKeyword = {
   name: string;
   /** 'treatment' | 'languages' | 'hair_type' | 'amenities' | 'inclusivity' | ... */
   categorySlug: string;
+  relationType: "specialty" | "experience";
+};
+
+export type DesignerPortfolioPreview = {
+  imagePath: string;
+  keywordSlugs: string[];
 };
 
 /** 캐러셀/리스트용 경량 모델 (Best Match for you, 향후 검색 결과 등) */
@@ -20,10 +26,16 @@ export type DesignerListItem = {
   profileImageUrl: string | null;
   /** Hero 첫 슬라이드 = portfolioImages[0]. 시드 규칙상 최소 1개 보장 */
   portfolioImages: string[];
+  /** Discover 필터 문맥에 맞는 카드 배경 선택용 portfolio rows */
+  portfolioPreviews: DesignerPortfolioPreview[];
   languages: string[];
   highlightMessage: string | null;
   /** 소속 살롱 id — Discover 디자이너 핀 클릭 시 살롱 단위 필터링용 */
   salonId: string | null;
+  /** 살롱 위치 — DesignerCarousel 거리 정렬용. 살롱 미배정 시 null */
+  salonLatLng: { lat: number; lng: number } | null;
+  /** 디자이너에 연결된 키워드 slug 목록 — 클라이언트 필터 매칭용 */
+  keywordSlugs: string[];
 };
 
 /** 디자이너 상세 페이지 전체 모델 */

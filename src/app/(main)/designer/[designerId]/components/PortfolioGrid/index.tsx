@@ -38,7 +38,7 @@ export default function PortfolioGrid({
             <button
               type="button"
               onClick={onViewMore}
-              className="typo-button text-surface-500 active:text-surface-700"
+              className="inline-flex items-center rounded-full bg-surface-200 px-[10px] py-[6px] typo-caption text-surface-800 active:bg-surface-300"
             >
               View more
             </button>
@@ -47,7 +47,7 @@ export default function PortfolioGrid({
       )}
       <div className={`grid ${gridClass}`}>
         {visible.map((src, i) => (
-          <div key={i} className="aspect-square bg-surface-100 overflow-hidden">
+          <div key={i} className="aspect-square bg-surface-100 overflow-hidden rounded-2xl">
             <SafeImage
               src={src}
               alt={`Portfolio ${i + 1}`}

@@ -2,22 +2,19 @@
 //
 // 디자이너 구사 언어 칩. 라이트 배경용 (LanguageTag는 dark 전용이라 별도 칩으로 렌더).
 
-const FLAG_MAP: Record<string, { flag: string; label: string }> = {
-  korean:   { flag: "🇰🇷", label: "Korean" },
-  english:  { flag: "🇬🇧", label: "English" },
-  japanese: { flag: "🇯🇵", label: "Japanese" },
-  chinese:  { flag: "🇨🇳", label: "Chinese" },
-  spanish:  { flag: "🇪🇸", label: "Spanish" },
-  french:   { flag: "🇫🇷", label: "French" },
-};
+import KeywordFilter from "@/app/(main)/discover/components/KeywordFilter";
+import { getLanguageFlag } from "@/lib/languageFlag";
 
-function LangChip({ language }: { language: string }) {
-  const { flag, label } = FLAG_MAP[language] ?? { flag: "🌐", label: language };
+function FlagIcon({ src }: { src: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-surface-200 px-2.5 py-1 bg-surface-white">
-      <span className="text-[14px] leading-none">{flag}</span>
-      <span className="typo-caption text-surface-800 capitalize">{label}</span>
-    </span>
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src={src}
+      alt=""
+      width={20}
+      height={20}
+      className="size-5 rounded-full shrink-0"
+    />
   );
 }
 
@@ -31,9 +28,17 @@ export default function LanguageSection({ languages }: Props) {
     <section className="px-4 py-5 border-b border-surface-100">
       <h2 className="typo-h6 text-surface-950 mb-3">Language</h2>
       <div className="flex flex-wrap gap-2">
-        {languages.map((lang) => (
-          <LangChip key={lang} language={lang} />
-        ))}
+        {languages.map((lang) => {
+          const flag = getLanguageFlag(lang);
+          return (
+            <KeywordFilter
+              key={lang}
+              label={lang}
+              variant="outlined"
+              leadingIcon={flag ? <FlagIcon src={flag} /> : undefined}
+            />
+          );
+        })}
       </div>
     </section>
   );

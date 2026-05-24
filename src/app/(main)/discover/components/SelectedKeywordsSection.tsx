@@ -3,18 +3,35 @@
 // Plan FR-12 ~ FR-16, SC-09 ~ SC-11, D-6
 // Figma 374:10503 레이아웃
 import KeywordFilter from "./KeywordFilter";
+import { getLanguageFlag } from "@/lib/languageFlag";
 import type { FilterSection, Keyword } from "@/types/keyword";
+
+function FlagIcon({ src }: { src: string }) {
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src={src}
+      alt=""
+      width={20}
+      height={20}
+      className="size-5 rounded-full shrink-0"
+    />
+  );
+}
 
 interface SelectedKeywordsSectionProps {
   filterSections: FilterSection[];
   activeKeywords: Set<string>; // slug set
   onRemove: (slug: string) => void;
+  /** Figma 572:7394 — 하단 sticky 영역에서는 헤더 라벨을 숨기고 칩만 노출 */
+  hideHeader?: boolean;
 }
 
 export default function SelectedKeywordsSection({
   filterSections,
   activeKeywords,
   onRemove,
+  hideHeader = false,
 }: SelectedKeywordsSectionProps) {
   // Plan SC-09 / D-6: 0개면 섹션 자체 숨김
   if (activeKeywords.size === 0) return null;
@@ -36,16 +53,20 @@ export default function SelectedKeywordsSection({
 
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="typo-h6 text-surface-900">Selected Keywords</h3>
+      {!hideHeader && <h3 className="typo-h6 text-surface-900">Selected Keywords</h3>}
       <div className="flex flex-wrap gap-1">
-        {selected.map((k) => (
-          <KeywordFilter
-            key={k.slug}
-            label={k.name}
-            variant="filled"
-            onRemove={() => onRemove(k.slug)}
-          />
-        ))}
+        {selected.map((k) => {
+          const flag = getLanguageFlag(k.slug);
+          return (
+            <KeywordFilter
+              key={k.slug}
+              label={k.name}
+              variant="filled"
+              onRemove={() => onRemove(k.slug)}
+              leadingIcon={flag ? <FlagIcon src={flag} /> : undefined}
+            />
+          );
+        })}
       </div>
     </div>
   );

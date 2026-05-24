@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { storageUrl } from "@/lib/storage";
 
 type Fallback = "profile" | "portfolio";
@@ -20,9 +20,20 @@ type Props = {
 };
 
 const PLACEHOLDER_PATH: Record<Fallback, string> = {
-  profile: "asset/placeholder/profile.svg",
-  portfolio: "asset/placeholder/portfolio.svg",
+  profile: "/icons/designer.svg",
+  portfolio: "/icons/portfolio.svg",
 };
+
+function toImageUrl(src: string) {
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("/")
+  ) {
+    return src;
+  }
+  return storageUrl(src);
+}
 
 export default function SafeImage({
   src,
@@ -32,17 +43,11 @@ export default function SafeImage({
   width,
   height,
 }: Props) {
-  const [errored, setErrored] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
-  // src 가 변경되면 errored 리셋 (캐러셀 슬라이드 전환 시 이전 에러 잔류 방지)
-  useEffect(() => {
-    setErrored(false);
-  }, [src]);
-
-  const finalUrl =
-    errored || !src
-      ? storageUrl(PLACEHOLDER_PATH[fallback])
-      : storageUrl(src);
+  const finalUrl = !src || failedSrc === src
+    ? PLACEHOLDER_PATH[fallback]
+    : toImageUrl(src);
 
   return (
     <img
@@ -51,7 +56,9 @@ export default function SafeImage({
       width={width}
       height={height}
       className={className}
-      onError={() => setErrored(true)}
+      onError={() => {
+        if (src) setFailedSrc(src);
+      }}
     />
   );
 }

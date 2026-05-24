@@ -10,6 +10,8 @@ interface KeywordFilterProps {
   onClick?: () => void;
   /** 주어지면 activated 강제 + 우측 pr-[5px] + chevron 대신 X 버튼 렌더 */
   onRemove?: () => void;
+  /** 텍스트 좌측에 렌더할 아이콘 (예: 국기 svg). 있으면 좌측 패딩 축소 */
+  leadingIcon?: React.ReactNode;
 }
 
 function ChevronDown({ className }: { className?: string }) {
@@ -36,6 +38,7 @@ export default function KeywordFilter({
   variant = "outlined",
   onClick,
   onRemove,
+  leadingIcon,
 }: KeywordFilterProps) {
   const isRemovable = !!onRemove;
   // Plan FR-13: onRemove 있으면 activated 강제
@@ -45,25 +48,28 @@ export default function KeywordFilter({
   const isExpandedGroupChip = showChevron && activated && !isRemovable;
 
   const defaultStyle =
-    variant === "outlined"
-      ? "bg-white border-[0.5px] border-surface-400 text-surface-800"
+    variant === "filled"
+      ? "bg-surface-200 text-surface-800"
       : "bg-surface-200 text-surface-800";
 
   const activatedStyle = isExpandedGroupChip
     ? "bg-surface-900 text-white"
     : "bg-secondary-400 text-white";
 
-  // Plan FR-13: onRemove 있으면 우측 좁은 패딩 (X 버튼을 위해)
-  const paddingX = isRemovable ? "pl-[10px] pr-[5px]" : "px-[10px]";
+  // leadingIcon 있으면 좌측 4px (Figma 572:7338) — 국기 칩 패턴
+  // 그 외엔 기존 규칙: removable 우측 5px / 일반 10px
+  const leftPadding = leadingIcon ? "pl-[4px]" : "pl-[10px]";
+  const rightPadding = isRemovable ? "pr-[5px]" : "pr-[10px]";
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-1 rounded-full ${paddingX} py-[6px] typo-caption capitalize transition-colors shrink-0 ${
+      className={`flex items-center gap-1 rounded-full ${leftPadding} ${rightPadding} py-[6px] typo-caption capitalize transition-colors shrink-0 ${
         effectiveActivated ? activatedStyle : defaultStyle
       }`}
     >
+      {leadingIcon}
       {label}
       {isRemovable && (
         // Plan FR-14: 원형 X 버튼. <button> 중첩 방지 위해 <span role="button">.

@@ -2,7 +2,7 @@
 // Figma Ref: 254:21435 — 커스텀 살롱 핀 마커 (흰색 원형 + barber pole 아이콘)
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   APIProvider,
   Map,
@@ -209,6 +209,9 @@ interface MapViewProps {
   pullBarVariant?: PullBarVariant;
   selectedPinId: string | null;
   onPinSelect: (id: string | null) => void;
+  /** 사용자 위치 — controlled. DiscoverClient가 단일 출처로 보유 (PullBar 거리 정렬과 공유) */
+  userLocation: LatLng | null;
+  onUserLocationChange: (pos: LatLng) => void;
 }
 
 export default function MapView({
@@ -218,9 +221,12 @@ export default function MapView({
   pullBarVariant = "compact",
   selectedPinId,
   onPinSelect,
+  userLocation,
+  onUserLocationChange,
 }: MapViewProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const [userPos, setUserPos] = useState<LatLng | null>(null);
+  const userPos = userLocation;
+  const setUserPos = onUserLocationChange;
 
   const togglePin = (pinId: string) =>
     onPinSelect(selectedPinId === pinId ? null : pinId);

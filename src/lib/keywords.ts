@@ -18,6 +18,7 @@ type RawKeywordRow = {
   slug: string;
   group_name: string | null;
   display_order: number;
+  tier: number;
 };
 
 type RawCategoryRow = {
@@ -28,8 +29,8 @@ type RawCategoryRow = {
 
 /**
  * FilterPopup이 렌더할 섹션들을 서버에서 완성된 형태로 반환.
- * Plan FR-05: hair_type / treatment / languages / amenities / inclusivity 순서 고정.
- * Design DS-1: 클라이언트 useMemo 없이 props만으로 렌더 가능.
+ * filter spec v3: languages / specialty / service / amenities / inclusivity 순서 고정.
+ * 클라이언트 useMemo 없이 props만으로 렌더 가능.
  */
 export async function getFilterKeywords(): Promise<FilterSection[]> {
   const { data, error } = await supabase
@@ -38,7 +39,7 @@ export async function getFilterKeywords(): Promise<FilterSection[]> {
       `
       slug,
       name,
-      keyword ( id, name, slug, group_name, display_order )
+      keyword ( id, name, slug, group_name, display_order, tier )
     `,
     )
     .in("slug", FILTER_SECTION_ORDER as unknown as string[]);
@@ -65,13 +66,14 @@ function buildSection(
       slug: k.slug,
       group_name: k.group_name,
       display_order: k.display_order,
+      tier: k.tier === 2 ? 2 : 1,
     }))
     .sort((a, b) => a.display_order - b.display_order);
 
   const displayName = FILTER_SECTION_DISPLAY_NAME[catSlug];
 
-  // Plan FR-06: treatment만 group_name 기준 2단계 그룹핑
-  if (catSlug === "treatment") {
+  // service 카테고리만 group_name 기준 2단계 그룹핑 (Perm/Straightening/Protective/Wigs)
+  if (catSlug === "service") {
     return {
       slug: catSlug,
       displayName,

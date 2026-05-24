@@ -19,6 +19,9 @@ out/
 .DS_Store
 Thumbs.db
 
+# local scratch (Unsplash 다운로드, 시드 임시 산출물, transformers 모델 캐시)
+tmp/
+
 # bkit
 .bkit/
 
