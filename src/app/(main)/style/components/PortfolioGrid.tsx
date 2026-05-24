@@ -42,9 +42,11 @@ export default function PortfolioGrid({
     return () => obs.disconnect();
   }, [onLoadMore, hasMore]);
 
-  // 중복 id 제거 (loadMore offset 겹침 또는 RPC 결과 중복 방어)
+  // 중복 제거: id 겹침 + 같은 image_path 가 다른 designer 로 중복 삽입된 케이스 방어
   const uniqueCards = cards.filter(
-    (c, i, arr) => arr.findIndex((x) => x.id === c.id) === i,
+    (c, i, arr) =>
+      arr.findIndex((x) => x.id === c.id) === i &&
+      arr.findIndex((x) => x.coverImageUrl === c.coverImageUrl) === i,
   );
 
   // 빈 결과 + 로딩 중: 중앙 spinner (초기 검색 / 결과 0건 케이스)

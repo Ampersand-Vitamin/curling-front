@@ -34,6 +34,7 @@ type RawDesigner = {
 };
 
 type RawKeywordRow = {
+  relation_type: "specialty" | "experience";
   keyword: {
     slug: string;
     name: string;
@@ -65,7 +66,8 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
     supabase
       .from("designer_keyword")
       .select(
-        `keyword:keyword_id (
+        `relation_type,
+         keyword:keyword_id (
            slug, name,
            category:category_id ( slug )
          )`,
@@ -110,6 +112,7 @@ function toDomain(
       slug: r.keyword!.slug,
       name: r.keyword!.name,
       categorySlug: r.keyword!.category!.slug,
+      relationType: r.relation_type,
     }));
 
   return {

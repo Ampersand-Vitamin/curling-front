@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import SafeImage from "@/components/SafeImage";
 import type { StylePortfolioCard } from "@/types/style";
 
 interface PortfolioCardProps {
@@ -25,7 +26,7 @@ function BookmarkIcon({ filled = false }: { filled?: boolean }) {
 export default function PortfolioCard({ card, onFavoriteClick }: PortfolioCardProps) {
   return (
     <Link
-      href={`/designer/${card.id}`}
+      href={`/designer/${card.designerId}`}
       className="relative block w-full overflow-hidden rounded-2xl mb-2"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -50,17 +51,12 @@ export default function PortfolioCard({ card, onFavoriteClick }: PortfolioCardPr
 
       <div className="absolute inset-x-0 bottom-0 px-2 pt-4 pb-2 bg-gradient-to-t from-surface-950/80 via-surface-950/40 to-transparent">
         <div className="flex items-end gap-2">
-          {card.profileImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={card.profileImageUrl}
-              alt=""
-              aria-hidden="true"
-              className="size-8 rounded-full object-cover shrink-0"
-            />
-          ) : (
-            <div className="size-8 rounded-full bg-surface-300 shrink-0" />
-          )}
+          <SafeImage
+            src={card.profileImageUrl}
+            alt=""
+            fallback="profile"
+            className="size-8 rounded-full object-cover shrink-0 bg-surface-300"
+          />
           <div className="flex-1 min-w-0">
             <p className="typo-body2 text-white truncate">{card.displayName}</p>
             {card.salonName && (

@@ -12,11 +12,11 @@ import DetailHeader from "./components/DetailHeader";
 import DesignerTabs from "./components/DesignerTabs";
 import PortfolioHero from "./components/PortfolioHero";
 import DesignerInfoSection from "./components/DesignerInfoSection";
-import HighlightBubble from "./components/HighlightBubble";
 import ReservationSection from "./components/ReservationSection";
 import SpecialityChips from "./components/SpecialityChips";
 import LanguageSection from "./components/LanguageSection";
 import PortfolioGrid from "./components/PortfolioGrid";
+import SalonSection from "./components/SalonSection";
 import ServicesList from "./components/ServicesList";
 import ReviewSection from "./components/ReviewSection";
 
@@ -27,11 +27,6 @@ interface Props {
 export default function DesignerDetailClient({ designer }: Props) {
   const { activeTab, setActiveTab, tabs } = useDesignerTabs();
   const { isFavorite, toggle } = useFavoriteToggle(designer.id);
-
-  // Plan FR-10 / Design §4.13: Speciality 는 treatment 카테고리만
-  const specialityKeywords = designer.keywords.filter(
-    (k) => k.categorySlug === "treatment",
-  );
 
   const salonLabel = designer.salon
     ? designer.salon.address
@@ -60,12 +55,8 @@ export default function DesignerDetailClient({ designer }: Props) {
             designerName={designer.displayName}
           />
           <DesignerInfoSection designer={designer} />
-          <HighlightBubble
-            message={designer.highlightMessage}
-            designerName={designer.displayName}
-          />
+          <SpecialityChips keywords={designer.keywords} />
           <ReservationSection links={designer.otherLinks} />
-          <SpecialityChips keywords={specialityKeywords} />
           <LanguageSection languages={designer.languages} />
           <PortfolioGrid
             images={designer.portfolioImages}
@@ -73,6 +64,7 @@ export default function DesignerDetailClient({ designer }: Props) {
             columns={2}
             onViewMore={() => setActiveTab("portfolio")}
           />
+          {designer.salon && <SalonSection salon={designer.salon} />}
           <ServicesList designerId={designer.id} />
           <ReviewSection designerId={designer.id} />
         </>

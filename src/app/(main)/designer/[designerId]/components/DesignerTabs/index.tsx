@@ -14,7 +14,7 @@ interface Props {
 
 export default function DesignerTabs({ activeTab, onTabChange, tabs }: Props) {
   return (
-    <div className="flex bg-surface-white border-b border-surface-100">
+    <div className="flex h-[44px] bg-surface-white border-b-[0.5px] border-surface-300">
       {tabs.map((t) => {
         const active = t.id === activeTab;
         return (
@@ -22,13 +22,16 @@ export default function DesignerTabs({ activeTab, onTabChange, tabs }: Props) {
             key={t.id}
             type="button"
             onClick={() => onTabChange(t.id)}
-            className={`flex-1 py-3 text-center transition-colors ${
+            className={`relative flex-1 flex items-center justify-center transition-colors ${
               active
-                ? "typo-button text-surface-950 border-b-2 border-primary-600"
-                : "typo-body2 text-surface-500 border-b-2 border-transparent"
+                ? "typo-h6 text-surface-950"
+                : "typo-body1 text-surface-400"
             }`}
           >
             {t.label}
+            {active && (
+              <span className="absolute bottom-0 h-[3px] w-16 rounded-full bg-secondary-400" />
+            )}
           </button>
         );
       })}

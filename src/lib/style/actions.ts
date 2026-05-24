@@ -22,6 +22,7 @@ function rowsToHits(
 ): StylePortfolioCard[] {
   return hits.map((h) => ({
     id: h.portfolioId,
+    designerId: h.designerId,
     displayName: h.displayName,
     role: "",
     salonName: h.salonName,

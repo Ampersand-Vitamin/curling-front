@@ -13,7 +13,10 @@ export type StyleSearchParams = {
 };
 
 export type StylePortfolioCard = {
+  /** portfolio.id — 카드/이미지 단위 식별자 */
   id: string;
+  /** designer_profile.id — /designer/[designerId] 상세 라우트용 */
+  designerId: string;
   displayName: string;
   role: string;
   salonName: string | null;

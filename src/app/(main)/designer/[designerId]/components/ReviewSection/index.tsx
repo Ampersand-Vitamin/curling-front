@@ -1,16 +1,16 @@
-// Design Ref: §4.17, §6.9, FR-14 — designer-detail
+// Figma Ref: 363:11550 (Review — 수평 스크롤 카드)
 // Mock 데이터 (DS-11). designerId 해시로 변형 분기.
 
 import { getMockReviews, type MockReview } from "@/mocks/designer-reviews";
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-0.5 text-alert-500" aria-label={`${rating} of 5 stars`}>
+    <div className="flex items-center gap-1 text-secondary-400" aria-label={`${rating} of 5 stars`}>
       {Array.from({ length: 5 }, (_, i) => (
         <svg
           key={i}
-          width="12"
-          height="12"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill={i < rating ? "currentColor" : "none"}
           stroke={i < rating ? "none" : "currentColor"}
@@ -26,12 +26,16 @@ function StarRating({ rating }: { rating: number }) {
 
 function ReviewCard({ review }: { review: MockReview }) {
   return (
-    <article className="border border-surface-100 rounded-xl p-4">
-      <div className="flex items-center justify-between mb-2">
-        <StarRating rating={review.rating} />
-        <span className="typo-caption2 text-surface-500">{review.authorName}</span>
+    <article className="w-[280px] shrink-0 bg-surface-100 rounded-lg px-4 py-3 flex flex-col gap-2.5">
+      <StarRating rating={review.rating} />
+      <div className="flex flex-col gap-1">
+        <p className="typo-h6 text-surface-950 line-clamp-2">
+          &ldquo;{review.body}&rdquo;
+        </p>
+        <p className="typo-caption text-surface-600 line-clamp-3">
+          — {review.authorName}
+        </p>
       </div>
-      <p className="typo-body2 text-surface-700 leading-relaxed">{review.body}</p>
     </article>
   );
 }
@@ -45,14 +49,14 @@ export default function ReviewSection({ designerId }: Props) {
   if (reviews.length === 0) return null;
 
   return (
-    <section className="px-4 py-5">
-      <div className="flex justify-between items-center mb-3">
-        <h2 className="typo-h6 text-surface-950">Review</h2>
-        <button type="button" className="typo-button text-surface-500 active:text-surface-700">
-          View more
+    <section className="py-5">
+      <div className="flex justify-between items-center px-4 mb-3">
+        <h2 className="typo-h4 text-surface-950">Review</h2>
+        <button type="button" className="typo-caption text-surface-400 underline">
+          view all
         </button>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex gap-2 overflow-x-auto px-4 scrollbar-hide">
         {reviews.map((r) => (
           <ReviewCard key={r.id} review={r} />
         ))}

@@ -48,8 +48,8 @@ export default function KeywordFilter({
   const isExpandedGroupChip = showChevron && activated && !isRemovable;
 
   const defaultStyle =
-    variant === "outlined"
-      ? "bg-white border-[0.5px] border-surface-400 text-surface-800"
+    variant === "filled"
+      ? "bg-surface-200 text-surface-800"
       : "bg-surface-200 text-surface-800";
 
   const activatedStyle = isExpandedGroupChip

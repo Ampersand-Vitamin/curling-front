@@ -10,6 +10,7 @@ export type DesignerKeyword = {
   name: string;
   /** 'treatment' | 'languages' | 'hair_type' | 'amenities' | 'inclusivity' | ... */
   categorySlug: string;
+  relationType: "specialty" | "experience";
 };
 
 export type DesignerPortfolioPreview = {

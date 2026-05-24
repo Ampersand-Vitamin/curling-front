@@ -10,6 +10,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "portfolio:fetch": "tsx --env-file=.env scripts/portfolio/fetch-pexels.ts",
+    "portfolio:fetch-pinterest": "tsx --env-file=.env scripts/portfolio/fetch-pinterest.ts",
+    "portfolio:fetch-instagram": "tsx --env-file=.env scripts/portfolio/fetch-instagram.ts",
     "portfolio:fetch-unsplash": "tsx --env-file=.env scripts/portfolio/fetch-unsplash.ts",
     "portfolio:upload": "tsx --env-file=.env scripts/portfolio/upload-storage.ts",
     "portfolio:seed-kw": "tsx --env-file=.env scripts/portfolio/seed-portfolio-from-storage.ts",

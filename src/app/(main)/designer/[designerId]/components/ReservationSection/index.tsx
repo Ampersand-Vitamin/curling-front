@@ -46,14 +46,6 @@ function NaverIcon() {
     </svg>
   );
 }
-function ChevronRight() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 const ICON_MAP: Record<Channel, React.ReactNode> = {
   message: <MessageIcon />,
   instagram: <InstagramIcon />,
@@ -66,67 +58,54 @@ interface Props {
 }
 
 export default function ReservationSection({ links }: Props) {
-  const channels: Channel[] = ["message", "instagram", "whatsapp", "naver"];
+  const iconChannels: Channel[] = ["instagram", "naver", "whatsapp"];
+  const messageUrl = links.message;
+  const messageEnabled = !!messageUrl;
 
   return (
-    <section className="border-b border-surface-100 py-2">
-      <h2 className="typo-h6 text-surface-950 px-4 py-3">Reservation</h2>
-      {channels.map((ch) => {
-        const url = links[ch];
-        const enabled = !!url;
-        const meta = CHANNEL_META[ch];
-        const isPrimary = ch === "message";
+    <section className="border-b border-surface-100 px-4 py-4 flex flex-col gap-3">
+      <h2 className="typo-h4 text-surface-950">Contact</h2>
 
-        if (isPrimary) {
-          // Message 행은 강조 CTA — 가로 카드 스타일
+      {/* Message CTA */}
+      <a
+        href={messageEnabled ? messageUrl : undefined}
+        aria-disabled={!messageEnabled}
+        className={`flex items-center gap-4 rounded-lg px-3 py-3 ${
+          messageEnabled
+            ? "bg-secondary-400 text-surface-white active:opacity-90"
+            : "bg-surface-200 text-surface-400 pointer-events-none"
+        }`}
+      >
+        <span className="shrink-0">{ICON_MAP.message}</span>
+        <span className="typo-h6 flex-1">{CHANNEL_META.message.label}</span>
+        <span className="typo-body2 opacity-70">{CHANNEL_META.message.cta}</span>
+      </a>
+
+      {/* 아이콘 버튼 행 */}
+      <div className="flex gap-2">
+        {iconChannels.map((ch) => {
+          const url = links[ch];
+          const enabled = !!url;
+
           return (
             <a
               key={ch}
               href={enabled ? url : undefined}
+              target={enabled ? "_blank" : undefined}
+              rel={enabled ? "noopener noreferrer" : undefined}
               aria-disabled={!enabled}
-              className={`mx-4 mt-2 mb-2 flex items-center gap-3 rounded-xl px-4 py-3.5 ${
+              aria-label={CHANNEL_META[ch].label}
+              className={`size-12 rounded-lg flex items-center justify-center ${
                 enabled
-                  ? "bg-secondary-400 text-surface-white active:opacity-90"
-                  : "bg-surface-200 text-surface-400 pointer-events-none"
+                  ? "bg-surface-100 text-surface-950 active:bg-surface-200"
+                  : "bg-surface-100 text-surface-300 pointer-events-none"
               }`}
             >
-              <span className="shrink-0">{ICON_MAP[ch]}</span>
-              <span className="typo-body1 flex-1">{meta.label}</span>
-              <span className="typo-button">{meta.cta}</span>
+              {ICON_MAP[ch]}
             </a>
           );
-        }
-
-        return (
-          <a
-            key={ch}
-            href={enabled ? url : undefined}
-            target={enabled ? "_blank" : undefined}
-            rel={enabled ? "noopener noreferrer" : undefined}
-            aria-disabled={!enabled}
-            className={`flex items-center gap-3 px-4 py-3 ${
-              enabled ? "active:bg-surface-100" : "pointer-events-none"
-            }`}
-          >
-            <span className={`shrink-0 ${enabled ? "text-surface-950" : "text-surface-300"}`}>
-              {ICON_MAP[ch]}
-            </span>
-            <span
-              className={`typo-body1 flex-1 ${enabled ? "text-surface-950" : "text-surface-300"}`}
-            >
-              {meta.label}
-            </span>
-            <span
-              className={`typo-button flex items-center gap-1 ${
-                enabled ? "text-secondary-500" : "text-surface-300"
-              }`}
-            >
-              {meta.cta}
-              <ChevronRight />
-            </span>
-          </a>
-        );
-      })}
+        })}
+      </div>
     </section>
   );
 }

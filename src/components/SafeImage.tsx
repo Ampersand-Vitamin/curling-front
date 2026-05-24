@@ -20,8 +20,8 @@ type Props = {
 };
 
 const PLACEHOLDER_PATH: Record<Fallback, string> = {
-  profile: "asset/placeholder/profile.svg",
-  portfolio: "asset/placeholder/portfolio.svg",
+  profile: "/icons/designer.svg",
+  portfolio: "/icons/portfolio.svg",
 };
 
 function toImageUrl(src: string) {
@@ -46,7 +46,7 @@ export default function SafeImage({
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   const finalUrl = !src || failedSrc === src
-    ? storageUrl(PLACEHOLDER_PATH[fallback])
+    ? PLACEHOLDER_PATH[fallback]
     : toImageUrl(src);
 
   return (

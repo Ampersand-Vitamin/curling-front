@@ -18,7 +18,6 @@
 //   pnpm portfolio:seed-kw -- --dry       # LLM/INSERT 없이 분배만 미리보기
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import OpenAI from "openai";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -31,11 +30,8 @@ const STORAGE_BUCKET = "portfolio";
 const SOURCE_REL = "tmp/portfolio-images";
 const INDEX_FILE = "_index.json";
 
-const LLM_MODEL = "gpt-4o-mini"; // vision-capable (text + image input)
-const BATCH_CONCURRENCY = 5;
 const MAX_DESCRIPTION_LEN = 200;
 const CHUNK = 100;
-const VISION_DETAIL = "low"; // "low" = $0.000425 per image, "high" = more tokens
 
 // ─────────────────────────────────────────────────────────────
 // Args
@@ -116,17 +112,13 @@ type SeedRow = {
 // Clients
 // ─────────────────────────────────────────────────────────────
 
-function makeClients() {
+function makeClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
   if (!url || !serviceKey) throw new Error("[seed] Supabase env missing");
-  if (!openaiKey) throw new Error("[seed] OPENAI_API_KEY missing");
-  const supabase = createClient(url, serviceKey, {
+  return createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  const openai = new OpenAI({ apiKey: openaiKey });
-  return { supabase, openai };
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -166,110 +158,47 @@ async function fetchExisting(supabase: SupabaseClient): Promise<Set<string>> {
 }
 
 // ─────────────────────────────────────────────────────────────
-// LLM meta
+// Simple meta (LLM 없이 slug + alt + 디자이너 keyword 기반)
 // ─────────────────────────────────────────────────────────────
 
-const LLM_SYSTEM_PROMPT = `You analyze hair-salon portfolio images and generate search metadata.
-You will see: the actual image, the primary keyword it should illustrate, and the designer's context.
-Return STRICT JSON: { "title": string, "description": string, "keywords": string[], "visual_summary": string }.
+function slugToTitle(slug: string): string {
+  return slug
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
-Constraints:
-- title: 30~80 chars, English, describing what you SEE in the image. e.g. "Tight Coily Afro with Defined Curls"
-- description: 80~${MAX_DESCRIPTION_LEN} chars, English. Describe visible hair: length, color, texture, technique. Salon-portfolio tone.
-- visual_summary: 50~150 chars, English. Pure visual observation (no marketing). Used for embedding.
-- keywords: 3~6 lowercase snake_case slugs. MUST include the primary slug. Add 2~5 from designer's pool that match what you see in the image.
+function generateMeta(job: Job): {
+  title: string;
+  description: string;
+  keywords: string[];
+} {
+  const prettyName = slugToTitle(job.keywordSlug);
+  const designerName = job.designer.display_name ?? "Stylist";
 
-If the image clearly does NOT show hair (e.g. unrelated photo), still produce metadata best matching the primary keyword.
-Return ONLY JSON. No prose.`;
+  // title: alt 텍스트가 있으면 활용, 없으면 keyword + designer 조합
+  const title = job.alt
+    ? job.alt.slice(0, 80)
+    : `${prettyName} by ${designerName}`;
 
-function buildLlmUserPrompt(job: Job): string {
-  const d = job.designer;
-  const specialties = d.designer_keyword
+  // description: keyword name + designer 컨텍스트
+  const specialties = job.designer.designer_keyword
     .filter((k) => k.relation_type === "specialty" && k.keyword)
     .map((k) => k.keyword!.name);
-  const experiences = d.designer_keyword
-    .filter((k) => k.relation_type === "experience" && k.keyword)
-    .map((k) => k.keyword!.name);
-  const slugs = d.designer_keyword.map((k) => k.keyword?.slug).filter((s): s is string => !!s);
+  const desc = specialties.length > 0
+    ? `${prettyName} — ${designerName} specializing in ${specialties.slice(0, 3).join(", ")}`
+    : `${prettyName} — portfolio by ${designerName}`;
 
-  return [
-    `Primary keyword (must appear in keywords[]): ${job.keywordSlug} ("${job.keywordName}")`,
-    `Designer: ${d.display_name ?? "Designer"} (${d.role ?? "stylist"})`,
-    `Years of experience: ${d.years_of_exp ?? "n/a"}`,
-    d.bio ? `Bio: ${d.bio}` : null,
-    specialties.length ? `Specialties: ${specialties.join(", ")}` : null,
-    experiences.length ? `Hair-type experience: ${experiences.join(", ")}` : null,
-    `Available keyword slug pool: ${Array.from(new Set([job.keywordSlug, ...slugs])).join(", ")}`,
-    d.salon?.name ? `Salon: ${d.salon.name}${d.salon.neighborhood ? ` (${d.salon.neighborhood})` : ""}` : null,
-    ``,
-    `Look at the image and generate metadata accordingly.`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  // keywords: primary slug + 디자이너의 specialty/experience slugs
+  const designerSlugs = job.designer.designer_keyword
+    .map((k) => k.keyword?.slug)
+    .filter((s): s is string => !!s);
+  const keywords = Array.from(new Set([job.keywordSlug, ...designerSlugs])).slice(0, 8);
+
+  return { title, description: desc.slice(0, MAX_DESCRIPTION_LEN), keywords };
 }
 
-async function generateMeta(
-  openai: OpenAI,
-  job: Job,
-  imageUrl: string,
-): Promise<{ title: string; description: string; keywords: string[]; visualSummary: string }> {
-  const completion = await openai.chat.completions.create({
-    model: LLM_MODEL,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: LLM_SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: [
-          { type: "text", text: buildLlmUserPrompt(job) },
-          { type: "image_url", image_url: { url: imageUrl, detail: VISION_DETAIL } },
-        ],
-      },
-    ],
-    temperature: 0.7,
-  });
-  const text = completion.choices[0]?.message?.content;
-  if (!text) throw new Error("empty completion");
 
-  const parsed = JSON.parse(text) as Record<string, unknown>;
-  const title = String(parsed.title ?? "").trim().slice(0, 200);
-  const description = String(parsed.description ?? "").trim().slice(0, MAX_DESCRIPTION_LEN);
-  const visualSummary = String(parsed.visual_summary ?? "").trim().slice(0, 300);
-  const rawKeywords = Array.isArray(parsed.keywords) ? parsed.keywords : [];
-  let keywords = rawKeywords
-    .map((k) => String(k ?? "").trim().toLowerCase())
-    .filter((k) => k.length > 0 && k.length <= 64)
-    .slice(0, 8);
-
-  // Primary keyword 강제 포함
-  if (!keywords.includes(job.keywordSlug)) keywords = [job.keywordSlug, ...keywords].slice(0, 8);
-
-  if (!title) throw new Error("missing title");
-  return { title, description, keywords, visualSummary };
-}
-
-// ─────────────────────────────────────────────────────────────
-// Concurrency
-// ─────────────────────────────────────────────────────────────
-
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  concurrency: number,
-  fn: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let cursor = 0;
-  async function worker() {
-    while (true) {
-      const i = cursor++;
-      if (i >= items.length) return;
-      results[i] = await fn(items[i], i);
-    }
-  }
-  const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker());
-  await Promise.all(workers);
-  return results;
-}
 
 // ─────────────────────────────────────────────────────────────
 // Main
@@ -278,7 +207,7 @@ async function mapWithConcurrency<T, R>(
 async function main() {
   const t0 = Date.now();
   const args = parseArgs();
-  const { supabase, openai } = makeClients();
+  const supabase = makeClient();
 
   // 1) Index 로드
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -310,16 +239,48 @@ async function main() {
   const existing = args.reset ? new Set<string>() : await fetchExisting(supabase);
   console.log(`[seed] existing rows: ${existing.size}`);
 
-  // 5) 분배 — 글로벌 cursor 로 designer round-robin
+  // 5) 분배 — keyword 매칭 우선, fallback round-robin
+  //    디자이너의 designer_keyword (specialty/experience) 에 해당 slug 이 있으면 우선 배정.
+  //    매칭 디자이너가 없으면 전체 디자이너 중 round-robin fallback.
+
+  // keyword slug → 해당 keyword 를 specialty/experience 로 가진 디자이너 목록
+  const designersByKeyword = new Map<string, DesignerRow[]>();
+  for (const d of designers) {
+    for (const dk of d.designer_keyword) {
+      const slug = dk.keyword?.slug;
+      if (!slug) continue;
+      if (!designersByKeyword.has(slug)) designersByKeyword.set(slug, []);
+      designersByKeyword.get(slug)!.push(d);
+    }
+  }
+
+  // keyword slug 별 round-robin cursor
+  const keywordCursors = new Map<string, number>();
+  let globalCursor = 0;
+
   const jobs: Job[] = [];
-  let cursor = 0;
   for (const entry of index.entries) {
     const keywordRow = keywordMap.get(entry.slug);
     const keywordName = keywordRow?.name ?? entry.slug;
+
+    const matched = designersByKeyword.get(entry.slug) ?? [];
+    if (!keywordCursors.has(entry.slug)) keywordCursors.set(entry.slug, 0);
+
     for (let i = 0; i < entry.photos.length; i++) {
       const photo = entry.photos[i];
-      const designer = designers[cursor % designers.length];
-      cursor++;
+
+      let designer: DesignerRow;
+      if (matched.length > 0) {
+        // specialty/experience 매칭 디자이너 round-robin
+        const cur = keywordCursors.get(entry.slug)!;
+        designer = matched[cur % matched.length];
+        keywordCursors.set(entry.slug, cur + 1);
+      } else {
+        // fallback: 전체 디자이너 round-robin
+        designer = designers[globalCursor % designers.length];
+        globalCursor++;
+      }
+
       const imagePath = `${STORAGE_BUCKET}/${entry.slug}/${photo.file}`;
       const key = `${designer.id}::${imagePath}`;
       if (existing.has(key)) continue;
@@ -333,6 +294,15 @@ async function main() {
       });
     }
   }
+
+  // 매칭 통계 로그
+  const matchedCount = jobs.filter((j) => {
+    const matched = designersByKeyword.get(j.keywordSlug) ?? [];
+    return matched.some((d) => d.id === j.designer.id);
+  }).length;
+  console.log(
+    `[seed] keyword-matched: ${matchedCount}/${jobs.length} (${jobs.length ? Math.round((matchedCount / jobs.length) * 100) : 0}%)`,
+  );
   console.log(`[seed] ${jobs.length} new jobs (after skip)`);
 
   if (args.limit) {
@@ -354,37 +324,22 @@ async function main() {
     return;
   }
 
-  // 6) Vision LLM 메타 생성 (concurrency 제한). image_embedding 은 별도 단계에서.
-  let ok = 0;
-  let fail = 0;
+  // 6) 메타데이터 생성 (slug + alt + 디자이너 keyword 기반, LLM 불필요)
   const rows: SeedRow[] = [];
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const publicUrl = (path: string) => `${supabaseUrl}/storage/v1/object/public/${path}`;
+  for (const job of jobs) {
+    const meta = generateMeta(job);
+    rows.push({
+      designer_id: job.designer.id,
+      image_path: job.imagePath,
+      title: meta.title,
+      description: meta.description,
+      keywords: meta.keywords,
+      display_order: job.fileIndex,
+    });
+  }
 
-  await mapWithConcurrency(jobs, BATCH_CONCURRENCY, async (job, idx) => {
-    try {
-      const imageUrl = publicUrl(job.imagePath);
-      const meta = await generateMeta(openai, job, imageUrl);
-      rows.push({
-        designer_id: job.designer.id,
-        image_path: job.imagePath,
-        title: meta.title,
-        description: meta.description,
-        keywords: meta.keywords,
-        display_order: job.fileIndex,
-      });
-      ok++;
-      if ((ok + fail) % 25 === 0) {
-        console.log(`[seed] progress: ${ok + fail}/${jobs.length} (ok=${ok} fail=${fail})`);
-      }
-    } catch (err) {
-      fail++;
-      console.warn(`[seed] job ${idx} (${job.keywordSlug}/${job.imagePath}) failed: ${(err as Error).message}`);
-    }
-  });
-
-  console.log(`[seed] generated: ok=${ok} fail=${fail}`);
+  console.log(`[seed] generated: ${rows.length} rows`);
 
   // 7) INSERT
   console.log(`[seed] inserting ${rows.length} rows ...`);

@@ -1,4 +1,4 @@
-// Design Ref: §4.16, §6.8, FR-13 — designer-detail
+// Figma Ref: 363:11514 (Providing Services & Price)
 // Mock 데이터 (DS-11). designerId 해시로 변형 분기.
 
 import { getMockServices } from "@/mocks/designer-services";
@@ -14,36 +14,48 @@ export default function ServicesList({ designerId }: Props) {
   if (services.length === 0) return null;
 
   return (
-    <section className="px-4 py-5 border-b border-surface-100">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="typo-h6 text-surface-950">Providing Services & Price</h2>
-        <button type="button" className="typo-button text-surface-500 active:text-surface-700">
-          View more
+    <section className="px-4 py-5 border-b border-surface-100 flex flex-col gap-3">
+      <div className="flex justify-between items-center">
+        <h2 className="typo-h4 text-surface-950">Providing Services & Price</h2>
+        <button type="button" className="typo-caption text-surface-400 underline">
+          view all
         </button>
       </div>
-      <ul className="flex flex-col">
+
+      <ul className="flex flex-col gap-2">
         {services.map((s) => (
           <li
             key={s.id}
-            className="flex justify-between items-center py-3 border-b border-surface-100 last:border-b-0"
+            className="flex items-center gap-4 bg-surface-100 rounded-lg p-3"
           >
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="typo-body1 text-surface-950 truncate">{s.name}</span>
+            <div className="flex-1 min-w-0 flex flex-col gap-1.5">
               {s.tag && (
-                <span
-                  className={`typo-caption2 px-1.5 py-0.5 rounded-md shrink-0 ${
-                    s.tag === "Popular"
-                      ? "bg-secondary-50 text-secondary-500"
-                      : "bg-accent-50 text-accent-500"
-                  }`}
-                >
-                  {s.tag}
-                </span>
+                <div className="flex gap-1">
+                  {s.tag === "Popular" && (
+                    <>
+                      <span className="typo-caption2 px-2 py-1 rounded-full bg-secondary-400 text-surface-white">
+                        Best
+                      </span>
+                      <span className="typo-caption2 px-2 py-1 rounded-full bg-surface-950 text-surface-white">
+                        Popular
+                      </span>
+                    </>
+                  )}
+                  {s.tag === "New" && (
+                    <span className="typo-caption2 px-2 py-1 rounded-full bg-surface-950 text-surface-white">
+                      New
+                    </span>
+                  )}
+                </div>
               )}
+              <span className="typo-h6 text-surface-950">{s.name}</span>
             </div>
-            <span className="typo-h6 text-surface-950 shrink-0 ml-2">
-              ₩{KRW.format(s.price)}
-            </span>
+            <div className="flex flex-col items-end shrink-0">
+              <span className="typo-caption text-surface-500">from</span>
+              <span className="typo-body1 text-surface-950">
+                ₩{KRW.format(s.price)}
+              </span>
+            </div>
           </li>
         ))}
       </ul>

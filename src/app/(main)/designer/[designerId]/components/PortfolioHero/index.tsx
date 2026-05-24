@@ -62,13 +62,15 @@ export default function PortfolioHero({
         </div>
       </div>
 
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface-white from-10% via-surface-white/75 via-45% to-transparent backdrop-blur-[2px]" />
+
       {/* ⭐ 저장 (UI-only) */}
       <button
         type="button"
         onClick={onToggleFavorite}
         aria-label={isFavorite ? "저장 해제" : "저장"}
         aria-pressed={isFavorite}
-        className={`absolute top-4 right-4 size-10 rounded-full bg-surface-white/90 shadow-[0px_2px_8px_rgba(0,0,0,0.15)] flex items-center justify-center ${
+        className={`absolute top-4 right-4 size-12 rounded-full bg-surface-50/95 backdrop-blur-[10px] flex items-center justify-center active:bg-surface-200 ${
           isFavorite ? "text-secondary-400" : "text-surface-700"
         }`}
       >

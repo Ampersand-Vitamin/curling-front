@@ -23,6 +23,8 @@ const THRESHOLD = (() => {
   return a ? Number(a.slice("--threshold=".length)) : DEFAULT_THRESHOLD;
 })();
 
+const DELETE_MODE = process.argv.includes("--delete");
+
 type Row = {
   id: string;
   image_path: string;
@@ -128,12 +130,37 @@ async function main() {
     console.log(`         ${r.title}`);
   }
 
+  // --delete: DB 에서 non-portfolio rows 삭제
+  if (DELETE_MODE && bad.length > 0) {
+    const ids = bad.map((r) => r.id);
+    console.log(`\n─── Deleting ${ids.length} non-portfolio rows ─────────`);
+    const CHUNK = 100;
+    let deleted = 0;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const chunk = ids.slice(i, i + CHUNK);
+      const { error: delErr } = await supabase
+        .from("portfolio")
+        .delete()
+        .in("id", chunk);
+      if (delErr) {
+        console.error(`[filter/delete] chunk ${i / CHUNK + 1} failed:`, delErr.message);
+        throw delErr;
+      }
+      deleted += chunk.length;
+      console.log(`[filter] deleted ${deleted}/${ids.length}`);
+    }
+    console.log(`[filter] ✓ ${deleted} rows deleted`);
+  } else if (DELETE_MODE) {
+    console.log(`\n[filter] no rows to delete`);
+  }
+
   // 결과 JSON 저장
   const output = {
     referenceText: REFERENCE_TEXT,
     threshold: THRESHOLD,
     totalRows: scored.length,
     nonPortfolioCount: bad.length,
+    deleted: DELETE_MODE,
     nonPortfolio: bad.map((r) => ({
       id: r.id,
       image_path: r.image_path,
