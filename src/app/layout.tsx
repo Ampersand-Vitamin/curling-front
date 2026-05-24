@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Roboto } from "next/font/google";
+import ClarityProvider from "@/components/ClarityProvider";
 import "./globals.css";
 
 const pretendard = localFont({
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pretendard.variable} ${roboto.variable} h-full antialiased`}>
       <body className="h-full flex justify-center bg-surface-950 font-pretendard overflow-hidden">
+        <ClarityProvider />
         {children}
       </body>
     </html>

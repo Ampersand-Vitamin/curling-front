@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curling · PRD v2 — 곱슬·특수머리 디자이너 매칭 플랫폼</title>
+<style>
+  :root {
+    --bg: #f7f5f1;
+    --surface: #ffffff;
+    --surface-2: #fbf9f5;
+    --border: #e6e1d8;
+    --border-strong: #d4ccbe;
+    --text: #2b2620;
+    --text-muted: #6b6359;
+    --text-soft: #8a8278;
+    --primary: #8b6f4e;
+    --primary-soft: #f0e8dc;
+    --accent: #3b6ea5;
+    --accent-soft: #e3edf7;
+    --warn: #c75a3c;
+    --highlight: #ffd400;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    padding: 40px 16px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* Document header */
+  .doc-header {
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .doc-meta span {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .doc-meta .product {
+    color: var(--primary);
+    background: var(--primary-soft);
+  }
+  .doc-meta .version {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .doc-meta .status {
+    color: #3f7a4a;
+    background: #dceadd;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .tagline {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .tagline strong { color: var(--primary); }
+  .subtitle { color: var(--text-soft); font-size: 14px; }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .toc h3 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin: 0 0 12px;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 20px;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .toc li {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+  }
+  .toc a:hover {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* Sections */
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    scroll-margin-top: 20px;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 0 0 18px;
+    letter-spacing: -0.015em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+  }
+  h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 22px 0 10px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  h3:first-child { margin-top: 0; }
+  p { margin: 0 0 12px; color: var(--text-muted); font-size: 14.5px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* Highlights */
+  .lede {
+    padding: 14px 18px;
+    background: var(--primary-soft);
+    border-left: 3px solid var(--primary);
+    border-radius: 6px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .lede strong { color: var(--primary); }
+
+  .callout {
+    padding: 12px 16px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    margin-top: 12px;
+  }
+  .callout strong { color: var(--accent); }
+
+  .warn-box {
+    padding: 12px 16px;
+    background: #fbf4f2;
+    border-left: 3px solid var(--warn);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    margin-top: 12px;
+  }
+  .warn-box strong { color: var(--warn); }
+
+  /* Personas */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .persona-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+  }
+  .persona-card.designer { border-left: 3px solid var(--primary); }
+  .persona-card.client { border-left: 3px solid var(--accent); }
+  .persona-card .role-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+  }
+  .persona-card h4 {
+    font-size: 17px;
+    margin: 0 0 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .persona-card ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .persona-card ul li { margin-bottom: 8px; }
+  .persona-card ul li:last-child { margin-bottom: 0; }
+  .persona-card ul ul {
+    margin-top: 6px;
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+  .persona-card strong { color: var(--text); font-weight: 600; }
+
+  /* Beachhead scope box */
+  .scope-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .scope-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+  }
+  .scope-box.in { border-left: 3px solid #4d8a5b; }
+  .scope-box.out { border-left: 3px solid var(--warn); }
+  .scope-box .scope-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .scope-box.in .scope-label { color: #4d8a5b; }
+  .scope-box.out .scope-label { color: var(--warn); }
+  .scope-box ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+  .scope-box ul li { margin-bottom: 6px; }
+
+  /* Scenario timeline */
+  .scenario {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .scenario .step {
+    display: inline-block;
+    min-width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .scenario .tab {
+    display: inline-block;
+    padding: 1px 7px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Place list (Where they gather) */
+  .place-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .place-item {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .place-item .num-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .place-item h4 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .place-item .desc {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .place-item .desc ul {
+    margin: 4px 0 0;
+    padding-left: 18px;
+  }
+
+  /* GTM phases */
+  .phase {
+    position: relative;
+    padding: 20px 20px 20px 60px;
+    margin-bottom: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .phase::before {
+    content: attr(data-step);
+    position: absolute;
+    left: 18px;
+    top: 20px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phase h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .phase p, .phase ul {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .phase ul { padding-left: 18px; margin-top: 6px; }
+  .phase ul li { margin-bottom: 6px; }
+  .phase ul ul {
+    margin-top: 4px;
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+  .phase .quote {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: #fff;
+    border-left: 3px solid var(--highlight);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .phase .quote strong { color: var(--primary); }
+
+  /* Pricing table */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .price-tier {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+  }
+  .price-tier.featured {
+    background: linear-gradient(180deg, #fff 0%, var(--primary-soft) 100%);
+    border-color: var(--primary);
+    border-width: 2px;
+  }
+  .price-tier .tier-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+  .price-tier.featured .tier-name { color: var(--primary); }
+  .price-tier .price {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .price-tier .price-suffix {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 400;
+  }
+  .price-tier .phase-tag {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--text-soft);
+    background: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 6px 0 10px;
+  }
+  .price-tier ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .price-tier ul li { margin-bottom: 5px; }
+
+  /* KPI table */
+  .kpi-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 13.5px;
+  }
+  .kpi-table th, .kpi-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .kpi-table th {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    background: var(--surface-2);
+  }
+  .kpi-table .stage {
+    font-weight: 600;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .kpi-table .target {
+    font-family: "SF Mono", Monaco, Menlo, monospace;
+    font-size: 12.5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .kpi-table tr.hero td { background: #fffbea; }
+  .kpi-table tr.hero .stage { color: var(--warn); }
+
+  /* Risk list */
+  .risk-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .risk-item {
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--warn);
+    font-size: 14px;
+  }
+  .risk-item .risk-name {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .risk-item .mitigation {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-top: 4px;
+  }
+  .risk-item .mitigation strong { color: #4d8a5b; }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 32px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #2b2620 0%, #3a322a 100%);
+    color: #f7f5f1;
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .doc-footer strong { color: var(--highlight); }
+
+  .arrow { display: inline-block; color: var(--text-soft); margin: 0 4px; }
+
+  @media (max-width: 720px) {
+    body { padding: 24px 12px 64px; }
+    .persona-grid, .scope-grid, .pricing-grid { grid-template-columns: 1fr; }
+    .toc ol { columns: 1; }
+    h1 { font-size: 26px; }
+    section { padding: 22px 18px; }
+    .phase { padding: 16px 16px 16px 52px; }
+    .phase::before { left: 14px; top: 16px; }
+    .kpi-table th, .kpi-table td { padding: 8px 6px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="doc-header">
+  <div class="doc-meta">
+    <span class="product">CURLING</span>
+    <span class="version">PRD v2.0</span>
+    <span class="status">Draft</span>
+  </div>
+  <h1>Curling — Pinterest for Curly &amp; Specialty Hair</h1>
+  <p class="tagline">
+    <strong>곱슬·특수 머리타입을 위한 스타일 검색 기반 디자이너 매칭 플랫폼</strong>
+  </p>
+  <p class="subtitle">Find a stylist by the exact style you want, in Seoul.</p>
+</header>
+
+<nav class="toc">
+  <h3>목차</h3>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#core-value">Core Value</a></li>
+    <li><a href="#beachhead">Beachhead (v1 Scope)</a></li>
+    <li><a href="#personas">Target Users &amp; Personas</a></li>
+    <li><a href="#scenario">Usage Scenario</a></li>
+    <li><a href="#business-model">Business Model</a></li>
+    <li><a href="#gtm">Go-to-Market</a></li>
+    <li><a href="#kpi">Success Criteria</a></li>
+    <li><a href="#risk">Risk &amp; Mitigation</a></li>
+    <li><a href="#attributes">Attributes</a></li>
+  </ol>
+</nav>
+
+<section id="overview">
+  <h2><span class="num">01</span>Overview</h2>
+
+  <div class="lede">
+    Curling은 <strong>곱슬머리·외국인·특수 헤어타입</strong>을 가진 사람들이
+    자기 머리를 진짜로 이해하는 디자이너를 <strong>스타일 검색</strong>으로 찾아 바로 연결되는
+    모바일 플랫폼이다.
+  </div>
+
+  <h3>Product Goal</h3>
+  <p>
+    카카오헤어샵·네이버예약이 점령한 직모 중심 시장 바깥에 남겨진 곱슬·특수머리 사용자들에게,
+    "내 헤어 타입을 이해하는 디자이너를 스타일로 검색해서 직접 연결"하는 경험을 제공한다.
+    동시에 곱슬·특수 시술 전문 디자이너에게 본인 포트폴리오를 자산화하고
+    이상적 클라이언트를 끌어들이는 전용 플랫폼이 된다.
+  </p>
+
+  <h3>Background</h3>
+  <p>
+    한국 인구의 15–20%(Type 3)와 한국 거주·방문 외국인(Type 3–4 비중 높음)은
+    "내 곱슬을 다룰 줄 아는 디자이너"를 찾기 위해 인스타 해시태그를 손수 뒤지거나
+    레딧의 산재된 추천 글에 의존한다. 기존 booking 플랫폼은 직모 기반 검색만 지원하고,
+    소셜 미디어는 검색이 아닌 알고리즘 노출에 의존한다.
+    이 공백이 Curling의 시장이다.
+  </p>
+</section>
+
+<section id="core-value">
+  <h2><span class="num">02</span>Core Value</h2>
+
+  <h3>User Problem</h3>
+  <p>
+    <strong>곱슬·특수머리 클라이언트</strong>는 일반 미용실에서 "내 머리를 못 다룸"을 반복 경험하고,
+    시술 실패와 신뢰 비용을 지속적으로 부담한다.
+    <strong>곱슬·특수 전문 디자이너</strong>는 demand는 있지만,
+    인스타 알고리즘에 의존하는 산발적 노출과 부재한 포트폴리오 관리 도구로 수요-공급 매칭에 실패한다.
+  </p>
+
+  <h3>Solution</h3>
+  <p>
+    Pinterest처럼 작동하는 <strong>Style 탭</strong>이 핵심.
+    자연어 + 키워드 + 헤어타입 인덱싱 기반으로 스타일을 검색하고,
+    각 스타일은 시술한 디자이너에게 1:1로 연결된다. DM으로 즉시 상담 가능.
+    Discover(지도)는 위치 확인용 보조 탭, My 탭에서 헤어 프로필과 저장한 스타일을 관리한다.
+  </p>
+
+  <h3>Differentiator (vs 카카오헤어샵·네이버예약·인스타)</h3>
+  <ul style="margin: 0; padding-left: 20px; color: var(--text-muted); font-size: 14.5px;">
+    <li><strong style="color: var(--text);">헤어타입 × 시술 × 길이 × 스타일링</strong> 4축 인덱싱 — 곱슬·특수에 특화</li>
+    <li><strong style="color: var(--text);">자연어 검색</strong> — "C컬 곱슬 단발", "korean perm for foreigners" 같은 의도 기반 쿼리</li>
+    <li><strong style="color: var(--text);">다국어 지원 (KR / EN)</strong> — 외국인 비치헤드 직접 공략</li>
+    <li><strong style="color: var(--text);">예약 수수료 0%</strong> — 구독 + 광고 모델로 디자이너 부담 해소</li>
+    <li><strong style="color: var(--text);">Style → Designer 1:1 매핑</strong> — Pinterest엔 없는, 영감과 실행의 직결</li>
+  </ul>
+</section>
+
+<section id="beachhead">
+  <h2><span class="num">03</span>Beachhead (v1 Scope)</h2>
+
+  <p>
+    v1은 <strong style="color: var(--text);">단일 비치헤드</strong>에 집중한다.
+    범용 헤어 매칭 플랫폼을 만들지 않는다 — 만들면 카카오헤어샵에 진다.
+  </p>
+
+  <div class="scope-grid">
+    <div class="scope-box in">
+      <div class="scope-label">✓ IN — v1 타겟</div>
+      <ul>
+        <li><strong>Client</strong>: Type 3 (Curly) 한국 거주자</li>
+        <li><strong>Client</strong>: 한국 거주·방문 외국인 (Type 3–4 비중 높음)</li>
+        <li><strong>Designer</strong>: D1 — 곱슬·특수 시술 전문, 1–5년차, 프리랜서·공유미용실</li>
+        <li><strong>Geography</strong>: 홍대 · 성수 · 강남 · 이태원 · 한남</li>
+      </ul>
+    </div>
+    <div class="scope-box out">
+      <div class="scope-label">✗ OUT — v1 의도적 제외 (anti-personas)</div>
+      <ul>
+        <li>Type 1–2 직모 클라이언트 → Red Ocean, 카카오·네이버 점령</li>
+        <li>체인 살롱 (준오·박준·이가자) → 영업주기 6–12개월</li>
+        <li>D2 일반 트렌드 디자이너 → Phase 2 확장</li>
+        <li>예약·결제 기능 → Phase 3 (먼저 매칭 가치 증명)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>왜 anti-persona를 명시하나:</strong>
+    팀이 "그래도 직모 유저도 잡아야지" 하는 유혹에 빠지지 않도록
+    PRD가 차단한다. 확장은 비치헤드 정복 후 <em>Curly → Coily → Wavy → Straight</em> 순서.
+  </div>
+</section>
+
+<section id="personas">
+  <h2><span class="num">04</span>Target Users &amp; Personas</h2>
+
+  <div class="persona-grid">
+    <div class="persona-card designer">
+      <div class="role-label">Designer · D1</div>
+      <h4>곱슬·외국인 전문 디자이너</h4>
+      <ul>
+        <li><strong>1–5년차 프리랜서·공유미용실</strong>, 인스타 팔로워 5k–30k</li>
+        <li>곱슬 시술 단가 일반 대비 1.5–2배, <strong>시술 3–5시간</strong> → 노쇼 치명적</li>
+        <li>이미 인스타에 포트폴리오를 올리지만 <strong>검색 안 됨 · 자산화 안 됨</strong></li>
+        <li>가치 제안: "포트폴리오 퍼뜨리기는 무조건 이득" — Pinterest 메타포에 즉시 동기화</li>
+      </ul>
+    </div>
+    <div class="persona-card client">
+      <div class="role-label">Client · Type 3 + Foreigner</div>
+      <h4>곱슬머리 보유자 · 외국인</h4>
+      <ul>
+        <li><strong>일반 미용실에서 "내 곱슬 못 다룸" 반복 경험</strong></li>
+        <li>한국 거주·방문 외국인, 헤어 실패 경험 보유</li>
+        <li>인스타 해시태그(<code>#곱슬머리펌</code>, <code>#C컬펌</code>)와 레딧 추천 글로 디자이너를 손수 찾는 패턴</li>
+        <li>사례·리뷰·비포애프터 강한 신뢰 → 한 번 좋은 디자이너 찾으면 LTV 매우 높음</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 24px;">User Roles (Feature spec 연결용)</h3>
+  <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: var(--text-muted);">
+    <li><strong style="color: var(--text);">Client</strong>: Type 3 Curly · Type 4 Coily · Foreigner · Type 1–2 [Phase 2]</li>
+    <li><strong style="color: var(--text);">Designer</strong>: D1 Curly Specialist · D2 Trend Stylist [Phase 2] · D3 General [Phase 3]</li>
+  </ul>
+</section>
+
+<section id="scenario">
+  <h2><span class="num">05</span>Usage Scenario</h2>
+  <p>핵심 펀넬: <strong style="color: var(--text);">Style 검색 → Designer 포트폴리오 → DM</strong>. Discover(지도)는 위치 확인용 보조.</p>
+
+  <div class="scenario">
+    <p>
+      <span class="step">1</span>
+      Sarah는 한국 거주 외국인. 자기 곱슬머리를 다룰 줄 아는 디자이너를 찾고 있다.
+      Curling을 열고 <span class="tab">Style</span> 탭에서 "C-curl perm short curly"를 검색한다.
+    </p>
+    <p>
+      <span class="step">2</span>
+      자기 헤어타입과 매칭된 실제 시술 포트폴리오들이 Pinterest처럼 나열된다.
+      마음에 드는 스타일을 탭하면 <strong>그 시술을 한 디자이너의 전체 포트폴리오</strong>로 이동.
+    </p>
+    <p>
+      <span class="step">3</span>
+      같은 헤어타입의 다른 사례·비포애프터·리뷰를 확인한 뒤
+      <span class="tab">Message</span> 탭에서 저장한 스타일을 레퍼런스로 첨부해 DM을 보낸다.
+    </p>
+    <p>
+      <span class="step">4</span>
+      상담 확정 후 <span class="tab">Discover</span> 지도로 살롱 위치를 확인,
+      <span class="tab">My</span> 탭에서 헤어 프로필·저장 스타일·예약 이력을 관리한다.
+    </p>
+  </div>
+</section>
+
+<section id="business-model">
+  <h2><span class="num">06</span>Business Model</h2>
+  <p>돈을 내는 쪽은 <strong style="color: var(--text);">디자이너</strong>. 클라이언트는 무료.</p>
+
+  <div class="pricing-grid">
+    <div class="price-tier">
+      <div class="tier-name">Free</div>
+      <div class="price">₩0</div>
+      <div class="phase-tag">v1 — 진입 장벽 0</div>
+      <ul>
+        <li>기본 포트폴리오 페이지</li>
+        <li>스타일 업로드</li>
+        <li>DM 수신</li>
+        <li>커스텀 URL</li>
+      </ul>
+    </div>
+    <div class="price-tier featured">
+      <div class="tier-name">Pro</div>
+      <div class="price">₩39,000<span class="price-suffix">/ 월</span></div>
+      <div class="phase-tag">v2 — 운영 도구 구독</div>
+      <ul>
+        <li>사전 헤어 진단 폼</li>
+        <li><strong>노쇼 보증금 수금</strong></li>
+        <li>후기·사진 자동 수집</li>
+        <li>재방문 클라이언트 관리</li>
+        <li>방문 분석 대시보드</li>
+      </ul>
+    </div>
+    <div class="price-tier">
+      <div class="tier-name">Boost</div>
+      <div class="price">₩9,900<span class="price-suffix">/ 주</span></div>
+      <div class="phase-tag">v3 — 키워드 광고</div>
+      <ul>
+        <li>키워드 슬롯 상단 1자리</li>
+        <li>예: "곱슬 C컬펌" 슬롯</li>
+        <li>Type 1–2 확장기 활성화</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>Anti-pattern — 예약 수수료 0%:</strong>
+    카카오헤어샵의 디자이너 불만 누적 지점이 정확히 booking commission이다.
+    우리는 결제·캘린더·환불 인프라를 v3까지 만들지 않는다.
+    구독+광고 모델이 예측 가능 매출 + 차별화를 동시에 준다.
+  </div>
+</section>
+
+<section id="gtm">
+  <h2><span class="num">07</span>Go-to-Market</h2>
+
+  <h3>고객이 모여 있는 곳 (우선순위)</h3>
+  <ul class="place-list">
+    <li class="place-item">
+      <div class="num-circle">1</div>
+      <div>
+        <h4>인스타그램</h4>
+        <div class="desc">
+          디자이너 포트폴리오 관리의 default. 클라이언트는 인스타에서 스타일을 서치하고 DM으로 예약까지 진행 — 우리의 펀넬과 정확히 같은 형태.
+        </div>
+      </div>
+    </li>
+    <li class="place-item">
+      <div class="num-circle">2</div>
+      <div>
+        <h4>레딧 <span style="font-size: 12px; color: var(--text-soft); font-weight: 400;">— 외국인 채널</span></h4>
+        <div class="desc">
+          r/korea · r/seoul · r/livinginkorea에 "Where can I get a haircut in Seoul for curly hair?" 류 글이 정기적으로 올라온다. 신뢰도 떨어지는 산재 정보 — 우리가 채울 공백.
+        </div>
+      </div>
+    </li>
+    <li class="place-item">
+      <div class="num-circle">3</div>
+      <div>
+        <h4>공유 미용실 운영사</h4>
+        <div class="desc">살롱드핏 · 헤어셀럽 · 챕터원. B2B 파트너십 한 번에 디자이너 수십 명 확보 가능 — 효율 최고 채널.</div>
+      </div>
+    </li>
+    <li class="place-item">
+      <div class="num-circle">4</div>
+      <div>
+        <h4>SEO · 헤어 블로그</h4>
+        <div class="desc">"곱슬머리 C컬펌", "외국인 미용실 서울" 같은 long-tail 검색어를 콘텐츠로 점령.</div>
+      </div>
+    </li>
+  </ul>
+
+  <h3>데려오는 방법 — 단계별</h3>
+
+  <div class="phase" data-step="1">
+    <h4>디자이너 풀 먼저 확보</h4>
+    <p>인스타 DM + 직접 방문으로 곱슬·외국인 전문 디자이너 컨택. 공유 미용실 1–2곳 파트너십.</p>
+  </div>
+
+  <div class="phase" data-step="2">
+    <h4>제안 — 검색 탭 상단 슬롯 무료 보장</h4>
+    <div class="quote">
+      "오픈 전에 들어오면 본인 <strong>Speciality 전문 키워드</strong>에 대해
+      Style 탭 검색 결과 상단을 보장. <strong>가입비 0원, 광고비 0원.</strong>"
+    </div>
+    <div class="callout" style="margin-top: 12px;">
+      <strong>핵심 정교화:</strong> "상단 노출"은 가입자가 늘수록 인플레이션됨.
+      <strong>키워드 단위로 좁혀</strong> 보장한다 — "곱슬 C컬펌 키워드 상단 1자리, 6개월, Founding 100명 한정".
+      이렇게 키워드를 슬롯 인벤토리화하면 v3 Boost 광고 가격의 근거가 된다.
+    </div>
+  </div>
+
+  <div class="phase" data-step="3">
+    <h4>그럼 유저는?</h4>
+    <ul>
+      <li><strong>커뮤니티 침투</strong> — 레딧·헤어 카페에서 실제 유저 페르소나로 우리 서비스 추천</li>
+      <li>
+        <strong>페이드 마케팅 — 스토리텔링 광고</strong>
+        <ul>
+          <li>"미용실에서 머리 실패 <span class="arrow">→</span> Curling으로 원하는 스타일 검색 <span class="arrow">→</span> 그 스타일 기반 상담 <span class="arrow">→</span> 만족"</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="callout">
+      유저는 <strong>이미 확보한 디자이너 풀</strong> 덕에 Style 탭 검색에서 즉시 가치를 느낀다 — supply가 demand를 끌어당기는 구조.
+    </div>
+  </div>
+
+  <div class="phase" data-step="4">
+    <h4>SEO 점령</h4>
+    <p>각종 헤어 스타일 관련 블로그·포트폴리오 페이지가 long-tail 검색어를 자동 흡수 — 시간이 지날수록 CAC가 0에 수렴.</p>
+  </div>
+</section>
+
+<section id="kpi">
+  <h2><span class="num">08</span>Success Criteria (Leading KPI)</h2>
+  <p>Vanity metric(profile views, retention rate) 대신 <strong>가치 루프를 직접 측정하는 leading indicator</strong>로 구성.</p>
+
+  <table class="kpi-table">
+    <thead>
+      <tr><th>단계</th><th>KPI</th><th>목표 (v1 6mo)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="stage">Supply 활성화</td>
+        <td>디자이너 Activation Rate (가입 7일 내 스타일 5+ 업로드)</td>
+        <td class="target">&gt;40%</td>
+      </tr>
+      <tr class="hero">
+        <td class="stage">★ Core Value Loop</td>
+        <td><strong>Style → DM 전환율</strong> (단일 핵심 지표)</td>
+        <td class="target">&gt;2%</td>
+      </tr>
+      <tr>
+        <td class="stage">Demand 검증</td>
+        <td>디자이너당 월간 신규 DM 수</td>
+        <td class="target">&gt;5 / 월</td>
+      </tr>
+      <tr>
+        <td class="stage">Monetization</td>
+        <td>Free → Pro 전환율 (6개월 시점)</td>
+        <td class="target">&gt;10%</td>
+      </tr>
+      <tr>
+        <td class="stage">Beachhead 정복</td>
+        <td>Type 3 + Foreigner 클라이언트 점유율</td>
+        <td class="target">&gt;60%</td>
+      </tr>
+      <tr>
+        <td class="stage">Founding 시드</td>
+        <td>Founding 100 디자이너 확보</td>
+        <td class="target">100 / 3mo</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="risk">
+  <h2><span class="num">09</span>Risk &amp; Mitigation</h2>
+
+  <ul class="risk-list">
+    <li class="risk-item">
+      <div class="risk-name">Cold Start (Chicken-and-Egg)</div>
+      디자이너 없이는 클라이언트 안 오고, 그 반대도 성립. 양면 시장의 고전적 함정.
+      <div class="mitigation"><strong>완화:</strong> Phase 1에서 디자이너 supply를 먼저 100명 확보 → 콘텐츠 채워진 상태로 demand 유입 시작.</div>
+    </li>
+    <li class="risk-item">
+      <div class="risk-name">Founding 100 Slot Inflation</div>
+      "상단 노출" 약속이 가입자 늘수록 자동 희석. 100명 다 1번일 수 없음.
+      <div class="mitigation"><strong>완화:</strong> 노출 약속을 <strong>키워드 단위 슬롯</strong>으로 좁혀 인벤토리화. v3 Boost 광고 가격 근거로 재활용.</div>
+    </li>
+    <li class="risk-item">
+      <div class="risk-name">비치헤드 자원 분산 (한국인 곱슬 vs 외국인)</div>
+      두 페르소나를 동시에 잡으려다 둘 다 놓치는 리스크.
+      <div class="mitigation"><strong>완화:</strong> v1 전반 한국인 곱슬, v1 후반 외국인 확장. 다국어 지원은 v1 후반 마일스톤으로 분리.</div>
+    </li>
+    <li class="risk-item">
+      <div class="risk-name">디자이너 6개월 이탈</div>
+      클라이언트 유입이 늦으면 디자이너가 떠나 콘텐츠 자산 손실.
+      <div class="mitigation"><strong>완화:</strong> Founding 첫 30일 내 디자이너당 DM 1건 이상 목표. SEO + 페이드 광고로 demand 초기 인공 가속.</div>
+    </li>
+    <li class="risk-item">
+      <div class="risk-name">기존 booking 플랫폼 경쟁 (카카오·네이버)</div>
+      그들이 곱슬 카테고리를 모방해 들어올 가능성.
+      <div class="mitigation"><strong>완화:</strong> "0% 수수료" + 헤어타입 인덱싱 + 외국인 시장 — 3중 해자. 그들이 들어오기엔 수익 모델 충돌.</div>
+    </li>
+  </ul>
+</section>
+
+<section id="attributes">
+  <h2><span class="num">10</span>Attributes</h2>
+
+  <h3>Category</h3>
+  <p>Two-sided marketplace · Vertical SaaS for hair stylists · Discovery platform</p>
+
+  <h3>Devices</h3>
+  <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: var(--text-muted);">
+    <li><strong style="color: var(--text);">Client</strong>: Mobile Web (PWA)</li>
+    <li><strong style="color: var(--text);">Designer</strong>: Mobile Web + <strong>Desktop responsive for upload</strong> — 시술 사진은 DSLR/미러리스로 찍어 데스크탑 저장하는 워크플로 고려</li>
+  </ul>
+
+  <h3>Languages</h3>
+  <p>Korean (default) + English (v1 후반) — 외국인 비치헤드 직접 공략용</p>
+</section>
+
+<div class="doc-footer">
+  <strong>One-page summary</strong> &nbsp;·&nbsp;
+  Beachhead = <strong>곱슬·외국인 (Type 3) ↔ D1 디자이너</strong> ·
+  Hero = <strong>Style 탭 검색</strong> ·
+  Funnel = <strong>Style → Designer → DM</strong> ·
+  Money = <strong>디자이너 구독+광고 (수수료 0%)</strong> ·
+  Hero KPI = <strong>Style → DM 전환율 &gt; 2%</strong>
+</div>
+
+</div>
+</body>
+</html>
