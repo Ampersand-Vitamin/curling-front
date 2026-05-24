@@ -46,6 +46,10 @@ function parseArgs() {
       const a = args.find((x) => x.startsWith("--limit="));
       return a ? Number(a.slice("--limit=".length)) : undefined;
     })(),
+    providers: (() => {
+      const a = args.find((x) => x.startsWith("--providers="));
+      return a ? a.slice("--providers=".length).split(",") : undefined;
+    })(),
   };
 }
 
@@ -161,6 +165,12 @@ async function fetchExisting(supabase: SupabaseClient): Promise<Set<string>> {
 // Simple meta (LLM 없이 slug + alt + 디자이너 keyword 기반)
 // ─────────────────────────────────────────────────────────────
 
+/** 깨진 Unicode surrogate pair 제거 (DB JSON 파싱 에러 방지) */
+function sanitize(text: string): string {
+  // eslint-disable-next-line no-control-regex
+  return text.replace(/[\uD800-\uDFFF]/g, "").trim();
+}
+
 function slugToTitle(slug: string): string {
   return slug
     .split("_")
@@ -178,16 +188,18 @@ function generateMeta(job: Job): {
 
   // title: alt 텍스트가 있으면 활용, 없으면 keyword + designer 조합
   const title = job.alt
-    ? job.alt.slice(0, 80)
+    ? sanitize(job.alt).slice(0, 80)
     : `${prettyName} by ${designerName}`;
 
   // description: keyword name + designer 컨텍스트
   const specialties = job.designer.designer_keyword
     .filter((k) => k.relation_type === "specialty" && k.keyword)
     .map((k) => k.keyword!.name);
-  const desc = specialties.length > 0
-    ? `${prettyName} — ${designerName} specializing in ${specialties.slice(0, 3).join(", ")}`
-    : `${prettyName} — portfolio by ${designerName}`;
+  const desc = sanitize(
+    specialties.length > 0
+      ? `${prettyName} — ${designerName} specializing in ${specialties.slice(0, 3).join(", ")}`
+      : `${prettyName} — portfolio by ${designerName}`,
+  );
 
   // keywords: primary slug + 디자이너의 specialty/experience slugs
   const designerSlugs = job.designer.designer_keyword
@@ -215,8 +227,19 @@ async function main() {
   const indexRaw = await readFile(indexPath, "utf-8").catch(() => {
     throw new Error(`[seed] index not found: ${indexPath} — run pnpm portfolio:fetch first`);
   });
-  const index = JSON.parse(indexRaw) as IndexFile;
-  console.log(`[seed] index entries: ${index.entries.length}`);
+  const indexAll = JSON.parse(indexRaw) as IndexFile;
+
+  // --providers 필터 적용
+  const index: IndexFile = args.providers
+    ? { entries: indexAll.entries.filter((e) => args.providers!.includes(e.provider ?? "pexels")) }
+    : indexAll;
+
+  if (args.providers) {
+    console.log(`[seed] providers filter: ${args.providers.join(", ")}`);
+    console.log(`[seed] index entries: ${index.entries.length}/${indexAll.entries.length} (filtered)`);
+  } else {
+    console.log(`[seed] index entries: ${index.entries.length}`);
+  }
 
   // 2) Designers + keyword master
   console.log("[seed] fetching designers ...");
