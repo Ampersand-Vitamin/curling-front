@@ -182,6 +182,7 @@ export default function PullBar({
                 designers={s.designers}
                 showViewMore
                 userLocation={userLocation}
+                portfolioKeywordSlugs={[s.slug]}
               />
             ))}
             {salonSections?.map((s) => (

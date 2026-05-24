@@ -16,6 +16,7 @@ import SalonCard from "./components/SalonCard";
 import { storageUrl } from "@/lib/storage";
 import type { LatLng } from "@/lib/geo";
 import { getDesignersBySalon } from "@/lib/designers";
+import { selectDesignerPortfolioImage } from "@/lib/designers/selectPortfolioImage";
 import type { DiscoverMode } from "@/types/discover";
 import type { FilterSection } from "@/types/keyword";
 import type { Salon } from "@/types/salon";
@@ -311,9 +312,7 @@ export default function DiscoverClient({ filterSections, salons, designerMapItem
                       d.profileImageUrl ? storageUrl(d.profileImageUrl) : ""
                     }
                     portfolioImage={
-                      d.portfolioImages[0]
-                        ? storageUrl(d.portfolioImages[0])
-                        : ""
+                      selectDesignerPortfolioImage(d, filterSlugs)
                     }
                     size="large"
                   />

@@ -5,14 +5,17 @@
 // 기존 src/lib/designers.ts 의 getDesignerMapItems 를 본 파일로 이전.
 
 import { supabase } from "@/lib/supabase";
-import type { DesignerListItem, DesignerMapItem } from "./types";
+import type {
+  DesignerListItem,
+  DesignerMapItem,
+  DesignerPortfolioPreview,
+} from "./types";
 
 type RawListRow = {
   id: string;
   display_name: string;
   role: string;
   profile_image_url: string | null;
-  portfolio_images: string[];
   languages: string[];
   highlight_message: string | null;
   salon_id: string | null;
@@ -22,14 +25,23 @@ type RawListRow = {
     | null;
 };
 
+type RawPortfolioRow = {
+  designer_id: string;
+  image_path: string;
+  keywords: string[] | null;
+};
+
 const LIST_SELECT = `
-  id, display_name, role, profile_image_url, portfolio_images,
+  id, display_name, role, profile_image_url,
   languages, highlight_message, salon_id,
   salon:salon_id ( latitude, longitude ),
   designer_keyword ( keyword:keyword_id ( slug ) )
 `;
 
-function toListItem(r: RawListRow): DesignerListItem {
+function toListItem(
+  r: RawListRow,
+  portfolioPreviews: DesignerPortfolioPreview[] = [],
+): DesignerListItem {
   const keywordSlugs = (r.designer_keyword ?? [])
     .map((row) => row.keyword?.slug)
     .filter((s): s is string => Boolean(s));
@@ -41,13 +53,45 @@ function toListItem(r: RawListRow): DesignerListItem {
     displayName: r.display_name,
     role: r.role,
     profileImageUrl: r.profile_image_url,
-    portfolioImages: r.portfolio_images ?? [],
+    portfolioImages: portfolioPreviews.map((p) => p.imagePath),
+    portfolioPreviews,
     languages: r.languages ?? [],
     highlightMessage: r.highlight_message,
     salonId: r.salon_id,
     salonLatLng,
     keywordSlugs,
   };
+}
+
+async function attachPortfolioPreviews(
+  rows: RawListRow[],
+  caller: string,
+): Promise<DesignerListItem[]> {
+  if (rows.length === 0) return [];
+
+  const designerIds = rows.map((r) => r.id);
+  const { data, error } = await supabase
+    .from("portfolio")
+    .select("designer_id, image_path, keywords")
+    .in("designer_id", designerIds)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`[${caller}:portfolio] ${error.message}`);
+  }
+
+  const previewsByDesigner = new Map<string, DesignerPortfolioPreview[]>();
+  for (const row of (data ?? []) as RawPortfolioRow[]) {
+    const previews = previewsByDesigner.get(row.designer_id) ?? [];
+    previews.push({
+      imagePath: row.image_path,
+      keywordSlugs: row.keywords ?? [],
+    });
+    previewsByDesigner.set(row.designer_id, previews);
+  }
+
+  return rows.map((r) => toListItem(r, previewsByDesigner.get(r.id) ?? []));
 }
 
 /**
@@ -67,8 +111,9 @@ export async function getBestMatchDesigners(
     throw new Error(`[getBestMatchDesigners] ${error.message}`);
   }
 
-  return (data ?? []).map<DesignerListItem>((r) =>
-    toListItem(r as unknown as RawListRow),
+  return attachPortfolioPreviews(
+    (data ?? []) as unknown as RawListRow[],
+    "getBestMatchDesigners",
   );
 }
 
@@ -90,8 +135,9 @@ export async function getDesignersBySalon(
     throw new Error(`[getDesignersBySalon] ${error.message}`);
   }
 
-  return (data ?? []).map<DesignerListItem>((r) =>
-    toListItem(r as unknown as RawListRow),
+  return attachPortfolioPreviews(
+    (data ?? []) as unknown as RawListRow[],
+    "getDesignersBySalon",
   );
 }
 
