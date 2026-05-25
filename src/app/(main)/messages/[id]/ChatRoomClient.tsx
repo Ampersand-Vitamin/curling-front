@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SafeImage from "@/components/SafeImage";
+import { useTranslation } from "@/hooks/useTranslation";
 import { createClient } from "@/lib/supabase/client";
 import { storageUrl } from "@/lib/storage";
 import type { ConversationDetail } from "@/lib/messages";
@@ -103,7 +104,13 @@ function WelcomeMessage({
 
 /* ── Message Bubble ───────────────────────────────────── */
 
-function BubbleContent({ message }: { message: Message }) {
+function BubbleContent({
+  message,
+  text,
+}: {
+  message: Message;
+  text?: string;
+}) {
   if (message.messageType === "image" && message.imageUrl) {
     const src = message.imageUrl.startsWith("http")
       ? message.imageUrl
@@ -116,18 +123,27 @@ function BubbleContent({ message }: { message: Message }) {
       />
     );
   }
-  return <p className="typo-body1 text-surface-950">{message.content}</p>;
+  return <p className="typo-body1 text-surface-950">{text ?? message.content}</p>;
 }
 
 function DesignerBubble({
   message,
   profileImage,
   designerName,
+  translation,
+  isTranslating,
 }: {
   message: Message;
   profileImage: string | null;
   designerName: string;
+  translation: string | null;
+  isTranslating: boolean;
 }) {
+  const [showTranslation, setShowTranslation] = useState(false);
+  const canTranslate =
+    message.messageType === "text" && !!translation && translation !== message.content;
+  const displayText = showTranslation && canTranslate ? translation : message.content;
+
   return (
     <div className="flex gap-2.5 items-start">
       <div className="size-8 rounded-full overflow-hidden bg-surface-200 shrink-0">
@@ -138,8 +154,24 @@ function DesignerBubble({
           className="size-full object-cover"
         />
       </div>
-      <div className="bg-surface-white rounded-2xl px-4 py-3 max-w-[260px]">
-        <BubbleContent message={message} />
+      <div className="flex flex-col items-start gap-1">
+        <div className="bg-surface-white rounded-2xl px-4 py-3 max-w-[260px]">
+          <BubbleContent message={message} text={displayText} />
+        </div>
+        {message.messageType === "text" && (canTranslate || isTranslating) && (
+          <button
+            type="button"
+            onClick={() => setShowTranslation((value) => !value)}
+            disabled={isTranslating || !canTranslate}
+            className="typo-caption2 text-surface-500 underline underline-offset-2 disabled:no-underline disabled:text-surface-400"
+          >
+            {isTranslating
+              ? "번역 중..."
+              : showTranslation
+                ? "원문 보기"
+                : "번역 보기"}
+          </button>
+        )}
       </div>
       <div className="flex items-end self-stretch min-w-0 flex-1">
         <span className="typo-caption2 text-surface-500 tracking-[-0.055px]">
@@ -522,6 +554,24 @@ export default function ChatRoomClient({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [myLang, setMyLang] = useState("en");
+  const { getTranslation, isTranslating } = useTranslation(messages, { myLang });
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("onboarding_profiles")
+        .select("languages")
+        .eq("user_id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          const languages = data?.languages as string[] | null | undefined;
+          setMyLang(languages?.[0] ?? "en");
+        });
+    });
+  }, []);
 
   // scroll to bottom on new messages
   useEffect(() => {
@@ -552,6 +602,8 @@ export default function ChatRoomClient({
             image_url: string | null;
             is_read: boolean;
             created_at: string;
+            sender_lang: string | null;
+            content_translated: Record<string, string> | null;
           };
           setMessages((prev) => {
             if (prev.some((p) => p.id === m.id)) return prev;
@@ -566,9 +618,38 @@ export default function ChatRoomClient({
                 imageUrl: m.image_url ?? null,
                 isRead: m.is_read,
                 createdAt: m.created_at,
+                senderLang: m.sender_lang ?? null,
+                contentTranslated: m.content_translated ?? null,
               },
             ];
           });
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "message",
+          filter: `conversation_id=eq.${conversation.id}`,
+        },
+        (payload) => {
+          const m = payload.new as {
+            id: string;
+            sender_lang: string | null;
+            content_translated: Record<string, string> | null;
+          };
+          setMessages((prev) =>
+            prev.map((message) =>
+              message.id === m.id
+                ? {
+                    ...message,
+                    senderLang: m.sender_lang ?? null,
+                    contentTranslated: m.content_translated ?? null,
+                  }
+                : message,
+            ),
+          );
         },
       )
       .subscribe();
@@ -594,6 +675,8 @@ export default function ChatRoomClient({
         imageUrl: null,
         isRead: false,
         createdAt: now,
+        senderLang: myLang,
+        contentTranslated: null,
       },
     ]);
 
@@ -603,6 +686,7 @@ export default function ChatRoomClient({
       conversation_id: conversation.id,
       sender_id: currentUserId,
       content: text,
+      sender_lang: myLang,
     });
   }
 
@@ -624,6 +708,8 @@ export default function ChatRoomClient({
           imageUrl: imageUrls[i],
           isRead: false,
           createdAt: ts,
+          senderLang: myLang,
+          contentTranslated: null,
         },
       ]);
 
@@ -633,6 +719,7 @@ export default function ChatRoomClient({
         content: "",
         message_type: "image",
         image_url: imageUrls[i],
+        sender_lang: myLang,
       });
     }
   }
@@ -668,6 +755,8 @@ export default function ChatRoomClient({
         imageUrl: storagePath,
         isRead: false,
         createdAt: now,
+        senderLang: myLang,
+        contentTranslated: null,
       },
     ]);
 
@@ -678,6 +767,7 @@ export default function ChatRoomClient({
       content: "",
       message_type: "image",
       image_url: storagePath,
+      sender_lang: myLang,
     });
   }
 
@@ -705,6 +795,8 @@ export default function ChatRoomClient({
               message={msg}
               profileImage={conversation.designerProfileImage}
               designerName={conversation.designerName}
+              translation={getTranslation(msg)}
+              isTranslating={isTranslating(msg.id)}
             />
           ),
         )}

@@ -54,7 +54,7 @@ export default function KeywordFilter({
 
   const activatedStyle = isExpandedGroupChip
     ? "bg-surface-900 text-white"
-    : "bg-secondary-400 text-white";
+    : "bg-primary-400 text-white";
 
   // leadingIcon 있으면 좌측 4px (Figma 572:7338) — 국기 칩 패턴
   // 그 외엔 기존 규칙: removable 우측 5px / 일반 10px
@@ -89,7 +89,7 @@ export default function KeywordFilter({
               onRemove!();
             }
           }}
-          className="flex items-center justify-center size-4 rounded-full bg-secondary-300 text-white"
+          className="flex items-center justify-center size-4 rounded-full bg-primary-300 text-white"
         >
           <XIcon className="size-2" />
         </span>
