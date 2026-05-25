@@ -81,7 +81,7 @@ export default function SplashPage() {
           >
             <button
               type="button"
-              onClick={() => supabase.auth.signInWithOAuth({ provider: "kakao", options: { redirectTo: `${location.origin}/auth/callback?next=/auth/redirect` } })}
+              onClick={() => supabase.auth.signInWithOAuth({ provider: "kakao", options: { redirectTo: `${location.origin}/auth/callback?next=/auth/redirect`, scopes: "" } })}
               className="w-full flex items-center gap-3 h-11 px-4 rounded-xl bg-[#fee500]"
             >
               <Image src="/images/kakao-logo.png" alt="Kakao" width={20} height={19} />
