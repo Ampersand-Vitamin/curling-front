@@ -547,31 +547,16 @@ export default function ChatRoomClient({
   conversation,
   initialMessages,
   currentUserId,
+  myLang,
 }: {
   conversation: ConversationDetail;
   initialMessages: Message[];
   currentUserId: string;
+  myLang: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [myLang, setMyLang] = useState("en");
   const { getTranslation, isTranslating } = useTranslation(messages, { myLang });
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
-      supabase
-        .from("onboarding_profiles")
-        .select("languages")
-        .eq("user_id", user.id)
-        .maybeSingle()
-        .then(({ data }) => {
-          const languages = data?.languages as string[] | null | undefined;
-          setMyLang(languages?.[0] ?? "en");
-        });
-    });
-  }, []);
 
   // scroll to bottom on new messages
   useEffect(() => {
