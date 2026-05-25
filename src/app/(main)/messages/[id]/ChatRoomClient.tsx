@@ -165,19 +165,138 @@ function MyBubble({ message }: { message: Message }) {
   );
 }
 
+/* ── Portfolio Picker Modal ────────────────────────────── */
+
+function PortfolioPicker({
+  designerId,
+  onSend,
+  onClose,
+}: {
+  designerId: string;
+  onSend: (imageUrls: string[]) => void;
+  onClose: () => void;
+}) {
+  const [images, setImages] = useState<{ id: string; path: string }[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("portfolio")
+      .select("id, image_path")
+      .eq("designer_id", designerId)
+      .order("display_order", { ascending: true })
+      .then(({ data }) => {
+        setImages((data ?? []).map((r) => ({ id: r.id, path: r.image_path })));
+        setLoading(false);
+      });
+  }, [designerId]);
+
+  function toggle(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else if (next.size < 4) {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function handleSend() {
+    const urls = images
+      .filter((img) => selected.has(img.id))
+      .map((img) => img.path);
+    onSend(urls);
+  }
+
+  return (
+    <div className="flex flex-col gap-3 px-4 pb-3 max-h-[320px]">
+      {/* header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={onClose} className="size-6 flex items-center justify-center">
+            <img src="/icons/chevron-left.svg" alt="" width={16} height={16} />
+          </button>
+          <p className="typo-h4 text-surface-950">Designer&apos;s Portfolio</p>
+        </div>
+        {selected.size > 0 && (
+          <button
+            type="button"
+            onClick={handleSend}
+            className="typo-body2 font-medium text-primary-600"
+          >
+            Send ({selected.size})
+          </button>
+        )}
+      </div>
+
+      {/* grid */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {loading ? (
+          <div className="flex items-center justify-center h-32">
+            <p className="typo-body2 text-surface-400">Loading...</p>
+          </div>
+        ) : images.length === 0 ? (
+          <div className="flex items-center justify-center h-32">
+            <p className="typo-body2 text-surface-400">No portfolio images</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            {images.map((img) => {
+              const isSelected = selected.has(img.id);
+              return (
+                <button
+                  key={img.id}
+                  type="button"
+                  onClick={() => toggle(img.id)}
+                  className="relative aspect-[3/4] overflow-hidden rounded-lg"
+                >
+                  <SafeImage
+                    src={img.path}
+                    alt="Portfolio"
+                    fallback="portfolio"
+                    className="size-full object-cover"
+                  />
+                  {/* selection circle */}
+                  <div className="absolute top-1.5 right-1.5">
+                    <div
+                      className={`size-4 rounded-full border-2 backdrop-blur-[15px] ${
+                        isSelected
+                          ? "bg-primary-600 border-primary-600"
+                          : "border-surface-white"
+                      }`}
+                    />
+                  </div>
+                  {/* bottom overlay */}
+                  <div className="absolute inset-x-0 bottom-0 h-9 bg-gradient-to-t from-surface-950/50 to-transparent" />
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ── Attach Panel ─────────────────────────────────────── */
 
 function AttachPanel({
   onPickGallery,
   onHairProfile,
+  onPickPortfolio,
 }: {
   onPickGallery: () => void;
   onHairProfile: () => void;
+  onPickPortfolio: () => void;
 }) {
   const items = [
     { icon: "/icons/photo.svg", label: "from Gallery", action: onPickGallery },
     { icon: "/icons/style.svg", label: "Send my Hair Profile", action: onHairProfile },
-    { icon: "/icons/portfolio.svg", label: "Designer's Portfolio", action: () => {} },
+    { icon: "/icons/portfolio.svg", label: "Designer's Portfolio", action: onPickPortfolio },
     { icon: "/icons/bookmark.svg", label: "My Favorite", action: () => {} },
   ];
 
@@ -207,15 +326,20 @@ function AttachPanel({
 function Composer({
   onSend,
   onSendImage,
+  onSendPortfolioImages,
+  designerId,
   disabled,
 }: {
   onSend: (text: string) => void;
   onSendImage: (file: File) => void;
+  onSendPortfolioImages: (imageUrls: string[]) => void;
+  designerId: string;
   disabled: boolean;
 }) {
   const [text, setText] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [portfolioOpen, setPortfolioOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -331,9 +455,16 @@ function Composer({
         ) : (
           <button
             type="button"
-            onClick={() => setPanelOpen((v) => !v)}
+            onClick={() => {
+              if (portfolioOpen) {
+                setPortfolioOpen(false);
+                setPanelOpen(true);
+              } else {
+                setPanelOpen((v) => !v);
+              }
+            }}
             className={`size-12 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-              panelOpen ? "bg-surface-800" : "bg-surface-200"
+              panelOpen || portfolioOpen ? "bg-surface-800" : "bg-surface-200"
             }`}
             aria-label="More"
           >
@@ -342,7 +473,7 @@ function Composer({
               alt=""
               width={18}
               height={18}
-              className={panelOpen ? "invert" : ""}
+              className={panelOpen || portfolioOpen ? "invert" : ""}
             />
           </button>
         )}
@@ -350,7 +481,26 @@ function Composer({
 
       {/* attach panel */}
       {panelOpen && (
-        <AttachPanel onPickGallery={openGallery} onHairProfile={loadHairProfile} />
+        <AttachPanel
+          onPickGallery={openGallery}
+          onHairProfile={loadHairProfile}
+          onPickPortfolio={() => {
+            setPanelOpen(false);
+            setPortfolioOpen(true);
+          }}
+        />
+      )}
+
+      {/* portfolio picker modal */}
+      {portfolioOpen && (
+        <PortfolioPicker
+          designerId={designerId}
+          onSend={(urls) => {
+            setPortfolioOpen(false);
+            onSendPortfolioImages(urls);
+          }}
+          onClose={() => setPortfolioOpen(false)}
+        />
       )}
 
       {/* bottom safe area */}
@@ -456,6 +606,37 @@ export default function ChatRoomClient({
     });
   }
 
+  async function handleSendPortfolioImages(imageUrls: string[]) {
+    const supabase = createClient();
+    const now = new Date();
+    for (let i = 0; i < imageUrls.length; i++) {
+      const tempId = crypto.randomUUID();
+      const ts = new Date(now.getTime() + i).toISOString();
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: tempId,
+          conversationId: conversation.id,
+          senderId: currentUserId,
+          content: "",
+          messageType: "image",
+          imageUrl: imageUrls[i],
+          isRead: false,
+          createdAt: ts,
+        },
+      ]);
+
+      await supabase.from("message").insert({
+        conversation_id: conversation.id,
+        sender_id: currentUserId,
+        content: "",
+        message_type: "image",
+        image_url: imageUrls[i],
+      });
+    }
+  }
+
   async function handleSendImage(file: File) {
     const supabase = createClient();
     const ext = file.name.split(".").pop() ?? "jpg";
@@ -529,7 +710,13 @@ export default function ChatRoomClient({
         )}
       </div>
 
-      <Composer onSend={handleSend} onSendImage={handleSendImage} disabled={false} />
+      <Composer
+        onSend={handleSend}
+        onSendImage={handleSendImage}
+        onSendPortfolioImages={handleSendPortfolioImages}
+        designerId={conversation.designerId}
+        disabled={false}
+      />
     </div>
   );
 }
