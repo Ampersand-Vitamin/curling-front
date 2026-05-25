@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SettingIcon } from "@/components/icons/SettingIcon";
-import { ChevronLeftIcon } from "@/components/icons/ChevronLeftIcon";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -303,15 +302,15 @@ export function EditProfileForm({ profile, email, avatarUrl, sessionName }: Prop
 
       {/* Sticky header */}
       <div className="sticky top-0 bg-white z-10 pt-16 pb-2.5">
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center h-6 mx-4">
           <button
             type="button"
             onClick={() => router.back()}
             aria-label="Go back"
-            className="p-1 text-surface-950"
-            style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }}
+            className="absolute left-0 flex items-center justify-center"
+            style={{ width: 24, height: 24 }}
           >
-            <ChevronLeftIcon size={24} />
+            <img src="/icons/chevron-left.svg" alt="back" width={16} height={16} />
           </button>
           <p className="typo-h6 text-surface-600">Profile Setting</p>
         </div>

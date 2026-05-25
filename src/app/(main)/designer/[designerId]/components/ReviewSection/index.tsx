@@ -5,7 +5,7 @@ import { getMockReviews, type MockReview } from "@/mocks/designer-reviews";
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-1 text-secondary-400" aria-label={`${rating} of 5 stars`}>
+    <div className="flex items-center gap-1 text-primary-400" aria-label={`${rating} of 5 stars`}>
       {Array.from({ length: 5 }, (_, i) => (
         <svg
           key={i}

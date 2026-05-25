@@ -8,7 +8,7 @@ export default async function EditProfilePage() {
   if (!user) redirect("/");
 
   const { data: profile } = await supabase
-    .from("hair_profiles")
+    .from("onboarding_profiles")
     .select("*")
     .eq("user_id", user.id)
     .maybeSingle();

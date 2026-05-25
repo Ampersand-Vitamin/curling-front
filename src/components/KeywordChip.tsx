@@ -11,7 +11,7 @@ export function KeywordChip({ label, selected, onClick, icon }: KeywordChipProps
       type="button"
       onClick={onClick}
       className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl typo-h6 transition-colors ${
-        selected ? "bg-secondary-400 text-white" : "bg-surface-200 text-surface-950"
+        selected ? "bg-primary-400 text-white" : "bg-surface-200 text-surface-950"
       }`}
     >
       {icon}

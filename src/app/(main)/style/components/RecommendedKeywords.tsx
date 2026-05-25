@@ -28,7 +28,7 @@ export default function RecommendedKeywords({
               aria-pressed={active}
               className={`flex items-center gap-1 h-7 px-2 rounded-full typo-caption shrink-0 transition-colors ${
                 active
-                  ? "bg-secondary-400 text-white"
+                  ? "bg-primary-400 text-white"
                   : "bg-surface-200 text-surface-800"
               }`}
             >
