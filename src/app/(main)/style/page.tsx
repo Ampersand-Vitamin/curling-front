@@ -1,5 +1,4 @@
 import StyleClient from "./StyleClient";
-import StyleTabView from "./components/StyleTabView";
 import { searchStyle } from "@/lib/style/actions";
 import { getRecommendedKeywords } from "@/lib/style/recommendedKeywords";
 
@@ -26,7 +25,6 @@ export default async function StylePage() {
 
   return (
     <div className="flex flex-col h-full">
-      <StyleTabView />
       <StyleClient initialResult={initialResult} recommended={recommended} />
     </div>
   );
