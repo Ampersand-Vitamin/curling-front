@@ -33,7 +33,7 @@ export default function ServicesList({ designerId }: Props) {
                 <div className="flex gap-1">
                   {s.tag === "Popular" && (
                     <>
-                      <span className="typo-caption2 px-2 py-1 rounded-full bg-secondary-400 text-surface-white">
+                      <span className="typo-caption2 px-2 py-1 rounded-full bg-primary-400 text-surface-white">
                         Best
                       </span>
                       <span className="typo-caption2 px-2 py-1 rounded-full bg-surface-950 text-surface-white">

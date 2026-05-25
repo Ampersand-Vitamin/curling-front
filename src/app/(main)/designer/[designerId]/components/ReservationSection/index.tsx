@@ -72,7 +72,7 @@ export default function ReservationSection({ links }: Props) {
         aria-disabled={!messageEnabled}
         className={`flex items-center gap-4 rounded-lg px-3 py-3 ${
           messageEnabled
-            ? "bg-secondary-400 text-surface-white active:opacity-90"
+            ? "bg-primary-400 text-surface-white active:opacity-90"
             : "bg-surface-200 text-surface-400 pointer-events-none"
         }`}
       >
