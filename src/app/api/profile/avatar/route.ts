@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { supabaseAdmin } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -15,8 +16,9 @@ export async function POST(req: NextRequest) {
   }
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const path = `${session.user.id}/avatar.${ext}`;
+  const path = `${user.id}/avatar.${ext}`;
 
+  // Storage upload uses admin (service role) to bypass storage RLS
   const { error: uploadError } = await supabaseAdmin.storage
     .from("avatars")
     .upload(path, file, { upsert: true, contentType: file.type });
@@ -30,8 +32,9 @@ export async function POST(req: NextRequest) {
     .from("avatars")
     .getPublicUrl(path);
 
-  const { error: dbError } = await supabaseAdmin.rpc("update_avatar_url", {
-    p_user_id:    session.user.id,
+  // DB update uses user client (RLS)
+  const { error: dbError } = await supabase.rpc("update_avatar_url", {
+    p_user_id:    user.id,
     p_avatar_url: publicUrl,
   });
 

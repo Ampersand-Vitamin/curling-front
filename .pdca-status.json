@@ -1,0 +1,9 @@
+{
+  "supabase-auth": {
+    "phase": "plan",
+    "matchRate": null,
+    "iterationCount": 0,
+    "startedAt": "2026-05-24T00:00:00Z",
+    "planPath": "docs/01-plan/features/supabase-auth.plan.md"
+  }
+}

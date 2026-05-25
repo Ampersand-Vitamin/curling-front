@@ -1,10 +1,15 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export function AccountActions() {
-  function handleLogout() {
-    signOut({ callbackUrl: "/" });
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/");
   }
 
   function handleDeleteAccount() {

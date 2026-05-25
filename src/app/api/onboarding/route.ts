@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { supabaseAdmin } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user?.id) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await req.json();
 
-  const { error } = await supabaseAdmin
+  const { error } = await supabase
     .from("onboarding_profiles")
     .upsert({
-      user_id:          session.user.id,
+      user_id:          user.id,
       account_mode:     body.accountMode   ?? null,
       name:             body.name          ?? "",
       gender:           body.gender        ?? "",
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     }, { onConflict: "user_id" });
 
   if (error) {
-    console.error("upsert_hair_profile rpc error:", error.message, error.code);
+    console.error("upsert onboarding_profiles error:", error.message, error.code);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
@@ -39,16 +39,17 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const session = await auth();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session?.user?.id) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from("onboarding_profiles")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .maybeSingle();
 
   if (error) {
