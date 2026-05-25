@@ -20,4 +20,14 @@ export type Message = {
   imageUrl: string | null;
   isRead: boolean;
   createdAt: string;
+  senderLang: string | null;
+  contentTranslated: Record<string, string> | null;
+};
+
+export type QuickReply = {
+  id: string;
+  type: string;
+  content: Record<string, string>;
+  sortOrder: number;
+  isActive: boolean;
 };
