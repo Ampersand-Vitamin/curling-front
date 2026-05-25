@@ -41,7 +41,7 @@ export default function DesignerDetailClient({ designer }: Props) {
           name={designer.displayName}
           profileImageUrl={designer.profileImageUrl}
           salonLabel={salonLabel}
-          messageHref={`/messages/${designer.id}`}
+          messageHref={`/messages/new/${designer.id}`}
         />
         <DesignerTabs activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
       </div>

@@ -2,7 +2,7 @@
 // Figma node: 433:6547 (designer upper bar)
 //
 // 좌측: ← + 프로필 사진 + 이름/살롱 정보
-// 우측: 메시지 아이콘 → /messages/[designerId]
+// 우측: 메시지 아이콘 → /messages/new/[designerId]
 
 "use client";
 

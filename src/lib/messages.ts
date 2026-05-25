@@ -174,7 +174,9 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
 
   const { data } = await supabase
     .from("message")
-    .select("id, conversation_id, sender_id, content, message_type, image_url, is_read, created_at")
+    .select(
+      "id, conversation_id, sender_id, content, message_type, image_url, is_read, created_at, sender_lang, content_translated",
+    )
     .eq("conversation_id", conversationId)
     .order("created_at", { ascending: true });
 
@@ -187,5 +189,7 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
     imageUrl: m.image_url ?? null,
     isRead: m.is_read,
     createdAt: m.created_at,
+    senderLang: m.sender_lang ?? null,
+    contentTranslated: (m.content_translated as Record<string, string> | null) ?? null,
   }));
 }

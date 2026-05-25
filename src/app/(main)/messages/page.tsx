@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getConversations } from "@/lib/messages";
 import MessagesClient from "./MessagesClient";
+import type { ConversationItem } from "@/types/message";
 
 export default async function MessagesPage() {
   const supabase = await createClient();
@@ -12,7 +13,7 @@ export default async function MessagesPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/");
 
-  let conversations;
+  let conversations: ConversationItem[];
   try {
     conversations = await getConversations(user.id);
   } catch (err) {
