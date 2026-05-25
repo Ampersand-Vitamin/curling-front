@@ -1,8 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import SafeImage from "@/components/SafeImage";
+import { FavoriteDesignerItem } from "@/components/chat/FavoriteDesignerItem";
+import { RecentChatItem } from "@/components/chat/RecentChatItem";
+import { StartConversationRow } from "@/components/chat/StartConversationRow";
 import type { ConversationItem } from "@/types/message";
+import type { SuggestedDesigner } from "./page";
 
 function formatTime(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -26,47 +28,6 @@ function formatTime(dateStr: string | null): string {
     month: "short",
     day: "numeric",
   });
-}
-
-function ConversationRow({ item }: { item: ConversationItem }) {
-  return (
-    <Link
-      href={`/messages/${item.id}`}
-      className="flex items-center gap-3 px-4 py-3 active:bg-surface-100 transition-colors"
-    >
-      {/* Avatar */}
-      <div className="size-12 rounded-full overflow-hidden bg-surface-200 shrink-0">
-        <SafeImage
-          src={item.designerProfileImage}
-          alt={item.designerName}
-          fallback="profile"
-          className="size-full object-cover"
-        />
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className="typo-body1 text-surface-950 font-medium truncate">
-            {item.designerName}
-          </p>
-          <span className="typo-caption text-surface-400 shrink-0">
-            {formatTime(item.lastMessageAt)}
-          </span>
-        </div>
-        <div className="flex items-center justify-between gap-2 mt-0.5">
-          <p className="typo-body2 text-surface-500 truncate">
-            {item.lastMessage ?? "No messages yet"}
-          </p>
-          {item.unreadCount > 0 && (
-            <span className="shrink-0 size-5 rounded-full bg-secondary-400 text-white flex items-center justify-center text-[11px] font-medium">
-              {item.unreadCount > 99 ? "99+" : item.unreadCount}
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
 }
 
 function EmptyState() {
@@ -101,8 +62,10 @@ function EmptyState() {
 
 export default function MessagesClient({
   conversations,
+  suggestedDesigners = [],
 }: {
   conversations: ConversationItem[];
+  suggestedDesigners?: SuggestedDesigner[];
 }) {
   if (conversations.length === 0) {
     return (
@@ -111,23 +74,83 @@ export default function MessagesClient({
           <p className="typo-h6 text-surface-600 text-center">Messages</p>
         </div>
         <EmptyState />
+        {suggestedDesigners.length > 0 && (
+          <div className="px-4 pb-6">
+            <p className="typo-body2 text-surface-500 font-medium mb-2">
+              Start a new conversation
+            </p>
+            <div className="flex flex-col gap-3">
+              {suggestedDesigners.map((d) => (
+                <StartConversationRow
+                  key={d.id}
+                  designerId={d.id}
+                  name={d.displayName}
+                  salonName={d.salonName ?? ""}
+                  avatarUrl={d.profileImageUrl}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div className="bg-white min-h-full flex flex-col">
-      {/* Sticky header — 다른 탭과 동일 패턴 */}
       <div className="sticky top-0 bg-white z-10 pt-16 pb-[10px]">
         <p className="typo-h6 text-surface-600 text-center">Messages</p>
       </div>
 
+      {/* Favorite designers — horizontal scroll */}
+      {conversations.length > 0 && (
+        <div className="flex gap-3 px-4 py-3 overflow-x-auto scrollbar-hide">
+          {conversations.map((item) => (
+            <FavoriteDesignerItem
+              key={item.id}
+              designerId={item.designerId}
+              name={item.designerName}
+              avatarUrl={item.designerProfileImage}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Conversation list */}
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-1 px-4">
         {conversations.map((item) => (
-          <ConversationRow key={item.id} item={item} />
+          <RecentChatItem
+            key={item.id}
+            conversationId={item.id}
+            name={item.designerName}
+            salonName=""
+            avatarUrl={item.designerProfileImage}
+            lastMessage={item.lastMessage ?? "No messages yet"}
+            timeLabel={formatTime(item.lastMessageAt)}
+            hasNew={item.unreadCount > 0}
+          />
         ))}
       </div>
+
+      {/* Suggested designers */}
+      {suggestedDesigners.length > 0 && (
+        <div className="mt-4 px-4 pb-6">
+          <p className="typo-body2 text-surface-500 font-medium mb-2">
+            Start a new conversation
+          </p>
+          <div className="flex flex-col gap-3">
+            {suggestedDesigners.map((d) => (
+              <StartConversationRow
+                  key={d.id}
+                  designerId={d.id}
+                  name={d.displayName}
+                  salonName={d.salonName ?? ""}
+                  avatarUrl={d.profileImageUrl}
+                />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
