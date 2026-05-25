@@ -71,7 +71,7 @@ export default function PortfolioHero({
         aria-label={isFavorite ? "저장 해제" : "저장"}
         aria-pressed={isFavorite}
         className={`absolute top-4 right-4 size-12 rounded-full bg-surface-50/95 backdrop-blur-[10px] flex items-center justify-center active:bg-surface-200 ${
-          isFavorite ? "text-secondary-400" : "text-surface-700"
+          isFavorite ? "text-primary-400" : "text-surface-700"
         }`}
       >
         {isFavorite ? <StarFilled /> : <StarOutline />}

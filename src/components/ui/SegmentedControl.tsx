@@ -42,7 +42,7 @@ export default function SegmentedControl({
             {/* 3px indicator at bottom */}
             <div className="h-0 relative w-16 shrink-0">
               <div
-                className={`absolute rounded-full bg-secondary-400 transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0"}`}
+                className={`absolute rounded-full bg-primary-400 transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0"}`}
                 style={{ inset: "-3px 0 0 0" }}
               />
             </div>

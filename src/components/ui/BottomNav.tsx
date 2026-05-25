@@ -11,27 +11,10 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  {
-    label: "Discover",
-    href: "/discover",
-    icon: "/icons/map.svg",
-  },
-  {
-    label: "Style",
-    href: "/style",
-    icon: "/icons/style.svg",
-  },
-  {
-    label: "Messages",
-    href: "/messages",
-    icon: "/icons/chat.svg",
-  },
-  {
-    label: "My",
-    href: "/my",
-    icon: "",
-    isProfile: true,
-  },
+  { label: "Discover", href: "/discover", icon: "/icons/map.svg" },
+  { label: "Style",    href: "/style",    icon: "/icons/style.svg" },
+  { label: "Messages", href: "/messages", icon: "/icons/chat.svg" },
+  { label: "My",       href: "/my",       icon: "", isProfile: true },
 ];
 
 function DefaultAvatar() {
@@ -57,8 +40,9 @@ export default function BottomNav({ avatarUrl }: { avatarUrl?: string | null }) 
               href={item.href}
               className="flex flex-col items-center w-[84px] h-[56px] py-1"
             >
-              <div className={`flex items-center justify-center size-8 ${isActive ? "" : "opacity-50"}`}>
+              <div className="flex items-center justify-center size-8">
                 {item.isProfile ? (
+                  // avatar는 항상 opacity 100
                   <div className="size-[20px] rounded-full overflow-hidden bg-surface-300 text-surface-500 flex items-center justify-center">
                     {avatarUrl ? (
                       <img
@@ -73,17 +57,28 @@ export default function BottomNav({ avatarUrl }: { avatarUrl?: string | null }) 
                     )}
                   </div>
                 ) : (
-                  <img
-                    src={item.icon}
-                    alt={item.label}
-                    width={24}
-                    height={24}
+                  // CSS mask로 아이콘 색상 제어
+                  <div
+                    className="size-6"
+                    style={{
+                      backgroundColor: isActive
+                        ? "var(--color-icon-red-primary)"
+                        : "var(--color-surface-400)",
+                      WebkitMaskImage: `url(${item.icon})`,
+                      maskImage: `url(${item.icon})`,
+                      WebkitMaskSize: "contain",
+                      maskSize: "contain",
+                      WebkitMaskRepeat: "no-repeat",
+                      maskRepeat: "no-repeat",
+                      WebkitMaskPosition: "center",
+                      maskPosition: "center",
+                    }}
                   />
                 )}
               </div>
               <span
                 className={`typo-caption tracking-[-0.5px] ${
-                  isActive ? "text-surface-950" : "text-surface-500"
+                  isActive ? "text-primary-600" : "text-surface-400"
                 }`}
               >
                 {item.label}

@@ -1,7 +1,7 @@
 type FavoriteButtonProps = {
   virant?: 48 | 40 | 32 | 20;
   status?: "Default" | "Active";
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
 };
 
@@ -19,7 +19,7 @@ export default function FavoriteButton({
 
   const containerCls =
     virant === 48
-      ? `${isActive ? "bg-secondary-50" : "bg-surface-200"} backdrop-blur-[2px] p-3 size-12`
+      ? `${isActive ? "bg-primary-50" : "bg-surface-200"} backdrop-blur-[2px] p-3 size-12`
       : virant === 40
         ? "p-1 size-10"
         : virant === 32
@@ -40,7 +40,11 @@ export default function FavoriteButton({
       >
         <path
           d={STAR_PATH}
-          fill={isActive ? "var(--color-secondary-400)" : "var(--color-surface-500)"}
+          fill={
+          virant === 32 || virant === 20
+            ? isActive ? "#ffffff" : "rgba(255,255,255,0.5)"
+            : isActive ? "var(--color-primary-400)" : "var(--color-surface-500)"
+        }
         />
       </svg>
     </button>

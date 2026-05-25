@@ -47,7 +47,7 @@ export default function DesignerInfoSection({ designer }: Props) {
 
         {designer.reviewCount > 0 && (
           <div className="flex flex-col items-center shrink-0">
-            <div className="size-10 rounded-full bg-secondary-100 flex items-center justify-center text-secondary-400">
+            <div className="size-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-400">
               <StarBadge />
             </div>
             <span className="typo-caption2 text-surface-500 mt-0.5">

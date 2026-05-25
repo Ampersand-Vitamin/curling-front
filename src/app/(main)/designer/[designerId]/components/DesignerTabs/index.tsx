@@ -30,7 +30,7 @@ export default function DesignerTabs({ activeTab, onTabChange, tabs }: Props) {
           >
             {t.label}
             {active && (
-              <span className="absolute bottom-0 h-[3px] w-16 rounded-full bg-secondary-400" />
+              <span className="absolute bottom-0 h-[3px] w-16 rounded-full bg-primary-400" />
             )}
           </button>
         );

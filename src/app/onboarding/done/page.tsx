@@ -84,7 +84,7 @@ export default function DonePage() {
         <button
           type="button"
           onClick={handleStart}
-          className="w-full bg-secondary-400 rounded-lg px-8 py-4 typo-h6 text-white text-center"
+          className="w-full bg-primary-400 rounded-lg px-8 py-4 typo-h6 text-white text-center"
         >
           Start exploring
         </button>

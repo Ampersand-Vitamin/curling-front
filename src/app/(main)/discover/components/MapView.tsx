@@ -32,8 +32,8 @@ type LatLng = { lat: number; lng: number };
 function UserLocationPin() {
   return (
     <div className="relative flex items-center justify-center">
-      <div className="absolute w-6 h-6 rounded-full bg-secondary-400/30 [animation:pulseSoft_1s_ease-in-out_infinite]" />
-      <div className="w-4 h-4 rounded-full bg-secondary-400 border-2 border-surface-white shadow-[0px_2px_6px_rgba(0,0,0,0.2)]" />
+      <div className="absolute w-6 h-6 rounded-full bg-primary-400/30 [animation:pulseSoft_1s_ease-in-out_infinite]" />
+      <div className="w-4 h-4 rounded-full bg-primary-400 border-2 border-surface-white shadow-[0px_2px_6px_rgba(0,0,0,0.2)]" />
     </div>
   );
 }
@@ -147,7 +147,7 @@ function SalonPin({ isSelected = false }: { isSelected?: boolean }) {
       <div
         className={`flex items-center justify-center rounded-full shadow-[0px_2px_8px_rgba(0,0,0,0.15)] ${
           isSelected
-            ? "bg-secondary-400 px-2.5 py-1.5"
+            ? "bg-primary-400 px-2.5 py-1.5"
             : "bg-surface-white pl-1.5 pr-2 py-1"
         }`}
       >
@@ -176,7 +176,7 @@ function DesignerPin({
       <div
         className={`flex items-center rounded-full shadow-[0px_2px_8px_rgba(0,0,0,0.15)] ${
           isSelected
-            ? "bg-secondary-400 gap-1 px-2.5 py-1.5"
+            ? "bg-primary-400 gap-1 px-2.5 py-1.5"
             : "bg-surface-white gap-1 pl-1.5 pr-2 py-1"
         }`}
       >
