@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { storageUrl } from "@/lib/storage";
 
 interface NavItem {
   label: string;
   href: string;
   icon: string;
-  iconActive: string;
   isProfile?: boolean;
 }
 
@@ -16,26 +14,22 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Discover",
     href: "/discover",
-    icon: "asset/nav/discover.svg",
-    iconActive: "asset/nav/discover_active.svg",
+    icon: "/icons/map.svg",
   },
   {
     label: "Style",
     href: "/style",
-    icon: "asset/nav/style.svg",
-    iconActive: "asset/nav/style_active.svg",
+    icon: "/icons/style.svg",
   },
   {
     label: "Messages",
     href: "/messages",
-    icon: "asset/nav/messages.svg",
-    iconActive: "asset/nav/messages_active.svg",
+    icon: "/icons/chat.svg",
   },
   {
     label: "My",
     href: "/my",
     icon: "",
-    iconActive: "",
     isProfile: true,
   },
 ];
@@ -80,7 +74,7 @@ export default function BottomNav({ avatarUrl }: { avatarUrl?: string | null }) 
                   </div>
                 ) : (
                   <img
-                    src={storageUrl(isActive ? item.iconActive : item.icon)}
+                    src={item.icon}
                     alt={item.label}
                     width={24}
                     height={24}

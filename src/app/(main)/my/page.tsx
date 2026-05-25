@@ -41,10 +41,10 @@ function ProfileChip({ label, flag }: Chip) {
 }
 
 
-const QUICK_ACTIONS = [
-  ["My Reviews", "Favorite"],
-  ["Booking History", "Coupons"],
-] as const;
+const QUICK_ACTIONS: [string, string, string, string][] = [
+  ["My Reviews", "Favorite", "#", "/favorite"],
+  ["Booking History", "Coupons", "#", "#"],
+];
 
 const SUPPORT_ITEMS = ["FAQ", "Customer Service"] as const;
 const SETTINGS_ITEMS = ["Setting", "Notification", "Terms and policies", "Version information"] as const;
@@ -54,7 +54,7 @@ export default async function MyPage() {
   if (!session?.user?.id) redirect("/");
 
   const { data: profile } = await supabaseAdmin
-    .from("hair_profiles")
+    .from("onboarding_profiles")
     .select("*")
     .eq("user_id", session.user.id)
     .maybeSingle();
@@ -94,9 +94,9 @@ export default async function MyPage() {
 
           {/* Avatar + name + bio */}
           <div className="flex flex-col items-center gap-3 w-full">
-            <div className="rounded-full overflow-hidden shrink-0 border border-surface-400 bg-surface-300 text-surface-500 flex items-center justify-center" style={{ width: 120, height: 120, minWidth: 120 }}>
+            <div className="rounded-full overflow-hidden shrink-0 border border-surface-400 bg-surface-300 text-surface-500 flex items-center justify-center" style={{ width: 100, height: 100, minWidth: 100 }}>
               {avatarUrl ? (
-                <Image src={avatarUrl} alt={displayName} width={120} height={120} className="object-cover w-full h-full" />
+                <Image src={avatarUrl} alt={displayName} width={100} height={100} className="object-cover w-full h-full" />
               ) : (
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
                   <circle cx="12" cy="9" r="4" />
@@ -132,17 +132,20 @@ export default async function MyPage() {
 
         {/* Quick actions */}
         <div className="flex flex-col gap-2">
-          {QUICK_ACTIONS.map((row, ri) => (
+          {QUICK_ACTIONS.map(([label0, label1, href0, href1], ri) => (
             <div key={ri} className="flex gap-2">
-              {row.map((label) => (
-                <Link
-                  key={label}
-                  href="#"
-                  className="bg-white rounded-lg py-4 flex-1 flex items-center justify-center typo-button text-surface-950 text-center overflow-hidden"
-                >
-                  {label}
-                </Link>
-              ))}
+              <Link
+                href={href0}
+                className="bg-white rounded-lg py-4 flex-1 flex items-center justify-center typo-button text-surface-950 text-center overflow-hidden"
+              >
+                {label0}
+              </Link>
+              <Link
+                href={href1}
+                className="bg-white rounded-lg py-4 flex-1 flex items-center justify-center typo-button text-surface-950 text-center overflow-hidden"
+              >
+                {label1}
+              </Link>
             </div>
           ))}
         </div>
