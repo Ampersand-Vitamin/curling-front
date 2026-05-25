@@ -23,5 +23,9 @@ export default async function StylePage() {
     };
   }
 
-  return <StyleClient initialResult={initialResult} recommended={recommended} />;
+  return (
+    <div className="flex flex-col h-full">
+      <StyleClient initialResult={initialResult} recommended={recommended} />
+    </div>
+  );
 }
