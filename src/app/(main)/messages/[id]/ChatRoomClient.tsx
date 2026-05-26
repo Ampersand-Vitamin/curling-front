@@ -168,10 +168,10 @@ function DesignerBubble({
             className="typo-caption2 text-surface-500 underline underline-offset-2 disabled:no-underline disabled:text-surface-400"
           >
             {isTranslating
-              ? "번역 중..."
+              ? "Translating..."
               : showTranslation
-                ? "원문 보기"
-                : "번역 보기"}
+                ? "Show original"
+                : "Translate"}
           </button>
         )}
       </div>

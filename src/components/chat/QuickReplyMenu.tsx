@@ -9,12 +9,11 @@ type QuickReply = {
 
 type Props = {
   replies: QuickReply[];
-  myLang: string;
   onSelect: (text: string) => void;
   onClose: () => void;
 };
 
-export function QuickReplyMenu({ replies, myLang, onSelect, onClose }: Props) {
+export function QuickReplyMenu({ replies, onSelect, onClose }: Props) {
   return (
     <>
       {/* Backdrop */}
@@ -24,7 +23,6 @@ export function QuickReplyMenu({ replies, myLang, onSelect, onClose }: Props) {
       <div className="absolute bottom-full left-0 right-0 mb-2 z-30 bg-white rounded-2xl shadow-lg border border-surface-200 overflow-hidden mx-4">
         {replies.map((reply) => {
           const text =
-            reply.content[myLang] ??
             reply.content["en"] ??
             Object.values(reply.content)[0];
           return (
