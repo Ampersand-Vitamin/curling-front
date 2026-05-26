@@ -25,11 +25,7 @@ export default function RecommendedKeywords({
 
   return (
     <div className="px-4 w-full">
-<<<<<<< HEAD
-      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-=======
-      <div className="flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
->>>>>>> 58b823a5ff76220a22e055f39a6aac92e21a83de
+      <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {keywords.map((kw) => {
           const active = activeSlugs.has(kw.slug);
           return (
@@ -38,17 +34,10 @@ export default function RecommendedKeywords({
               type="button"
               onClick={() => onToggle(kw.slug)}
               aria-pressed={active}
-<<<<<<< HEAD
               className={`flex items-center gap-1.5 h-7 rounded-full typo-caption shrink-0 transition-colors ${
                 active
                   ? "bg-secondary-400 text-white pl-2.5 pr-1.5"
                   : "bg-surface-200 text-surface-800 px-2.5"
-=======
-              className={`flex items-center justify-center px-4 h-8 rounded-full shrink-0 typo-button transition-colors ${
-                active
-                  ? "bg-primary-700 text-white"
-                  : "bg-surface-200 text-surface-600"
->>>>>>> 58b823a5ff76220a22e055f39a6aac92e21a83de
               }`}
             >
               <span className="capitalize">{kw.label}</span>
