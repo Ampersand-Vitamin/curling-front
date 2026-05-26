@@ -6,8 +6,8 @@ interface StyleSearchInputProps {
   value: string;
   onChange: (next: string) => void;
   onSubmit?: () => void;
-  /** 사진 검색 모드 진입 — 부모가 File 받아서 처리 */
   onFileSelect?: (file: File) => void;
+  onFocus?: () => void;
   placeholder?: string;
   className?: string;
   isLoading?: boolean;
@@ -58,6 +58,7 @@ export default function StyleSearchInput({
   onChange,
   onSubmit,
   onFileSelect,
+  onFocus,
   placeholder = "Search Salons",
   className = "",
   isLoading = false,
@@ -77,11 +78,11 @@ export default function StyleSearchInput({
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onFocus={onFocus}
         placeholder={placeholder}
         className="flex-1 min-w-0 bg-transparent outline-none typo-body1 text-surface-900 placeholder:text-surface-400 pr-2"
         aria-label="Search styles"
       />
-      {/* hidden file picker — photo 아이콘 클릭 시 트리거 */}
       <input
         ref={fileInputRef}
         type="file"
@@ -91,7 +92,6 @@ export default function StyleSearchInput({
           const file = e.target.files?.[0];
           if (file && onFileSelect) {
             onFileSelect(file);
-            // 같은 파일 다시 선택 가능하게 reset
             e.target.value = "";
           }
         }}

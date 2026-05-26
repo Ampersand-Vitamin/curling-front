@@ -5,6 +5,7 @@ import StyleSearchTab from "./components/StyleSearchTab";
 import StyleFilterPopup, { STYLE_SLUG_MAP } from "./components/StyleFilterPopup";
 import RecommendedKeywords from "./components/RecommendedKeywords";
 import PortfolioGrid from "./components/PortfolioGrid";
+import StyleSearchSuggestions from "./components/StyleSearchSuggestions";
 import { searchStyle, searchStyleByImage } from "@/lib/style/actions";
 import type {
   RecommendedKeyword,
@@ -33,11 +34,10 @@ export default function StyleClient({
   const [cards, setCards] = useState<StylePortfolioCard[]>(initialResult.hits);
   const [cursor, setCursor] = useState<number | null>(initialResult.nextCursor);
   const [isLoading, setIsLoading] = useState(false);
-  // Design Ref: §6.2 — photo 검색 모드. null 이면 text 모드.
   const [photoSearch, setPhotoSearch] = useState<PhotoSearchState | null>(null);
   const [showFilter, setShowFilter] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // 동시성 가드: 이전 요청이 늦게 도착해도 최신만 반영
   const requestIdRef = useRef(0);
 
   const runSearch = useCallback(
@@ -45,11 +45,7 @@ export default function StyleClient({
       const myId = ++requestIdRef.current;
       setIsLoading(true);
       try {
-        const res = await searchStyle({
-          q,
-          keywordSlugs: slugs,
-          cursor: offset,
-        });
+        const res = await searchStyle({ q, keywordSlugs: slugs, cursor: offset });
         if (requestIdRef.current !== myId) return;
         if (offset === 0) setCards(res.hits);
         else setCards((prev) => [...prev, ...res.hits]);
@@ -81,8 +77,6 @@ export default function StyleClient({
     }
   }, []);
 
-  // 필터 slug → 자연어 이름으로 변환하여 검색 쿼리에 합성
-  // (DB strict filter 가 아닌, CLIP 텍스트 검색으로 정성적 매칭)
   const filterQuery = useMemo(() => {
     if (activeSlugs.size === 0) return "";
     return Array.from(activeSlugs)
@@ -90,11 +84,11 @@ export default function StyleClient({
       .join(" ");
   }, [activeSlugs]);
 
-  const combinedQuery = useMemo(() => {
-    return [query, filterQuery].filter(Boolean).join(" ");
-  }, [query, filterQuery]);
+  const combinedQuery = useMemo(
+    () => [query, filterQuery].filter(Boolean).join(" "),
+    [query, filterQuery],
+  );
 
-  // 텍스트 검색은 디바운스. 단, photo 모드에서는 텍스트 검색 비활성.
   useEffect(() => {
     if (photoSearch) return;
     const handle = setTimeout(() => {
@@ -103,13 +97,11 @@ export default function StyleClient({
     return () => clearTimeout(handle);
   }, [combinedQuery, runSearch, photoSearch]);
 
-  // 사진 또는 키워드 칩 변경 시 photo 모드면 재검색
   useEffect(() => {
     if (!photoSearch) return;
     runPhotoSearch(photoSearch.file, []);
   }, [photoSearch, activeSlugs, runPhotoSearch]);
 
-  // preview URL cleanup
   useEffect(() => {
     return () => {
       if (photoSearch) URL.revokeObjectURL(photoSearch.previewUrl);
@@ -134,9 +126,7 @@ export default function StyleClient({
   }, []);
 
   const onLoadMore = useCallback(() => {
-    if (cursor === null || isLoading) return;
-    // photo 모드는 페이지네이션 미지원 (RPC 가 cursor 안 받음) — text 모드만
-    if (photoSearch) return;
+    if (cursor === null || isLoading || photoSearch) return;
     runSearch(query, Array.from(activeSlugs), cursor);
   }, [cursor, isLoading, query, activeSlugs, runSearch, photoSearch]);
 
@@ -154,15 +144,24 @@ export default function StyleClient({
     });
   }, []);
 
+  const handleSearchSubmit = useCallback(() => {
+    setShowSuggestions(false);
+    runSearch(query, Array.from(activeSlugs), 0);
+  }, [query, activeSlugs, runSearch]);
+
   return (
     <div className="relative flex flex-col h-full bg-surface-50">
+      {/* 상단 고정 영역 */}
       <div className="sticky top-0 z-20 flex flex-col items-center bg-surface-50 pt-4 pb-2.5">
         <StyleSearchTab
           query={query}
           onQueryChange={setQuery}
-          onSubmit={() => runSearch(query, Array.from(activeSlugs), 0)}
+          onSubmit={handleSearchSubmit}
           isLoading={isLoading}
-          onFilterClick={() => setShowFilter(true)}
+          onFilterClick={() => {
+            setShowSuggestions(false);
+            setShowFilter(true);
+          }}
           onFavoriteClick={() => {}}
           onFileSelect={onFileSelect}
           photoMode={
@@ -171,6 +170,8 @@ export default function StyleClient({
               : null
           }
           onPhotoClear={onPhotoClear}
+          activeFilterCount={activeSlugs.size}
+          onSearchFocus={() => setShowSuggestions(true)}
         />
         <RecommendedKeywords
           keywords={recommended}
@@ -179,6 +180,7 @@ export default function StyleClient({
         />
       </div>
 
+      {/* 포트폴리오 그리드 */}
       <PortfolioGrid
         cards={cards}
         isLoading={isLoading}
@@ -193,7 +195,17 @@ export default function StyleClient({
         }
       />
 
-      {/* Filter overlay + popup */}
+      {/* 검색 제안 패널 (Screen 4) */}
+      {showSuggestions && !showFilter && (
+        <StyleSearchSuggestions
+          keywords={recommended}
+          activeSlugs={activeSlugs}
+          onToggleKeyword={onToggleKeyword}
+          onClose={() => setShowSuggestions(false)}
+        />
+      )}
+
+      {/* 필터 팝업 오버레이 */}
       {showFilter && (
         <>
           <div className="absolute inset-0 backdrop-blur-sm z-30" />
