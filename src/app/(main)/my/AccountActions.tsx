@@ -33,7 +33,7 @@ export function AccountActions() {
           onClick={handleDeleteAccount}
           className="bg-white rounded-lg py-3 px-3 flex items-center gap-2 overflow-hidden w-full text-left"
         >
-          <span className="typo-button text-secondary-400">Delete Account</span>
+          <span className="typo-button text-primary-400">Delete Account</span>
         </button>
       </div>
     </div>

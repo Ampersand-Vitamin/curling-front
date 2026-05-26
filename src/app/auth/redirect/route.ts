@@ -9,12 +9,13 @@ export async function GET() {
     redirect("/");
   }
 
-  const { data } = await supabase.rpc("get_hair_profile", {
-    p_user_id: user.id,
-  });
+  const { data } = await supabase
+    .from("onboarding_profiles")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-  const profile = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
-  if (profile) {
+  if (data) {
     redirect("/discover");
   } else {
     redirect("/onboarding/account-mode");

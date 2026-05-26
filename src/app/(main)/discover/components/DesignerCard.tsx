@@ -50,8 +50,8 @@ export default function DesignerCard({
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* Gradient overlay + DesignerInfo */}
-      <div className="absolute inset-0 flex flex-col justify-between p-2.5 bg-gradient-to-b from-surface-950 via-surface-950/50 via-50% to-transparent">
+      {/* DesignerInfo */}
+      <div className="absolute inset-0 flex flex-col justify-between p-2.5">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-end gap-1 min-w-0">
             <span className="typo-h3 text-surface-50 whitespace-nowrap">

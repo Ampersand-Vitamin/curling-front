@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${pretendard.variable} ${roboto.variable} h-full antialiased`}>
-      <body className="h-full flex justify-center bg-surface-950 font-pretendard overflow-hidden">
+      <body suppressHydrationWarning className="h-full flex justify-center bg-surface-950 font-pretendard overflow-hidden">
         <ClarityProvider />
         {children}
       </body>
