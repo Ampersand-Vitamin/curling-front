@@ -1,5 +1,5 @@
-function Sk({ className }: { className: string }) {
-  return <div className={`bg-surface-200 animate-pulse ${className}`} />;
+function Sk({ className, style }: { className: string; style?: React.CSSProperties }) {
+  return <div className={`bg-surface-200 animate-pulse ${className}`} style={style} />;
 }
 
 export default function MyLoading() {
@@ -18,7 +18,7 @@ export default function MyLoading() {
 
           {/* Avatar */}
           <div className="flex flex-col items-center gap-3 w-full">
-            <Sk className="rounded-full" style={{ width: 100, height: 100 }} />
+            <Sk className="rounded-full w-[100px] h-[100px]" />
             <div className="flex flex-col gap-2 items-center">
               <Sk className="w-28 h-5 rounded-full" />
               <Sk className="w-40 h-4 rounded-full" />
