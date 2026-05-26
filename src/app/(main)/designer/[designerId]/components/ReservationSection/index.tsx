@@ -63,7 +63,7 @@ export default function ReservationSection({ links }: Props) {
   const messageEnabled = !!messageUrl;
 
   return (
-    <section className="border-b border-surface-100 px-4 py-4 flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       <h2 className="typo-h4 text-surface-950">Contact</h2>
 
       {/* Message CTA */}

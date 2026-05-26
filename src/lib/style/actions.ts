@@ -7,6 +7,7 @@
 
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
 import { searchPortfolios, searchPortfoliosByImage } from "@/lib/portfolio-search/search";
 import { getRecommendedKeywords } from "@/lib/style/recommendedKeywords";
 import type {
@@ -114,6 +115,31 @@ export async function searchStyleByImage(
     query: result.query,
     appliedFilters: result.appliedFilters,
   };
+}
+
+export async function toggleFavoritePortfolio(portfolioId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data: existing } = await supabase
+    .from("favorite_portfolio")
+    .select("portfolio_id")
+    .eq("user_id", user.id)
+    .eq("portfolio_id", portfolioId)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase.from("favorite_portfolio")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("portfolio_id", portfolioId);
+    return false;
+  } else {
+    await supabase.from("favorite_portfolio")
+      .insert({ user_id: user.id, portfolio_id: portfolioId });
+    return true;
+  }
 }
 
 // ─────────────────────────────────────────────

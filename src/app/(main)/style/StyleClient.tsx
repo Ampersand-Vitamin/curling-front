@@ -1,13 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import StyleSearchTab from "./components/StyleSearchTab";
 import StyleFilterPopup, { STYLE_SLUG_MAP } from "./components/StyleFilterPopup";
 import RecommendedKeywords from "./components/RecommendedKeywords";
 import PortfolioGrid from "./components/PortfolioGrid";
 import StyleSearchSuggestions from "./components/StyleSearchSuggestions";
 import ImageKeywordsPopup from "./components/ImageKeywordsPopup";
-import { searchStyle, searchStyleByImage, extractImageKeywords } from "@/lib/style/actions";
+import { searchStyle, searchStyleByImage, extractImageKeywords, toggleFavoritePortfolio } from "@/lib/style/actions";
 import type {
   RecommendedKeyword,
   StylePortfolioCard,
@@ -46,6 +47,7 @@ export default function StyleClient({
   const [isLoading, setIsLoading] = useState(false);
   const [photoSearch, setPhotoSearch] = useState<PhotoSearchState | null>(null);
   const [showFilter, setShowFilter] = useState(false);
+  const router = useRouter();
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [imagePopup, setImagePopup] = useState<ImagePopupState | null>(null);
 
@@ -136,6 +138,21 @@ export default function StyleClient({
       next.delete(slug);
       return next;
     });
+  }, []);
+
+  const onFavoriteClick = useCallback(async (portfolioId: string) => {
+    // 낙관적 업데이트
+    setCards((prev) =>
+      prev.map((c) => c.id === portfolioId ? { ...c, isFavorited: !c.isFavorited } : c)
+    );
+    try {
+      await toggleFavoritePortfolio(portfolioId);
+    } catch {
+      // 실패 시 롤백
+      setCards((prev) =>
+        prev.map((c) => c.id === portfolioId ? { ...c, isFavorited: !c.isFavorited } : c)
+      );
+    }
   }, []);
 
   const onLoadMore = useCallback(() => {
@@ -281,7 +298,7 @@ export default function StyleClient({
             setShowSuggestions(false);
             setShowFilter(true);
           }}
-          onFavoriteClick={() => {}}
+          onFavoriteClick={() => router.push("/favorite?tab=portfolio")}
           onFileSelect={onFileSelect}
           photoMode={
             photoSearch
@@ -305,6 +322,7 @@ export default function StyleClient({
         isLoading={isLoading}
         hasMore={!photoSearch && cursor !== null}
         onLoadMore={onLoadMore}
+        onFavoriteClick={onFavoriteClick}
         emptyMessage={
           photoSearch
             ? "No visually similar portfolios"

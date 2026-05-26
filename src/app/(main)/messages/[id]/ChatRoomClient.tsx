@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
 import { useTranslation } from "@/hooks/useTranslation";
 import { createClient } from "@/lib/supabase/client";
@@ -42,27 +43,28 @@ function ChatHeader({ conversation }: { conversation: ConversationDetail }) {
             <img src="/icons/chevron-left.svg" alt="" width={16} height={16} />
           </button>
 
-          {/* designer profile */}
-          <div className="size-8 rounded-full overflow-hidden bg-surface-200 shrink-0">
-            <SafeImage
-              src={conversation.designerProfileImage}
-              alt={conversation.designerName}
-              fallback="profile"
-              className="size-full object-cover"
-            />
-          </div>
+          {/* designer profile — links to designer detail page */}
+          <Link href={`/designer/${conversation.designerId}`} className="flex items-center gap-2.5">
+            <div className="size-8 rounded-full overflow-hidden bg-surface-200 shrink-0">
+              <SafeImage
+                src={conversation.designerProfileImage}
+                alt={conversation.designerName}
+                fallback="profile"
+                className="size-full object-cover"
+              />
+            </div>
 
-          {/* name + salon */}
-          <div className="flex flex-col">
-            <p className="typo-body1 font-medium text-surface-950 leading-6 tracking-[-0.16px]">
-              {conversation.designerName}
-            </p>
-            {conversation.designerSalonName && (
-              <p className="typo-caption2 text-surface-600 leading-[13px]">
-                {conversation.designerSalonName}
+            <div className="flex flex-col">
+              <p className="typo-body1 font-medium text-surface-950 leading-6 tracking-[-0.16px]">
+                {conversation.designerName}
               </p>
-            )}
-          </div>
+              {conversation.designerSalonName && (
+                <p className="typo-caption2 text-surface-600 leading-[13px]">
+                  {conversation.designerSalonName}
+                </p>
+              )}
+            </div>
+          </Link>
         </div>
       </div>
     </div>

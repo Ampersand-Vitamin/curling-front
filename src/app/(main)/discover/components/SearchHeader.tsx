@@ -49,8 +49,8 @@ export default function SearchHeader({
     <div className="flex flex-col w-full">
       {/* Search Row */}
       <div className="flex items-center gap-1 px-3 py-3">
-        <IconButton badge={filterCount > 0 ? filterCount : undefined} onClick={onFilterPress}>
-          <img src="/icons/filter.svg" alt="filter" width={20} height={20} />
+        <IconButton badge={filterCount > 0 ? filterCount : undefined} onClick={onFilterPress} variant={filterCount > 0 ? "dark" : "light"}>
+          <img src="/icons/filter.svg" alt="filter" width={20} height={20} className={filterCount > 0 ? "[filter:brightness(0)_invert(1)]" : ""} />
         </IconButton>
         <SearchBar
           placeholder={showFilter ? "Search Keywords" : "Search salons"}

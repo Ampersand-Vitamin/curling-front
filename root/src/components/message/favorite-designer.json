@@ -1,0 +1,40 @@
+{
+  "name": "FavoriteDesigner",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "default": "254:1833"
+    }
+  },
+  "components": {
+    "FavoriteDesigner": {
+      "description": "Favorite 페이지 상단 즐겨찾는 디자이너 목록에서 사용하는 아이템. 아바타 + 이름의 세로 레이아웃.",
+      "props": {
+        "avatarUrl": "string | null",
+        "name": "string"
+      },
+      "tokens": {
+        "layout": {
+          "direction": "col",
+          "align": "center",
+          "gap": "size.space.200",
+          "width": 60
+        },
+        "avatar": {
+          "size": 60,
+          "shape": "circle",
+          "border": {
+            "width": "size.stroke.border",
+            "color": "color.border.default"
+          }
+        },
+        "name": {
+          "typography": "font.curling.body2",
+          "color": "color.text.primary",
+          "align": "center",
+          "truncate": true
+        }
+      }
+    }
+  }
+}
