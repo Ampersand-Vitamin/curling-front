@@ -26,8 +26,8 @@ type RawQuickReply = {
   is_active: boolean;
 };
 
-function pickLocalizedContent(content: Record<string, string>, lang: string) {
-  return content[lang] ?? content.en ?? content.ko ?? Object.values(content)[0] ?? "";
+function pickEnglishContent(content: Record<string, string>) {
+  return content.en ?? Object.values(content)[0] ?? "";
 }
 
 export default function NewMessagePage() {
@@ -118,7 +118,7 @@ export default function NewMessagePage() {
       if (rows.length > 0) {
         setQuickReplies(
           rows
-            .map((reply) => pickLocalizedContent(reply.content, nextLang))
+            .map((reply) => pickEnglishContent(reply.content))
             .filter(Boolean),
         );
       }
