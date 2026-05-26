@@ -3,12 +3,15 @@
 //
 // 자연어: searchStyle(params) — CLIP text encoder + BM25 RRF
 // 사진:   searchStyleByImage(formData) — CLIP image encoder cosine
+// 키워드: extractImageKeywords(formData) — CLIP cross-modal cosine scoring
 
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
 import { searchPortfolios, searchPortfoliosByImage } from "@/lib/portfolio-search/search";
+import { getRecommendedKeywords } from "@/lib/style/recommendedKeywords";
 import type {
+  RecommendedKeyword,
   StylePortfolioCard,
   StyleSearchParams,
   StyleSearchResult,
@@ -136,5 +139,59 @@ export async function toggleFavoritePortfolio(portfolioId: string): Promise<bool
     await supabase.from("favorite_portfolio")
       .insert({ user_id: user.id, portfolio_id: portfolioId });
     return true;
+  }
+}
+
+// ─────────────────────────────────────────────
+// 이미지 → 키워드 추출 — CLIP cross-modal cosine scoring
+// 이미지 임베딩과 각 키워드 텍스트 임베딩 간 유사도로 순위 결정
+// ─────────────────────────────────────────────
+
+function dotProduct(a: number[], b: number[]): number {
+  let sum = 0;
+  for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
+  return sum;
+}
+
+export async function extractImageKeywords(
+  formData: FormData,
+): Promise<RecommendedKeyword[]> {
+  const allKeywords = getRecommendedKeywords();
+  const file = formData.get("image");
+
+  if (
+    !(file instanceof File) ||
+    file.size === 0 ||
+    file.size > MAX_IMAGE_BYTES ||
+    !ALLOWED_MIMES.has(file.type)
+  ) {
+    return allKeywords;
+  }
+
+  try {
+    const rawBuf = Buffer.from(await file.arrayBuffer());
+    const normalized = await sharp(rawBuf)
+      .resize(224, 224, { fit: "cover" })
+      .removeAlpha()
+      .jpeg({ quality: 85 })
+      .toBuffer();
+
+    const { embedImage, embedText } = await import("../portfolio-search/clip");
+    const imageVec = await embedImage(normalized);
+
+    // 각 키워드를 텍스트 임베딩 후 이미지와 코사인 유사도 계산 (둘 다 L2 정규화됨)
+    const scored = await Promise.all(
+      allKeywords.map(async (kw) => {
+        const textVec = await embedText(kw.label);
+        return { ...kw, score: dotProduct(imageVec, textVec) };
+      }),
+    );
+
+    return scored
+      .sort((a, b) => b.score - a.score)
+      .map(({ slug, label }) => ({ slug, label }));
+  } catch (err) {
+    console.warn("[extractImageKeywords] CLIP scoring failed, returning defaults", err);
+    return allKeywords;
   }
 }

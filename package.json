@@ -33,6 +33,9 @@
     "sharp": "^0.34.5",
     "zustand": "^5.0.12"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "protobufjs", "sharp", "unrs-resolver"]
+  },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.1.1",
     "@storybook/addon-a11y": "^10.3.3",
