@@ -1,114 +1,118 @@
-// Style 탭 검색 Server Action.
-// 클라이언트(StyleClient.tsx) ↔ pgvector RPC 의 단일 진입점.
-//
-// 자연어: searchStyle(params) — CLIP text encoder + BM25 RRF
-// 사진:   searchStyleByImage(formData) — CLIP image encoder cosine
-
 "use server";
 
-import { searchPortfolios, searchPortfoliosByImage } from "@/lib/portfolio-search/search";
+import { createClient } from "@/lib/supabase/server";
 import type {
   StylePortfolioCard,
   StyleSearchParams,
   StyleSearchResult,
 } from "@/types/style";
-import sharp from "sharp";
-
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
-
-function rowsToHits(
-  hits: Awaited<ReturnType<typeof searchPortfolios>>["hits"],
-): StylePortfolioCard[] {
-  return hits.map((h) => ({
-    id: h.portfolioId,
-    designerId: h.designerId,
-    displayName: h.displayName,
-    role: "",
-    salonName: h.salonName,
-    coverImageUrl: h.coverImageUrl,
-    profileImageUrl: h.profileImageUrl,
-    isFavorited: false,
-  }));
-}
 
 export async function searchStyle(
   params: StyleSearchParams,
 ): Promise<StyleSearchResult> {
-  // 입력 sanitize
-  const q = (params.q ?? "").slice(0, 200);
-  const keywordSlugs = (params.keywordSlugs ?? [])
-    .filter((s) => typeof s === "string" && s.length > 0 && s.length <= 64)
-    .slice(0, 20);
+  const supabase = await createClient();
+  const q = (params.q ?? "").toLowerCase().trim();
+  const limit = params.limit ?? 30;
+  const offset = params.cursor ?? 0;
 
-  const result = await searchPortfolios({
-    q,
-    keywordSlugs,
-    limit: params.limit,
-    cursor: params.cursor,
+  // 1. 포트폴리오 목록
+  const { data: portfolios, error: pErr } = await supabase
+    .from("designer_portfolio")
+    .select("id, designer_id, image_url, sort_order")
+    .order("designer_id")
+    .order("sort_order")
+    .range(offset, offset + limit - 1);
+
+  if (pErr) {
+    console.warn("[searchStyle] portfolio query failed", pErr.message);
+    return { hits: [], totalEstimated: 0, nextCursor: null, query: q, appliedFilters: [] };
+  }
+
+  const rows = portfolios ?? [];
+  if (rows.length === 0) {
+    return { hits: [], totalEstimated: 0, nextCursor: null, query: q, appliedFilters: [] };
+  }
+
+  // 2. 디자이너 프로필
+  const designerIds = [...new Set(rows.map((r) => r.designer_id as string))];
+  const { data: profiles } = await supabase
+    .from("onboarding_profiles")
+    .select("user_id, name, salon_name, avatar_url, specialty")
+    .in("user_id", designerIds.map((id) => id.toString()));
+
+  const profileMap = new Map((profiles ?? []).map((p) => [p.user_id, p]));
+
+  // 3. 현재 유저의 즐겨찾기 포트폴리오 ID 목록
+  const { data: { user } } = await supabase.auth.getUser();
+  let favoritedIds = new Set<string>();
+  if (user) {
+    const { data: favs } = await supabase
+      .from("favorite_portfolio")
+      .select("portfolio_id")
+      .eq("user_id", user.id);
+    favoritedIds = new Set((favs ?? []).map((f) => f.portfolio_id as string));
+  }
+
+  // 4. 합치기 + 필터
+  let hits: StylePortfolioCard[] = rows.map((r) => {
+    const profile = profileMap.get(r.designer_id as string);
+    return {
+      id: r.id as string,
+      designerId: r.designer_id as string,
+      displayName: profile?.name ?? "Designer",
+      role: "",
+      salonName: profile?.salon_name ?? null,
+      coverImageUrl: r.image_url as string,
+      profileImageUrl: profile?.avatar_url ?? null,
+      isFavorited: favoritedIds.has(r.id as string),
+    };
   });
 
-  const hits = rowsToHits(result.hits);
+  if (q) {
+    hits = hits.filter((h) => {
+      const name = h.displayName.toLowerCase();
+      const salon = (h.salonName ?? "").toLowerCase();
+      const profile = profileMap.get(h.designerId);
+      const keywords = ((profile?.specialty as string[]) ?? []).map((s) => s.toLowerCase());
+      return name.includes(q) || salon.includes(q) || keywords.some((k) => k.includes(q));
+    });
+  }
 
   return {
     hits,
-    // RPC 가 totalCount 를 반환하지 않으므로 현재 페이지 크기로 근사.
     totalEstimated: hits.length,
-    nextCursor: result.nextCursor,
-    query: result.query,
-    appliedFilters: result.appliedFilters,
+    nextCursor: rows.length === limit ? offset + limit : null,
+    query: q,
+    appliedFilters: [],
   };
 }
 
-// ─────────────────────────────────────────────
-// Photo 검색 — File 업로드 → CLIP image → portfolio.image_embedding cosine
-// Design Ref: §5 — Server Action
-// ─────────────────────────────────────────────
+export async function toggleFavoritePortfolio(portfolioId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
 
-export async function searchStyleByImage(
-  formData: FormData,
-): Promise<StyleSearchResult> {
-  const file = formData.get("image");
-  if (!(file instanceof File)) {
-    throw new Error("photo: missing image");
+  const { data: existing } = await supabase
+    .from("favorite_portfolio")
+    .select("portfolio_id")
+    .eq("user_id", user.id)
+    .eq("portfolio_id", portfolioId)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase.from("favorite_portfolio")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("portfolio_id", portfolioId);
+    return false;
+  } else {
+    await supabase.from("favorite_portfolio")
+      .insert({ user_id: user.id, portfolio_id: portfolioId });
+    return true;
   }
-  if (file.size === 0 || file.size > MAX_IMAGE_BYTES) {
-    throw new Error(`photo: invalid size (${file.size} bytes, max ${MAX_IMAGE_BYTES})`);
-  }
-  if (!ALLOWED_MIMES.has(file.type)) {
-    throw new Error(`photo: unsupported MIME ${file.type}`);
-  }
+}
 
-  const keywordSlugsRaw = formData.get("keywordSlugs");
-  const keywordSlugs =
-    typeof keywordSlugsRaw === "string" && keywordSlugsRaw.length > 0
-      ? keywordSlugsRaw
-          .split(",")
-          .map((s) => s.trim())
-          .filter((s) => s.length > 0 && s.length <= 64)
-          .slice(0, 20)
-      : [];
-
-  // sharp 로 224×224 정규화 후 CLIP 에 넘김 (불필요하게 큰 이미지로 추론 비용 안 들이게)
-  const rawBuf = Buffer.from(await file.arrayBuffer());
-  const normalized = await sharp(rawBuf)
-    .resize(224, 224, { fit: "cover" })
-    .removeAlpha()
-    .jpeg({ quality: 85 })
-    .toBuffer();
-
-  const result = await searchPortfoliosByImage({
-    imageBuffer: normalized,
-    keywordSlugs,
-  });
-
-  const hits = rowsToHits(result.hits);
-
-  return {
-    hits,
-    totalEstimated: hits.length,
-    nextCursor: result.nextCursor,
-    query: result.query,
-    appliedFilters: result.appliedFilters,
-  };
+// 사진 검색은 pgvector 없이 미지원
+export async function searchStyleByImage(): Promise<StyleSearchResult> {
+  return { hits: [], totalEstimated: 0, nextCursor: null, query: "(image)", appliedFilters: [] };
 }

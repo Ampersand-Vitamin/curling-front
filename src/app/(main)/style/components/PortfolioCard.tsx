@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 import type { StylePortfolioCard } from "@/types/style";
 
 interface PortfolioCardProps {
@@ -12,29 +13,30 @@ interface PortfolioCardProps {
 export default function PortfolioCard({ card, onFavoriteClick }: PortfolioCardProps) {
   return (
     <Link
-      href={`/designer/${card.designerId}`}
+      href={`/portfolio/${card.id}`}
       className="relative block w-full overflow-hidden rounded-2xl mb-2"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={card.coverImageUrl}
-        alt={`${card.displayName} portfolio`}
-        loading="lazy"
-        className="w-full h-auto block"
-      />
-
-      <button
-        type="button"
-        aria-label={card.isFavorited ? "Remove from saved" : "Save"}
-        onClick={(e) => {
-          e.preventDefault();
-          onFavoriteClick?.(card.id);
-        }}
-        className="absolute top-2 right-2 flex items-center justify-center size-8 rounded-full bg-surface-white/30 backdrop-blur-sm text-white"
-      >
+      <div className="w-full" style={{ aspectRatio: "3/4" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/icons/bookmark.svg" alt="" width={24} height={24} className="[filter:brightness(0)_invert(1)]" />
-      </button>
+        <img
+          src={card.coverImageUrl}
+          alt={`${card.displayName} portfolio`}
+          loading="lazy"
+          className="w-full h-full block"
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+
+      <div className="absolute top-2 right-2">
+        <FavoriteButton
+          virant={32}
+          status={card.isFavorited ? "Active" : "Default"}
+          onClick={(e) => {
+            e.preventDefault();
+            onFavoriteClick?.(card.id);
+          }}
+        />
+      </div>
 
       <div className="absolute inset-x-0 bottom-0 px-2 pt-4 pb-2 bg-gradient-to-t from-surface-950/80 via-surface-950/40 to-transparent">
         <div className="flex items-end gap-2">

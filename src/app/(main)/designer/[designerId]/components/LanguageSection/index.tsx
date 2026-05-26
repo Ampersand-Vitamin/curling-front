@@ -25,8 +25,8 @@ interface Props {
 export default function LanguageSection({ languages }: Props) {
   if (languages.length === 0) return null;
   return (
-    <section className="px-4 py-5 border-b border-surface-100">
-      <h2 className="typo-h6 text-surface-950 mb-3">Language</h2>
+    <section>
+      <h2 className="typo-h4 text-surface-950 mb-3">Languages</h2>
       <div className="flex flex-wrap gap-2">
         {languages.map((lang) => {
           const flag = getLanguageFlag(lang);

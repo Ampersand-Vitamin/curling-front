@@ -1,0 +1,90 @@
+{
+  "name": "RecentChats",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "hasNew=false": "256:141",
+      "hasNew=true": "256:141"
+    }
+  },
+  "components": {
+    "RecentChats": {
+      "description": "채팅 목록 페이지의 각 항목. 아바타, 디자이너명+살롱명, 최근 메시지 미리보기, 시간, 안읽은 메시지 New 뱃지로 구성.",
+      "props": {
+        "avatarUrl": "string | null",
+        "name": "string",
+        "salonName": "string",
+        "lastMessage": "string",
+        "timeLabel": "string",
+        "hasNew": [true, false]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.250",
+          "width": "full"
+        },
+        "left": {
+          "direction": "row",
+          "flex": 1,
+          "align": "center",
+          "gap": "size.space.250",
+          "avatar": {
+            "size": 40,
+            "shape": "circle",
+            "border": {
+              "width": "size.stroke.border",
+              "color": "color.border.default"
+            }
+          },
+          "info": {
+            "direction": "col",
+            "flex": 1,
+            "gap": 5,
+            "designerRow": {
+              "direction": "row",
+              "align": "end",
+              "gap": "size.space.200",
+              "name": {
+                "typography": "font.curling.h6",
+                "color": "color.text.primary"
+              },
+              "salonName": {
+                "typography": "font.curling.caption",
+                "color": "color.text.tertiary"
+              }
+            },
+            "messageRow": {
+              "direction": "row",
+              "align": "center",
+              "gap": "size.space.200",
+              "lastMessage": {
+                "typography": "font.curling.caption",
+                "color": "color.text.secondary",
+                "flex": 1,
+                "truncate": true
+              },
+              "timeLabel": {
+                "typography": "font.curling.caption2",
+                "color": "color.text.caption"
+              }
+            }
+          }
+        },
+        "newBadge": {
+          "condition": "hasNew",
+          "background": "color.action.primary",
+          "borderRadius": "size.radius.400",
+          "paddingX": "size.space.200",
+          "paddingY": "size.space.100",
+          "label": {
+            "text": "New",
+            "typography": "font.curling.caption",
+            "color": "color.text.inverse"
+          }
+        }
+      }
+    }
+  }
+}

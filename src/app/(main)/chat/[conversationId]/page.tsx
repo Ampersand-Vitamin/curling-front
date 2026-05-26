@@ -2,12 +2,48 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useChat } from "@/hooks/useChat";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { MessageInput } from "@/components/chat/MessageInput";
 import { createClient } from "@/lib/supabase/client";
 
 type PageProps = { params: Promise<{ conversationId: string }> };
+
+function Sk({ className }: { className: string }) {
+  return <div className={`bg-surface-200 animate-pulse rounded-2xl ${className}`} />;
+}
+
+function ChatSkeleton() {
+  const rows: Array<{ mine: boolean; w: string }> = [
+    { mine: false, w: "w-48" },
+    { mine: true,  w: "w-36" },
+    { mine: true,  w: "w-56" },
+    { mine: false, w: "w-52" },
+    { mine: false, w: "w-40" },
+    { mine: true,  w: "w-44" },
+    { mine: true,  w: "w-32" },
+    { mine: false, w: "w-56" },
+  ];
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      {rows.map((row, i) =>
+        row.mine ? (
+          <div key={i} className="flex items-end justify-end gap-2.5">
+            <Sk className="w-10 h-3 rounded-full bg-surface-200" />
+            <Sk className={`${row.w} h-11`} />
+          </div>
+        ) : (
+          <div key={i} className="flex items-end gap-2.5">
+            <div className="size-8 rounded-full bg-surface-200 animate-pulse shrink-0" />
+            <Sk className={`${row.w} h-11`} />
+            <Sk className="w-8 h-3 rounded-full bg-surface-200" />
+          </div>
+        )
+      )}
+    </div>
+  );
+}
 
 type PartnerProfile = {
   name: string;
@@ -94,25 +130,35 @@ export default function ChatPage({ params }: PageProps) {
               <img src="/icons/chevron-left.svg" alt="back" width={16} height={16} />
             </button>
 
-            {/* Partner avatar */}
-            <div className="size-8 rounded-full overflow-hidden bg-surface-300 text-surface-500 flex items-center justify-center shrink-0">
-              {partner?.avatarUrl ? (
-                <img src={partner.avatarUrl} alt="" className="size-full object-cover" />
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <circle cx="12" cy="9" r="4" />
-                  <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6" />
-                </svg>
-              )}
-            </div>
-
-            {/* Name + salon */}
-            <div className="flex flex-col">
-              <p className="typo-h6 text-surface-950">{partner?.name || "채팅"}</p>
-              {partner?.salonName && (
-                <p className="typo-caption2 text-surface-600">{partner.salonName}</p>
-              )}
-            </div>
+            {/* Partner avatar + name — designer profile link */}
+            {partner ? (
+              <Link href={`/designer/${partner.userId}`} className="flex items-center gap-2.5">
+                <div className="size-8 rounded-full overflow-hidden bg-surface-300 text-surface-500 flex items-center justify-center shrink-0">
+                  {partner.avatarUrl ? (
+                    <img src={partner.avatarUrl} alt="" className="size-full object-cover" />
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="9" r="4" />
+                      <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <p className="typo-h6 text-surface-950">{partner.name}</p>
+                  {partner.salonName && (
+                    <p className="typo-caption2 text-surface-600">{partner.salonName}</p>
+                  )}
+                </div>
+              </Link>
+            ) : (
+              <>
+                <div className="size-8 rounded-full bg-surface-200 animate-pulse shrink-0" />
+                <div className="flex flex-col gap-1.5">
+                  <div className="w-24 h-3.5 rounded-full bg-surface-200 animate-pulse" />
+                  <div className="w-16 h-2.5 rounded-full bg-surface-200 animate-pulse" />
+                </div>
+              </>
+            )}
           </div>
 
           {/* More icon */}
@@ -125,12 +171,7 @@ export default function ChatPage({ params }: PageProps) {
       {/* Message list */}
       <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-4 scrollbar-hide">
         {loading ? (
-          <div className="flex-1 flex items-center justify-center py-16">
-            <svg width="28" height="28" viewBox="0 0 20 20" fill="none" className="animate-spin text-surface-400">
-              <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-              <path d="M17.5 10a7.5 7.5 0 0 0-7.5-7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
+          <ChatSkeleton />
         ) : messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center py-16">
             <p className="typo-body2 text-surface-400">첫 메시지를 보내보세요.</p>

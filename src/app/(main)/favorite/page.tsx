@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import FavoriteButton from "@/components/ui/FavoriteButton";
 import SegmentedControl from "@/components/ui/SegmentedControl";
+import SafeImage from "@/components/SafeImage";
+import { createClient } from "@/lib/supabase/client";
+import { toggleFavoritePortfolio } from "@/lib/style/actions";
 
 type KeywordChip = { label: string; flag?: string };
 
@@ -15,10 +19,13 @@ type MockDesigner = {
   keywords: KeywordChip[];
 };
 
-type MockPortfolio = {
-  id: string;
+type FavoritePortfolio = {
+  portfolioId: string;
+  imageUrl: string;
+  designerId: string;
   designerName: string;
-  salonName: string;
+  salonName: string | null;
+  profileImageUrl: string | null;
 };
 
 const MOCK_DESIGNERS: MockDesigner[] = [
@@ -55,15 +62,6 @@ const MOCK_DESIGNERS: MockDesigner[] = [
   },
 ];
 
-const MOCK_PORTFOLIOS: MockPortfolio[] = [
-  { id: "1", designerName: "Sejin", salonName: "Salon de Sea" },
-  { id: "2", designerName: "Mina", salonName: "Hair Studio M" },
-  { id: "3", designerName: "Amy", salonName: "The Curl Bar" },
-  { id: "4", designerName: "Tae", salonName: "Studio T" },
-  { id: "5", designerName: "Luna", salonName: "Luna Hair" },
-  { id: "6", designerName: "Rin", salonName: "Rin's Salon" },
-];
-
 const TABS = [
   { key: "designer", label: "Designer" },
   { key: "portfolio", label: "Portfolio" },
@@ -92,7 +90,7 @@ function DesignerFavoriteCard({ designer }: { designer: MockDesigner }) {
           <p className="typo-h4 text-surface-950 truncate">{designer.name}</p>
           <p className="typo-caption text-surface-600 truncate">{designer.salon}</p>
         </div>
-        <FavoriteButton virant={48} />
+        <FavoriteButton virant={48} status="Active" />
       </div>
 
       <div className="flex gap-1 flex-wrap">
@@ -124,39 +122,131 @@ function DesignerFavoriteCard({ designer }: { designer: MockDesigner }) {
   );
 }
 
-function PortfolioFavoriteCard({ portfolio }: { portfolio: MockPortfolio }) {
+function PortfolioFavoriteCard({
+  portfolio,
+  onUnfavorite,
+}: {
+  portfolio: FavoritePortfolio;
+  onUnfavorite: (id: string) => void;
+}) {
   return (
-    <div className="relative rounded-2xl overflow-hidden bg-surface-200" style={{ height: 250 }}>
-      {/* z-10 — sticky header is z-20, so this stays below it when scrolling */}
-      <div className="absolute top-2 right-2 z-10">
-        <FavoriteButton virant={32} />
+    <Link
+      href={`/portfolio/${portfolio.portfolioId}`}
+      className="relative block w-full overflow-hidden rounded-2xl"
+    >
+      <div className="w-full" style={{ aspectRatio: "3/4" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={portfolio.imageUrl}
+          alt={`${portfolio.designerName} portfolio`}
+          loading="lazy"
+          className="w-full h-full block"
+          style={{ objectFit: "cover" }}
+        />
       </div>
 
-      <div
-        className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-4"
-        style={{ background: "linear-gradient(to top, rgba(23,23,23,0.5), transparent)" }}
-      >
+      <div className="absolute top-2 right-2">
+        <FavoriteButton
+          virant={32}
+          status="Active"
+          onClick={(e) => {
+            e.preventDefault();
+            onUnfavorite(portfolio.portfolioId);
+          }}
+        />
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 px-2 pt-4 pb-2 bg-gradient-to-t from-surface-950/80 via-surface-950/40 to-transparent">
         <div className="flex items-end gap-2">
-          <PlaceholderAvatar size={32} />
-          <div className="flex flex-col min-w-0">
+          <SafeImage
+            src={portfolio.profileImageUrl}
+            alt=""
+            fallback="profile"
+            className="size-8 rounded-full object-cover shrink-0 bg-surface-300"
+          />
+          <div className="flex-1 min-w-0">
             <p className="typo-body2 text-white truncate">{portfolio.designerName}</p>
-            <p className="typo-caption2 text-white/80 truncate">{portfolio.salonName}</p>
+            {portfolio.salonName && (
+              <p className="typo-caption2 text-white/80 truncate">{portfolio.salonName}</p>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
-export default function FavoritePage() {
+function FavoriteContent() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("designer");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") === "portfolio" ? "portfolio" : "designer"
+  );
+  const [portfolios, setPortfolios] = useState<FavoritePortfolio[]>([]);
+  const [loadingPortfolios, setLoadingPortfolios] = useState(false);
+
+  useEffect(() => {
+    if (activeTab !== "portfolio") return;
+    const fetch = async () => {
+      setLoadingPortfolios(true);
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoadingPortfolios(false); return; }
+
+      // 즐겨찾기 포트폴리오 ID 목록
+      const { data: favs } = await supabase
+        .from("favorite_portfolio")
+        .select("portfolio_id")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      const portfolioIds = (favs ?? []).map((f) => f.portfolio_id as string);
+      if (portfolioIds.length === 0) { setPortfolios([]); setLoadingPortfolios(false); return; }
+
+      // 포트폴리오 상세
+      const { data: portRows } = await supabase
+        .from("designer_portfolio")
+        .select("id, image_url, designer_id")
+        .in("id", portfolioIds);
+
+      const designerIds = [...new Set((portRows ?? []).map((r) => r.designer_id as string))];
+      const { data: profiles } = await supabase
+        .from("onboarding_profiles")
+        .select("user_id, name, salon_name, avatar_url")
+        .in("user_id", designerIds.map((id) => id.toString()));
+
+      const profileMap = new Map((profiles ?? []).map((p) => [p.user_id, p]));
+
+      const result: FavoritePortfolio[] = (portRows ?? []).map((r) => {
+        const profile = profileMap.get(r.designer_id as string);
+        return {
+          portfolioId: r.id as string,
+          imageUrl: r.image_url as string,
+          designerId: r.designer_id as string,
+          designerName: profile?.name ?? "Designer",
+          salonName: profile?.salon_name ?? null,
+          profileImageUrl: profile?.avatar_url ?? null,
+        };
+      });
+
+      // 즐겨찾기 순서대로 정렬
+      const orderMap = new Map(portfolioIds.map((id, i) => [id, i]));
+      result.sort((a, b) => (orderMap.get(a.portfolioId) ?? 0) - (orderMap.get(b.portfolioId) ?? 0));
+
+      setPortfolios(result);
+      setLoadingPortfolios(false);
+    };
+    fetch();
+  }, [activeTab]);
+
+  const handleUnfavorite = async (portfolioId: string) => {
+    setPortfolios((prev) => prev.filter((p) => p.portfolioId !== portfolioId));
+    await toggleFavoritePortfolio(portfolioId);
+  };
 
   return (
     <div className="min-h-full flex flex-col bg-white">
-      {/* Sticky header — z-20 so card buttons (z-10) stay below when scrolling */}
       <div className="sticky top-0 z-20 bg-white pt-16 shrink-0">
-        {/* Title row: "Favorite" centered, back button absolute-left */}
         <div className="relative flex items-center justify-center h-6 mx-4">
           <button
             onClick={() => router.back()}
@@ -167,8 +257,6 @@ export default function FavoritePage() {
           </button>
           <p className="typo-h6 text-surface-600">Favorite</p>
         </div>
-
-        {/* Segmented control */}
         <SegmentedControl
           tabs={TABS}
           activeKey={activeTab}
@@ -177,7 +265,6 @@ export default function FavoritePage() {
         />
       </div>
 
-      {/* Content */}
       {activeTab === "designer" ? (
         <div className="flex flex-col gap-8 p-4">
           {MOCK_DESIGNERS.map((d) => (
@@ -186,13 +273,34 @@ export default function FavoritePage() {
         </div>
       ) : (
         <div className="p-4">
-          <div className="grid grid-cols-2 gap-2">
-            {MOCK_PORTFOLIOS.map((p) => (
-              <PortfolioFavoriteCard key={p.id} portfolio={p} />
-            ))}
-          </div>
+          {loadingPortfolios ? (
+            <div className="flex items-center justify-center py-16">
+              <svg width="28" height="28" viewBox="0 0 20 20" fill="none" className="animate-spin text-surface-700">
+                <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="2" opacity="0.25" />
+                <path d="M17.5 10a7.5 7.5 0 0 0-7.5-7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </div>
+          ) : portfolios.length === 0 ? (
+            <p className="typo-body2 text-surface-400 text-center py-16">
+              No saved portfolios yet.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {portfolios.map((p) => (
+                <PortfolioFavoriteCard key={p.portfolioId} portfolio={p} onUnfavorite={handleUnfavorite} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+export default function FavoritePage() {
+  return (
+    <Suspense>
+      <FavoriteContent />
+    </Suspense>
   );
 }

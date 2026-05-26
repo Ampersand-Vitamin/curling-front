@@ -29,6 +29,8 @@ function DefaultAvatar() {
 export default function BottomNav({ avatarUrl }: { avatarUrl?: string | null }) {
   const pathname = usePathname();
 
+  if (pathname.startsWith("/chat/")) return null;
+
   return (
     <nav className="bg-white">
       <div className="flex items-start justify-center gap-1 pb-5">

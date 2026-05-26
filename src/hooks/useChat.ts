@@ -22,8 +22,8 @@ export function useChat(conversationId: string, myLang: string) {
   const channelRef = useRef<RealtimeChannel | null>(null);
   const supabase = createClient();
 
-  // 번역 요청
-  const translate = useCallback(async (text: string, sourceLang: string): Promise<string> => {
+  // 번역 요청 — API 실패 시 null 반환 (잘못된 값 캐싱 방지)
+  const translate = useCallback(async (text: string, sourceLang: string): Promise<string | null> => {
     if (sourceLang === myLang) return text;
     try {
       const res = await fetch("/api/translate", {
@@ -31,10 +31,11 @@ export function useChat(conversationId: string, myLang: string) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, targetLang: myLang, sourceLang }),
       });
+      if (!res.ok) return null;
       const data = await res.json();
-      return data.translatedText ?? text;
+      return data.translatedText ?? null;
     } catch {
-      return text;
+      return null;
     }
   }, [myLang]);
 
@@ -44,6 +45,8 @@ export function useChat(conversationId: string, myLang: string) {
     if (msg.content_translated?.[myLang]) return; // 이미 번역됨
 
     const translatedText = await translate(msg.content, msg.sender_lang);
+    if (!translatedText) return; // API 실패 시 캐싱 안 함
+
     const next: Record<string, string> = {
       ...(msg.content_translated ?? {}),
       [myLang]: translatedText,
@@ -63,6 +66,7 @@ export function useChat(conversationId: string, myLang: string) {
 
   // 초기 메시지 로드
   useEffect(() => {
+    if (!conversationId) return;
     const load = async () => {
       setLoading(true);
       const { data } = await supabase
@@ -74,12 +78,18 @@ export function useChat(conversationId: string, myLang: string) {
       const msgs = (data ?? []) as Message[];
       setMessages(msgs);
       setLoading(false);
-
-      // 번역 안 된 메시지 일괄 처리
-      msgs.forEach((m) => updateTranslation(m));
     };
     load();
   }, [conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // myLang 확정 후(또는 변경 시) + 메시지 로드 완료 시 미번역 메시지 일괄 처리
+  // — [myLang, messages.length] 둘 다 감지:
+  //   1) myLang 'ko'→'en' 시점에 이미 messages 있으면 바로 번역
+  //   2) myLang 변경 후 messages가 로드되면(0→N) 그 때 번역
+  useEffect(() => {
+    if (!conversationId || messages.length === 0) return;
+    messages.forEach((m) => updateTranslation(m));
+  }, [myLang, messages.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Realtime 구독
   useEffect(() => {

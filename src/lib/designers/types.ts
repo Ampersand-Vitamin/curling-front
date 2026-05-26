@@ -53,6 +53,7 @@ export type DesignerDetail = {
   otherLinks: DesignerLinks;
   profileImageUrl: string | null;
   portfolioImages: string[];
+  portfolioItems: { id: string; imageUrl: string }[];
   salon: { id: string; name: string; address: string | null } | null;
   keywords: DesignerKeyword[];
 };

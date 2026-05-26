@@ -31,8 +31,8 @@ export default function SpecialityChips({ keywords }: Props) {
   if (visibleKeywords.length === 0) return null;
 
   return (
-    <section className="px-4 py-5 border-b border-surface-100">
-      <h2 className="typo-h6 text-surface-950 mb-3">Speciality</h2>
+    <section>
+      <h2 className="typo-h4 text-surface-950 mb-3">Specialities</h2>
       <div className="flex flex-wrap gap-2">
         {visibleKeywords.map((k) => (
           <KeywordFilter

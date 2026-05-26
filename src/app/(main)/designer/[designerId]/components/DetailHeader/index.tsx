@@ -22,7 +22,7 @@ export default function DetailHeader({ name, profileImageUrl, salonLabel, messag
 
   return (
     <div className="bg-surface-white">
-      <div className="flex items-center justify-between pl-4 pr-3 pt-4 pb-3">
+      <div className="flex items-center justify-between pl-4 pr-3 pt-16 pb-3">
         <div className="flex items-center gap-[10px] min-w-0">
           <button
             type="button"

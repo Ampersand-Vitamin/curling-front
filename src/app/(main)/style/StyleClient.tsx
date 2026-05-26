@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import StyleSearchTab from "./components/StyleSearchTab";
 import StyleFilterPopup, { STYLE_SLUG_MAP } from "./components/StyleFilterPopup";
 import RecommendedKeywords from "./components/RecommendedKeywords";
 import PortfolioGrid from "./components/PortfolioGrid";
-import { searchStyle, searchStyleByImage } from "@/lib/style/actions";
+import { searchStyle, searchStyleByImage, toggleFavoritePortfolio } from "@/lib/style/actions";
 import type {
   RecommendedKeyword,
   StylePortfolioCard,
@@ -36,6 +37,7 @@ export default function StyleClient({
   // Design Ref: §6.2 — photo 검색 모드. null 이면 text 모드.
   const [photoSearch, setPhotoSearch] = useState<PhotoSearchState | null>(null);
   const [showFilter, setShowFilter] = useState(false);
+  const router = useRouter();
 
   // 동시성 가드: 이전 요청이 늦게 도착해도 최신만 반영
   const requestIdRef = useRef(0);
@@ -67,10 +69,7 @@ export default function StyleClient({
     const myId = ++requestIdRef.current;
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.set("image", file);
-      if (slugs.length > 0) formData.set("keywordSlugs", slugs.join(","));
-      const res = await searchStyleByImage(formData);
+      const res = await searchStyleByImage();
       if (requestIdRef.current !== myId) return;
       setCards(res.hits);
       setCursor(res.nextCursor);
@@ -133,6 +132,21 @@ export default function StyleClient({
     });
   }, []);
 
+  const onFavoriteClick = useCallback(async (portfolioId: string) => {
+    // 낙관적 업데이트
+    setCards((prev) =>
+      prev.map((c) => c.id === portfolioId ? { ...c, isFavorited: !c.isFavorited } : c)
+    );
+    try {
+      await toggleFavoritePortfolio(portfolioId);
+    } catch {
+      // 실패 시 롤백
+      setCards((prev) =>
+        prev.map((c) => c.id === portfolioId ? { ...c, isFavorited: !c.isFavorited } : c)
+      );
+    }
+  }, []);
+
   const onLoadMore = useCallback(() => {
     if (cursor === null || isLoading) return;
     // photo 모드는 페이지네이션 미지원 (RPC 가 cursor 안 받음) — text 모드만
@@ -163,7 +177,7 @@ export default function StyleClient({
           onSubmit={() => runSearch(query, Array.from(activeSlugs), 0)}
           isLoading={isLoading}
           onFilterClick={() => setShowFilter(true)}
-          onFavoriteClick={() => {}}
+          onFavoriteClick={() => router.push("/favorite?tab=portfolio")}
           onFileSelect={onFileSelect}
           photoMode={
             photoSearch
@@ -184,6 +198,7 @@ export default function StyleClient({
         isLoading={isLoading}
         hasMore={!photoSearch && cursor !== null}
         onLoadMore={onLoadMore}
+        onFavoriteClick={onFavoriteClick}
         emptyMessage={
           photoSearch
             ? "No visually similar portfolios"

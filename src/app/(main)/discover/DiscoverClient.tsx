@@ -2,7 +2,8 @@
 // Design Ref: §4.3, §2.1 Page Layer — 모든 client state 보유
 // Plan FR-03, FR-09, SC-14
 import { useEffect, useMemo, useState } from "react";
-import MapView from "./components/MapView";
+import dynamic from "next/dynamic";
+const MapView = dynamic(() => import("./components/MapView"), { ssr: false });
 import SearchHeader from "./components/SearchHeader";
 import PullBar, {
   type KeywordSection,
