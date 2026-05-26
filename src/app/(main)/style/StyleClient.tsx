@@ -6,7 +6,8 @@ import StyleFilterPopup, { STYLE_SLUG_MAP } from "./components/StyleFilterPopup"
 import RecommendedKeywords from "./components/RecommendedKeywords";
 import PortfolioGrid from "./components/PortfolioGrid";
 import StyleSearchSuggestions from "./components/StyleSearchSuggestions";
-import { searchStyle, searchStyleByImage } from "@/lib/style/actions";
+import ImageKeywordsPopup from "./components/ImageKeywordsPopup";
+import { searchStyle, searchStyleByImage, extractImageKeywords } from "@/lib/style/actions";
 import type {
   RecommendedKeyword,
   StylePortfolioCard,
@@ -25,6 +26,15 @@ type PhotoSearchState = {
   previewUrl: string;
 };
 
+type ImagePopupState = {
+  file: File;
+  previewUrl: string;
+  stage: "initial" | "keywords";
+  keywords: RecommendedKeyword[];
+  selectedSlugs: Set<string>;
+  isExtracting: boolean;
+};
+
 export default function StyleClient({
   initialResult,
   recommended,
@@ -37,8 +47,10 @@ export default function StyleClient({
   const [photoSearch, setPhotoSearch] = useState<PhotoSearchState | null>(null);
   const [showFilter, setShowFilter] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [imagePopup, setImagePopup] = useState<ImagePopupState | null>(null);
 
   const requestIdRef = useRef(0);
+  const reselectInputRef = useRef<HTMLInputElement | null>(null);
 
   const runSearch = useCallback(
     async (q: string, slugs: string[], offset = 0) => {
@@ -97,9 +109,10 @@ export default function StyleClient({
     return () => clearTimeout(handle);
   }, [combinedQuery, runSearch, photoSearch]);
 
+  // 사진 검색: photoSearch 또는 activeSlugs 변경 시 재실행
   useEffect(() => {
     if (!photoSearch) return;
-    runPhotoSearch(photoSearch.file, []);
+    runPhotoSearch(photoSearch.file, Array.from(activeSlugs));
   }, [photoSearch, activeSlugs, runPhotoSearch]);
 
   useEffect(() => {
@@ -130,18 +143,109 @@ export default function StyleClient({
     runSearch(query, Array.from(activeSlugs), cursor);
   }, [cursor, isLoading, query, activeSlugs, runSearch, photoSearch]);
 
+  // 파일 선택 → 팝업 열기 (즉시 검색 X)
   const onFileSelect = useCallback((file: File) => {
-    setPhotoSearch((prev) => {
-      if (prev) URL.revokeObjectURL(prev.previewUrl);
-      return { file, previewUrl: URL.createObjectURL(file) };
+    const previewUrl = URL.createObjectURL(file);
+    setImagePopup({
+      file,
+      previewUrl,
+      stage: "initial",
+      keywords: [],
+      selectedSlugs: new Set(),
+      isExtracting: false,
     });
   }, []);
+
+  // 팝업 내 Reselect → 파일 선택기 재오픈
+  const onReselect = useCallback(() => {
+    reselectInputRef.current?.click();
+  }, []);
+
+  // Reselect 파일 선택 시 팝업 이미지 교체
+  const onReselectFile = useCallback((file: File) => {
+    setImagePopup((prev) => {
+      if (prev) URL.revokeObjectURL(prev.previewUrl);
+      return {
+        file,
+        previewUrl: URL.createObjectURL(file),
+        stage: "initial",
+        keywords: [],
+        selectedSlugs: new Set(),
+        isExtracting: false,
+      };
+    });
+  }, []);
+
+  // Extract Keywords 클릭 → CLIP 키워드 스코어링
+  const onExtractKeywords = useCallback(async () => {
+    if (!imagePopup) return;
+    setImagePopup((prev) => prev ? { ...prev, isExtracting: true } : prev);
+    try {
+      const formData = new FormData();
+      formData.set("image", imagePopup.file);
+      const keywords = await extractImageKeywords(formData);
+      setImagePopup((prev) =>
+        prev
+          ? {
+              ...prev,
+              stage: "keywords",
+              keywords,
+              selectedSlugs: new Set(keywords.map((k) => k.slug)),
+              isExtracting: false,
+            }
+          : prev,
+      );
+    } catch {
+      setImagePopup((prev) => prev ? { ...prev, isExtracting: false } : prev);
+    }
+  }, [imagePopup]);
+
+  const onTogglePopupKeyword = useCallback((slug: string) => {
+    setImagePopup((prev) => {
+      if (!prev) return prev;
+      const next = new Set(prev.selectedSlugs);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return { ...prev, selectedSlugs: next };
+    });
+  }, []);
+
+  const onSelectAllPopupKeywords = useCallback(() => {
+    setImagePopup((prev) => {
+      if (!prev) return prev;
+      const allSelected = prev.keywords.every((k) => prev.selectedSlugs.has(k.slug));
+      const next = allSelected
+        ? new Set<string>()
+        : new Set(prev.keywords.map((k) => k.slug));
+      return { ...prev, selectedSlugs: next };
+    });
+  }, []);
+
+  const onCancelImagePopup = useCallback(() => {
+    setImagePopup((prev) => {
+      if (prev) URL.revokeObjectURL(prev.previewUrl);
+      return null;
+    });
+  }, []);
+
+  // Apply Selected → 팝업 선택 키워드로 이미지 검색 실행
+  const onApplyImageKeywords = useCallback(() => {
+    if (!imagePopup) return;
+    const { file, previewUrl, selectedSlugs } = imagePopup;
+    setImagePopup(null);
+    setActiveSlugs(new Set(selectedSlugs));
+    setPhotoSearch((prev) => {
+      if (prev) URL.revokeObjectURL(prev.previewUrl);
+      return { file, previewUrl };
+    });
+  }, [imagePopup]);
 
   const onPhotoClear = useCallback(() => {
     setPhotoSearch((prev) => {
       if (prev) URL.revokeObjectURL(prev.previewUrl);
       return null;
     });
+    setActiveSlugs(new Set());
   }, []);
 
   const handleSearchSubmit = useCallback(() => {
@@ -151,6 +255,21 @@ export default function StyleClient({
 
   return (
     <div className="relative flex flex-col h-full bg-surface-50">
+      {/* Reselect용 숨겨진 파일 인풋 */}
+      <input
+        ref={reselectInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            onReselectFile(file);
+            e.target.value = "";
+          }
+        }}
+      />
+
       {/* 상단 고정 영역 */}
       <div className="sticky top-0 z-20 flex flex-col items-center bg-surface-50 pt-4 pb-2.5">
         <StyleSearchTab
@@ -195,13 +314,30 @@ export default function StyleClient({
         }
       />
 
-      {/* 검색 제안 패널 (Screen 4) */}
-      {showSuggestions && !showFilter && (
+      {/* 검색 제안 패널 */}
+      {showSuggestions && !showFilter && !imagePopup && (
         <StyleSearchSuggestions
           keywords={recommended}
           activeSlugs={activeSlugs}
           onToggleKeyword={onToggleKeyword}
           onClose={() => setShowSuggestions(false)}
+        />
+      )}
+
+      {/* 이미지 키워드 팝업 */}
+      {imagePopup && (
+        <ImageKeywordsPopup
+          previewUrl={imagePopup.previewUrl}
+          stage={imagePopup.stage}
+          keywords={imagePopup.keywords}
+          selectedSlugs={imagePopup.selectedSlugs}
+          isExtracting={imagePopup.isExtracting}
+          onExtract={onExtractKeywords}
+          onReselect={onReselect}
+          onToggle={onTogglePopupKeyword}
+          onSelectAll={onSelectAllPopupKeywords}
+          onCancel={onCancelImagePopup}
+          onApply={onApplyImageKeywords}
         />
       )}
 
