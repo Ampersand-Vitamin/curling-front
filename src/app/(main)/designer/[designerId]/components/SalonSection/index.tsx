@@ -18,7 +18,7 @@ interface Props {
 
 export default function SalonSection({ salon }: Props) {
   return (
-    <section className="px-4 py-5 border-b border-surface-100 flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       <h2 className="typo-h4 text-surface-950">Works at</h2>
 
       <div>

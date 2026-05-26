@@ -1,0 +1,79 @@
+{
+  "name": "LoginButton",
+  "figma": {
+    "fileKey": "Nd9ToDBR2rj4DUYXcaSphP",
+    "nodeIds": {
+      "variant=Google": "229:2075",
+      "variant=Kakao":  "229:2074",
+      "variant=Email":  "229:2073",
+      "variant=Skip":   "229:2072"
+    }
+  },
+  "components": {
+    "LoginButton": {
+      "props": {
+        "variant": ["Google", "Kakao", "Email", "Skip"]
+      },
+      "tokens": {
+        "layout": {
+          "direction": "row",
+          "align": "center",
+          "gap": "size.space.300",
+          "height": 44,
+          "borderRadius": "size.radius.200",
+          "overflow": "clip"
+        },
+        "variant_Google": {
+          "background": "color.login.google-background",
+          "padding": { "x": "size.space.400", "y": "size.space.300" },
+          "icon": {
+            "asset": "assets/logo/social/google.png",
+            "size": "size.icon.small"
+          },
+          "label": {
+            "typography": "font.login",
+            "color": "color.text.primary",
+            "align": "center",
+            "flex": 1
+          }
+        },
+        "variant_Kakao": {
+          "background": "color.login.kakao-background",
+          "padding": { "x": "size.space.400", "y": "size.space.300" },
+          "icon": {
+            "asset": "assets/logo/social/kakao.png",
+            "size": "size.icon.small"
+          },
+          "label": {
+            "typography": "font.login",
+            "color": "color.text.primary",
+            "align": "center",
+            "flex": 1
+          }
+        },
+        "variant_Email": {
+          "background": "color.action.secondary",
+          "padding": { "x": "size.space.600", "y": "size.space.300" },
+          "label": {
+            "typography": "font.login",
+            "color": "color.text.inverse",
+            "align": "center",
+            "flex": 1
+          }
+        },
+        "variant_Skip": {
+          "background": "color.action.overlay-white",
+          "blur": "effect.blur.frosted",
+          "padding": { "x": "size.space.800", "y": "size.space.400" },
+          "label": {
+            "typography": "font.login",
+            "color": "color.text.inverse",
+            "align": "center",
+            "flex": 1,
+            "textDecoration": "underline"
+          }
+        }
+      }
+    }
+  }
+}

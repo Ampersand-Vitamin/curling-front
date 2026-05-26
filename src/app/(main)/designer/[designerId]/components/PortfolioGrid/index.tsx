@@ -1,62 +1,77 @@
-// Design Ref: §4.15, §6.7, FR-12 — designer-detail
-//
-// limit 미지정 시 전체. limit 초과 시 "View more" 노출 (onViewMore 핸들러).
-
 "use client";
 
+import Link from "next/link";
 import SafeImage from "@/components/SafeImage";
 
+interface PortfolioItem {
+  id: string;
+  imageUrl: string;
+}
+
 interface Props {
-  images: string[];
+  images?: string[];
+  items?: PortfolioItem[];
   limit?: number;
   columns?: 2 | 3;
   onViewMore?: () => void;
-  /** Designer 탭(섹션 제목 + View more 같이) vs Portfolio 탭(제목 없는 풀 그리드) */
   showHeader?: boolean;
 }
 
 export default function PortfolioGrid({
   images,
+  items,
   limit,
   columns = 2,
   onViewMore,
   showHeader = true,
 }: Props) {
-  if (images.length === 0) return null;
+  const allItems: PortfolioItem[] = items
+    ? items
+    : (images ?? []).map((url, i) => ({ id: String(i), imageUrl: url }));
 
-  const visible = typeof limit === "number" ? images.slice(0, limit) : images;
-  const hasMore = typeof limit === "number" && images.length > limit;
+  if (allItems.length === 0) return null;
+
+  const visible = typeof limit === "number" ? allItems.slice(0, limit) : allItems;
+  const hasMore = typeof limit === "number" && allItems.length > limit;
+  const hasIds = !!items;
 
   const gridClass = columns === 3 ? "grid-cols-3 gap-0.5" : "grid-cols-2 gap-1";
 
   return (
-    <section className={showHeader ? "px-4 py-5 border-b border-surface-100" : ""}>
+    <div>
       {showHeader && (
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="typo-h6 text-surface-950">Portfolio</h2>
-          {hasMore && onViewMore && (
-            <button
-              type="button"
-              onClick={onViewMore}
-              className="inline-flex items-center rounded-full bg-surface-200 px-[10px] py-[6px] typo-caption text-surface-800 active:bg-surface-300"
-            >
-              View more
-            </button>
-          )}
-        </div>
+        <h2 className="typo-h4 text-surface-950 mb-3">Portfolio</h2>
       )}
       <div className={`grid ${gridClass}`}>
-        {visible.map((src, i) => (
-          <div key={i} className="aspect-square bg-surface-100 overflow-hidden rounded-2xl">
-            <SafeImage
-              src={src}
-              alt={`Portfolio ${i + 1}`}
-              fallback="portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
+        {visible.map((item) => {
+          const card = (
+            <div className="bg-surface-100 overflow-hidden rounded-2xl" style={{ height: 200 }}>
+              <SafeImage
+                src={item.imageUrl}
+                alt="Portfolio"
+                fallback="portfolio"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          );
+          return hasIds ? (
+            <Link key={item.id} href={`/portfolio/${item.id}`}>
+              {card}
+            </Link>
+          ) : (
+            <div key={item.id}>{card}</div>
+          );
+        })}
       </div>
-    </section>
+      {hasMore && onViewMore && (
+        <button
+          type="button"
+          onClick={onViewMore}
+          className="mt-3 w-full py-3 bg-surface-200 rounded-lg typo-button text-surface-950 active:bg-surface-300"
+        >
+          View More
+        </button>
+      )}
+    </div>
   );
 }

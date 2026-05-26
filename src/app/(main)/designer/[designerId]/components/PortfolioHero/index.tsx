@@ -7,46 +7,18 @@
 import SafeImage from "@/components/SafeImage";
 import { useHeroCarousel } from "./useHeroCarousel";
 
-function StarFilled() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-  );
-}
-
-function StarOutline() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 interface Props {
   images: string[];
-  isFavorite: boolean;
-  onToggleFavorite: () => void;
   designerName: string;
 }
 
-export default function PortfolioHero({
-  images,
-  isFavorite,
-  onToggleFavorite,
-  designerName,
-}: Props) {
-  // 빈 배열 fallback: 단일 placeholder slide
+export default function PortfolioHero({ images, designerName }: Props) {
   const slides = images.length > 0 ? images : [null];
   const { emblaRef, selectedIndex, scrollTo, indices } = useHeroCarousel(slides.length);
 
   return (
-    <div className="relative aspect-[3/4] bg-surface-200">
+    <div className="relative bg-surface-200" style={{ height: 450 }}>
       <div ref={emblaRef} className="overflow-hidden h-full">
         <div className="flex h-full">
           {slides.map((src, i) => (
@@ -62,40 +34,32 @@ export default function PortfolioHero({
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface-white from-10% via-surface-white/75 via-45% to-transparent backdrop-blur-[2px]" />
-
-      {/* ⭐ 저장 (UI-only) */}
-      <button
-        type="button"
-        onClick={onToggleFavorite}
-        aria-label={isFavorite ? "저장 해제" : "저장"}
-        aria-pressed={isFavorite}
-        className={`absolute top-4 right-4 size-12 rounded-full bg-surface-50/95 backdrop-blur-[10px] flex items-center justify-center active:bg-surface-200 ${
-          isFavorite ? "text-primary-400" : "text-surface-700"
-        }`}
+      {/* 하단 그라데이션 + 도트 인디케이터 */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center pb-8"
+        style={{
+          height: 100,
+          background: "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))",
+        }}
       >
-        {isFavorite ? <StarFilled /> : <StarOutline />}
-      </button>
-
-      {/* 도트 인디케이터 */}
-      {slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {indices.map((i) => {
-            const active = i === selectedIndex;
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={() => scrollTo(i)}
-                aria-label={`Slide ${i + 1}`}
-                className={`size-1.5 rounded-full transition-colors ${
-                  active ? "bg-surface-white" : "bg-surface-white/50"
-                }`}
-              />
-            );
-          })}
-        </div>
-      )}
+        {slides.length > 1 && (
+          <div className="pointer-events-auto flex gap-1">
+            {indices.map((i) => {
+              const active = i === selectedIndex;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => scrollTo(i)}
+                  aria-label={`Slide ${i + 1}`}
+                  className="size-1.5 rounded-full transition-colors"
+                  style={{ backgroundColor: active ? "rgba(0,0,0,1)" : "rgba(0,0,0,0.5)" }}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

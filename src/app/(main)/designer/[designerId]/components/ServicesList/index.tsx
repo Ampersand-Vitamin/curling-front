@@ -14,7 +14,7 @@ export default function ServicesList({ designerId }: Props) {
   if (services.length === 0) return null;
 
   return (
-    <section className="px-4 py-5 border-b border-surface-100 flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <h2 className="typo-h4 text-surface-950">Providing Services & Price</h2>
         <button type="button" className="typo-caption text-surface-400 underline">

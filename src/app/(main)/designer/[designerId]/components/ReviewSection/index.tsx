@@ -49,14 +49,14 @@ export default function ReviewSection({ designerId }: Props) {
   if (reviews.length === 0) return null;
 
   return (
-    <section className="py-5">
-      <div className="flex justify-between items-center px-4 mb-3">
+    <section className="flex flex-col gap-3">
+      <div className="flex justify-between items-center">
         <h2 className="typo-h4 text-surface-950">Review</h2>
         <button type="button" className="typo-caption text-surface-400 underline">
           view all
         </button>
       </div>
-      <div className="flex gap-2 overflow-x-auto px-4 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto -mx-4 px-4 scrollbar-hide pb-1">
         {reviews.map((r) => (
           <ReviewCard key={r.id} review={r} />
         ))}

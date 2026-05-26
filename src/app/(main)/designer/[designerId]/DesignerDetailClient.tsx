@@ -1,10 +1,8 @@
-// Design Ref: §4.5, §5.2, FR-04, FR-15 — designer-detail
-//
-// Client orchestrator — 탭/북마크 hook 호출 + 섹션 렌더만 담당.
-// 데이터는 page.tsx (Server) 에서 props 로 주입.
-
 "use client";
 
+import Link from "next/link";
+import SafeImage from "@/components/SafeImage";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 import type { DesignerDetail } from "@/lib/designers";
 import { useDesignerTabs } from "./hooks/useDesignerTabs";
 import { useFavoriteToggle } from "./hooks/useFavoriteToggle";
@@ -24,6 +22,28 @@ interface Props {
   designer: DesignerDetail;
 }
 
+function PortfolioTabCard({ src, index, portfolioId }: { src: string; index: number; portfolioId: string }) {
+  return (
+    <Link href={`/portfolio/${portfolioId}`} className="flex flex-col gap-2.5">
+      <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: "3/4" }}>
+        <SafeImage
+          src={src}
+          alt={`Portfolio ${index + 1}`}
+          fallback="portfolio"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute top-2 right-2">
+          <FavoriteButton virant={32} status="Default" />
+        </div>
+        <div
+          className="absolute inset-x-0 bottom-0 h-[59px]"
+          style={{ background: "linear-gradient(to bottom, rgba(23,23,23,0), rgba(23,23,23,0.5))" }}
+        />
+      </div>
+    </Link>
+  );
+}
+
 export default function DesignerDetailClient({ designer }: Props) {
   const { activeTab, setActiveTab, tabs } = useDesignerTabs();
   const { isFavorite, toggle } = useFavoriteToggle(designer.id);
@@ -34,8 +54,10 @@ export default function DesignerDetailClient({ designer }: Props) {
       : designer.salon.name
     : null;
 
+  const messageHref = designer.otherLinks?.message ?? `/chat/new?designerId=${designer.id}`;
+
   return (
-    <div className="flex flex-col h-full overflow-y-auto pb-[76px] bg-surface-white">
+    <div className="flex flex-col h-full overflow-y-auto scrollbar-hide pb-[76px] bg-white">
       <div className="sticky top-0 z-30">
         <DetailHeader
           name={designer.displayName}
@@ -50,32 +72,44 @@ export default function DesignerDetailClient({ designer }: Props) {
         <>
           <PortfolioHero
             images={designer.portfolioImages}
-            isFavorite={isFavorite}
-            onToggleFavorite={toggle}
             designerName={designer.displayName}
           />
-          <DesignerInfoSection designer={designer} />
-          <SpecialityChips keywords={designer.keywords} />
-          <ReservationSection links={designer.otherLinks} />
-          <LanguageSection languages={designer.languages} />
-          <PortfolioGrid
-            images={designer.portfolioImages}
-            limit={4}
-            columns={2}
-            onViewMore={() => setActiveTab("portfolio")}
-          />
-          {designer.salon && <SalonSection salon={designer.salon} />}
-          <ServicesList designerId={designer.id} />
-          <ReviewSection designerId={designer.id} />
+          <div className="px-4 py-6 flex flex-col gap-10">
+            <DesignerInfoSection
+              designer={designer}
+              isFavorite={isFavorite}
+              onToggleFavorite={toggle}
+            />
+            <SpecialityChips keywords={designer.keywords} />
+            <ReservationSection links={designer.otherLinks} />
+            <LanguageSection languages={designer.languages} />
+            <PortfolioGrid
+              items={designer.portfolioItems}
+              limit={4}
+              columns={2}
+              onViewMore={() => setActiveTab("portfolio")}
+            />
+            {designer.salon && <SalonSection salon={designer.salon} />}
+            <ServicesList designerId={designer.id} />
+            <ReviewSection designerId={designer.id} />
+            <Link
+              href={messageHref}
+              className="flex items-center justify-center w-full py-4 bg-primary-400 rounded-lg typo-h6 text-white active:opacity-90"
+            >
+              Start Conversation with {designer.displayName}
+            </Link>
+          </div>
         </>
       )}
 
       {activeTab === "portfolio" && (
-        <PortfolioGrid
-          images={designer.portfolioImages}
-          columns={3}
-          showHeader={false}
-        />
+        <div className="px-4 py-6">
+          <div className="grid grid-cols-2 gap-2">
+            {designer.portfolioItems.map((item, i) => (
+              <PortfolioTabCard key={item.id} src={item.imageUrl} index={i} portfolioId={item.id} />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
