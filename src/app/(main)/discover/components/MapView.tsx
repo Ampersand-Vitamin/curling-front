@@ -253,7 +253,6 @@ export default function MapView({
           mapId="671d8b693bbcd9d324bfc862"
           style={{ width: "100%", height: "100%" }}
           disableDefaultUI
-          zoomControl
         >
           <UserLocationTracker position={userPos} onResolved={setUserPos} />
           {userPos && (
