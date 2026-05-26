@@ -69,7 +69,10 @@ export default function StyleClient({
     const myId = ++requestIdRef.current;
     setIsLoading(true);
     try {
-      const res = await searchStyleByImage();
+      const formData = new FormData();
+      formData.set("image", file);
+      if (slugs.length > 0) formData.set("keywordSlugs", slugs.join(","));
+      const res = await searchStyleByImage(formData);
       if (requestIdRef.current !== myId) return;
       setCards(res.hits);
       setCursor(res.nextCursor);

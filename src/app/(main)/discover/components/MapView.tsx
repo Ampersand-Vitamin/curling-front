@@ -14,8 +14,8 @@ import type { Salon } from "@/types/salon";
 import type { DesignerMapItem } from "@/lib/designers";
 import type { PullBarVariant } from "./PullBar";
 
-// 지도 초기 중심/줌 (뉴욕 기반 — 실서비스 시 유저 위치로 대체)
-const DEFAULT_CENTER = { lat: 40.758, lng: -73.9855 };
+// 지도 초기 중심/줌 (서울 기반 — 실서비스 시 유저 위치로 대체)
+const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
 const DEFAULT_ZOOM = 12;
 const MY_LOCATION_ZOOM = 14;
 

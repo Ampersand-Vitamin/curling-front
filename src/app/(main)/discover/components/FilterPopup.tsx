@@ -78,7 +78,7 @@ export default function FilterPopup({
     : null;
 
   return (
-    <div className="h-full flex flex-col rounded-2xl bg-surface-50/95 backdrop-blur-[10px]">
+    <div className="h-full flex flex-col rounded-2xl bg-surface-white">
       {/* 헤더 — 닫기 + 검색바 */}
       <div className="shrink-0 px-[10px] pt-3 pb-3 flex items-center gap-2">
         <button
@@ -146,7 +146,7 @@ export default function FilterPopup({
 
       {/* Figma 572:7394 — 하단 Selected + Apply 영역. 선택 0개면 숨김 */}
       {hasSelection && (
-        <div className="shrink-0 flex flex-col gap-[10px] border-t border-surface-200 bg-surface-50/95 backdrop-blur-[10px] p-[10px] rounded-b-2xl">
+        <div className="shrink-0 flex flex-col gap-[10px] border-t border-surface-200 bg-surface-white p-[10px] rounded-b-2xl">
           <SelectedKeywordsSection
             filterSections={filterSections}
             activeKeywords={activeKeywords}

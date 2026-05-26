@@ -333,7 +333,7 @@ export default function DiscoverClient({ filterSections, salons, designerMapItem
         )}
 
         {/* 하단 PullBar — 핀 선택 시 collapsed로 강제 */}
-        <div className="pointer-events-auto">
+        <div className={`pointer-events-auto ${pullBarVariant === "expanded" ? "absolute inset-x-0 bottom-0" : "mt-auto"}`}>
           <PullBar
             designers={bestMatchDesigners}
             keywordSections={keywordSections}
