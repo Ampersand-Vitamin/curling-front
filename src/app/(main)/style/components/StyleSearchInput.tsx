@@ -109,7 +109,7 @@ export default function StyleSearchInput({
           type="button"
           aria-label="Search by photo"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center justify-center size-9 rounded-full bg-white border border-surface-200 text-surface-900"
+          className="flex items-center justify-center size-9 rounded-full bg-secondary-400 text-white"
         >
           <PhotoIcon />
         </button>
