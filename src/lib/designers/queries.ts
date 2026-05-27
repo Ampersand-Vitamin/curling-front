@@ -43,7 +43,7 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
         rating_avg, review_count, is_verified,
         languages, other_links,
         salon:salon_id ( id, name, address ),
-        designer_keyword ( keyword:keyword_id ( slug, name, category:category_slug ( slug ) ) )
+        designer_keyword ( keyword:keyword_id ( slug, name, category_slug ) )
       `)
       .eq("id", id)
       .maybeSingle(),

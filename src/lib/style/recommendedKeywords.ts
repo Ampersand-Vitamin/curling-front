@@ -12,7 +12,6 @@ const STATIC_RECOMMENDED: RecommendedKeyword[] = [
   { slug: "straight_hair", label: "Straight Hair" },
   { slug: "balayage", label: "Balayage" },
   { slug: "highlights", label: "Highlight" },
-  { slug: "long_hair", label: "Long Hair" },
   { slug: "brown_hair", label: "Brown Hair" },
   { slug: "korean_perm", label: "Korean Perm" },
   { slug: "curly_cut", label: "Curly Cut" },
