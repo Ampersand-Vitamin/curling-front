@@ -21,7 +21,7 @@ type RawDesignerProfile = {
   languages: string[];
   other_links: Record<string, string>;
   salon: { id: string; name: string; address: string | null } | null;
-  designer_keyword: { keyword: { slug: string; name: string; category: { slug: string } | null } | null }[] | null;
+  designer_keyword: { keyword: { slug: string; name: string; category_slug: string | null } | null }[] | null;
 };
 
 type RawPortfolioRow = {
@@ -77,7 +77,7 @@ function toDomain(raw: RawDesignerProfile, portfolioRows: RawPortfolioRow[]): De
     .map((dk) => ({
       slug: dk.keyword!.slug,
       name: dk.keyword!.name,
-      categorySlug: dk.keyword!.category?.slug ?? "specialty",
+      categorySlug: dk.keyword!.category_slug ?? "specialty",
       relationType: "specialty" as const,
     }));
 
