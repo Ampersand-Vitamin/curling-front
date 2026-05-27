@@ -6,8 +6,8 @@ import KeywordFilter from "./KeywordFilter";
 import type { DiscoverMode } from "@/types/discover";
 
 const KEYWORDS = [
-  { slug: "english_speaking", label: "English Speaker" },
-  { slug: "curly_hair", label: "Curly Hair Expert" },
+  { slug: "english", label: "English Speaker" },
+  { slug: "curly_hair_expert", label: "Curly Hair Expert" },
   { slug: "foreigner_friendly", label: "Foreigner Friendly" },
 ];
 
