@@ -111,6 +111,9 @@ export default function DiscoverClient({ filterSections, salons, designerMapItem
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
+      // 필터 선택 시 PullBar를 compact로 올려서 결과 노출
+      if (next.size > 0) setPullBarVariant("compact");
+      else setPullBarVariant("collapsed");
       return next;
     });
   };
