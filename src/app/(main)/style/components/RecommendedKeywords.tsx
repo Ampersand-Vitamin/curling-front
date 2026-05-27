@@ -36,13 +36,13 @@ export default function RecommendedKeywords({
               aria-pressed={active}
               className={`flex items-center gap-1.5 h-7 rounded-full typo-caption shrink-0 transition-colors ${
                 active
-                  ? "bg-secondary-400 text-white pl-2.5 pr-1.5"
+                  ? "bg-primary-400 text-white pl-2.5 pr-1.5"
                   : "bg-surface-200 text-surface-800 px-2.5"
               }`}
             >
               <span className="capitalize">{kw.label}</span>
               {active && (
-                <span className="flex items-center justify-center size-4 rounded-full bg-secondary-300 shrink-0">
+                <span className="flex items-center justify-center size-4 rounded-full bg-primary-300 shrink-0">
                   <XIcon />
                 </span>
               )}

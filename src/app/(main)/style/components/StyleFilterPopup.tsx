@@ -502,7 +502,7 @@ export default function StyleFilterPopup({
           <button
             type="button"
             onClick={handleApply}
-            className="w-full rounded-full bg-secondary-400 text-white typo-button h-14"
+            className="w-full rounded-lg bg-primary-400 text-white typo-h6 py-4 px-8"
           >
             Apply Selected
           </button>
