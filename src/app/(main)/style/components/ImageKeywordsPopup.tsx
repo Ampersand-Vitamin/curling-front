@@ -46,8 +46,6 @@ export default function ImageKeywordsPopup({
   onCancel,
   onApply,
 }: ImageKeywordsPopupProps) {
-  const allSelected = keywords.length > 0 && keywords.every((k) => selectedSlugs.has(k.slug));
-
   return (
     <div className="absolute inset-0 z-50 flex flex-col justify-end">
       {/* 배경 오버레이 */}
@@ -99,14 +97,14 @@ export default function ImageKeywordsPopup({
               <button
                 type="button"
                 onClick={onCancel}
-                className="flex-1 h-12 rounded-full bg-surface-200 text-surface-700 typo-button"
+                className="flex-1 h-12 typo-button text-surface-600"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 disabled
-                className="flex-1 h-12 rounded-full bg-secondary-400 text-white typo-button disabled:opacity-40"
+                className="flex-1 h-12 rounded-full bg-primary-400 text-white typo-button disabled:opacity-40"
               >
                 Apply Selected
               </button>
@@ -114,30 +112,28 @@ export default function ImageKeywordsPopup({
           </>
         ) : (
           <>
-            {/* 키워드 단계 — 이미지 작게 */}
-            <div className="flex justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={previewUrl}
-                alt="Uploaded style"
-                className="w-24 h-24 rounded-2xl object-cover"
-              />
-            </div>
+            {/* 키워드 단계 — 이미지 크게 */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewUrl}
+              alt="Uploaded style"
+              className="w-full rounded-2xl object-cover"
+              style={{ maxHeight: "48vw" }}
+            />
 
-            {/* Select All + 키워드 칩 */}
-            <div className="flex flex-wrap gap-2">
+            {/* Select All — 우측 정렬 */}
+            <div className="flex justify-end">
               <button
                 type="button"
                 onClick={onSelectAll}
-                className={`px-3.5 py-1.5 rounded-full typo-caption border transition-colors ${
-                  allSelected
-                    ? "bg-surface-900 text-white border-surface-900"
-                    : "bg-surface-100 text-surface-700 border-surface-300"
-                }`}
+                className="typo-caption text-surface-500 hover:text-surface-700 transition-colors"
               >
                 Select All
               </button>
+            </div>
 
+            {/* 키워드 칩 */}
+            <div className="flex flex-wrap gap-2">
               {keywords.map((kw) => {
                 const active = selectedSlugs.has(kw.slug);
                 return (
@@ -163,7 +159,7 @@ export default function ImageKeywordsPopup({
               <button
                 type="button"
                 onClick={onCancel}
-                className="flex-1 h-12 rounded-full bg-surface-200 text-surface-700 typo-button"
+                className="flex-1 h-12 typo-button text-surface-600"
               >
                 Cancel
               </button>
@@ -171,7 +167,7 @@ export default function ImageKeywordsPopup({
                 type="button"
                 onClick={onApply}
                 disabled={selectedSlugs.size === 0}
-                className="flex-1 h-12 rounded-full bg-secondary-400 text-white typo-button disabled:opacity-40"
+                className="flex-1 h-12 rounded-full bg-primary-400 text-white typo-button disabled:opacity-40"
               >
                 Apply Selected
               </button>
