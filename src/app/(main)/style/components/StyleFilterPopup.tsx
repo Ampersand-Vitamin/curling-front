@@ -131,7 +131,6 @@ const COLOR_TIER2: ColorGroup[] = [
 const LENGTHS: Item[] = [
   { slug: "short", name: "Short" },
   { slug: "medium", name: "Medium" },
-  { slug: "long_hair", name: "Long" },
   { slug: "extra_long", name: "Extra Long" },
 ];
 
@@ -328,7 +327,6 @@ export default function StyleFilterPopup({
   const hasShort = activeKeywords.has("short");
   const hasMediumPlus =
     activeKeywords.has("medium") ||
-    activeKeywords.has("long_hair") ||
     activeKeywords.has("extra_long");
   const hasPerm = activeKeywords.has("perm");
   const hasStraightening = activeKeywords.has("straightening");
