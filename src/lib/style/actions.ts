@@ -16,6 +16,7 @@ import type {
   StyleSearchParams,
   StyleSearchResult,
 } from "@/types/style";
+import { STYLE_SLUG_MAP } from "@/app/(main)/style/components/StyleFilterPopup";
 import sharp from "sharp";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -45,9 +46,18 @@ export async function searchStyle(
     .filter((s) => typeof s === "string" && s.length > 0 && s.length <= 64)
     .slice(0, 20);
 
+  // 텍스트 쿼리가 없고 키워드만 있으면, 키워드 이름을 CLIP 텍스트 쿼리로 변환하여 벡터 검색
+  const effectiveQ =
+    q.length === 0 && keywordSlugs.length > 0
+      ? keywordSlugs
+          .map((s) => STYLE_SLUG_MAP.get(s) ?? s.replace(/_/g, " "))
+          .join(", ")
+          .slice(0, 200)
+      : q;
+
   const result = await searchPortfolios({
-    q,
-    keywordSlugs,
+    q: effectiveQ,
+    keywordSlugs: [],  // slug 정확 매칭 대신 벡터 검색에 위임
     limit: params.limit,
     cursor: params.cursor,
   });
