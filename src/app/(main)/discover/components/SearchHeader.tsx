@@ -6,9 +6,9 @@ import KeywordFilter from "./KeywordFilter";
 import type { DiscoverMode } from "@/types/discover";
 
 const KEYWORDS = [
-  { label: "English Speaker" },
-  { label: "Curly Hair Expert" },
-  { label: "Foreigner Friendly" },
+  { slug: "english_speaking", label: "English Speaker" },
+  { slug: "curly_hair", label: "Curly Hair Expert" },
+  { slug: "foreigner_friendly", label: "Foreigner Friendly" },
 ];
 
 function CloseIcon() {
@@ -81,10 +81,10 @@ export default function SearchHeader({
         <div className="flex gap-2 px-3 overflow-x-auto scrollbar-hide">
           {KEYWORDS.map((kw) => (
             <KeywordFilter
-              key={kw.label}
+              key={kw.slug}
               label={kw.label}
-              activated={activeKeywords.has(kw.label)}
-              onClick={() => onToggleKeyword(kw.label)}
+              activated={activeKeywords.has(kw.slug)}
+              onClick={() => onToggleKeyword(kw.slug)}
             />
           ))}
         </div>
