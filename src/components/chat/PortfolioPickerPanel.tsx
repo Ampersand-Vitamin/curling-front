@@ -84,15 +84,15 @@ export function PortfolioPickerPanel({
 
       if (mode === "designer" && designerId) {
         const { data: portfolios } = await supabase
-          .from("designer_portfolio")
-          .select("id, image_url, designer_id")
+          .from("portfolio")
+          .select("id, image_path, designer_id")
           .eq("designer_id", designerId)
           .limit(12);
 
         setItems(
           (portfolios ?? []).map((p) => ({
             id: p.id as string,
-            image_url: p.image_url as string,
+            image_url: p.image_path as string,
             designer_id: p.designer_id as string,
           }))
         );
@@ -110,8 +110,8 @@ export function PortfolioPickerPanel({
 
         const portfolioIds = favs.map((f) => f.portfolio_id);
         const { data: portfolios } = await supabase
-          .from("designer_portfolio")
-          .select("id, image_url, designer_id")
+          .from("portfolio")
+          .select("id, image_path, designer_id")
           .in("id", portfolioIds);
 
         if (!portfolios || portfolios.length === 0) {
@@ -122,7 +122,7 @@ export function PortfolioPickerPanel({
         setItems(
           portfolios.map((p) => ({
             id: p.id as string,
-            image_url: p.image_url as string,
+            image_url: p.image_path as string,
             designer_id: p.designer_id as string,
           }))
         );
