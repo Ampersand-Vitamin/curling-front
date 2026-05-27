@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { storageUrl } from "@/lib/storage";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -6,21 +7,26 @@ const supabase = createClient(
 );
 import type { DesignerDetail, DesignerKeyword, DesignerLinks } from "./types";
 
-type RawProfile = {
-  user_id: string;
-  name: string | null;
-  salon_name: string | null;
-  avatar_url: string | null;
-  title: string | null;
+type RawDesignerProfile = {
+  id: string;
+  display_name: string;
+  role: string;
+  profile_image_url: string | null;
   bio: string | null;
-  career_years: number | null;
-  specialty: string[] | null;
-  languages: string[] | null;
+  highlight_message: string | null;
+  years_of_exp: number | null;
+  rating_avg: number;
+  review_count: number;
+  is_verified: boolean;
+  languages: string[];
+  other_links: Record<string, string>;
+  salon: { id: string; name: string; address: string | null } | null;
+  designer_keyword: { keyword: { slug: string; name: string; category: { slug: string } | null } | null }[] | null;
 };
 
 type RawPortfolioRow = {
   id: string;
-  image_url: string;
+  image_path: string;
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -30,15 +36,22 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
 
   const [profileRes, portfolioRes] = await Promise.all([
     supabase
-      .from("onboarding_profiles")
-      .select("user_id, name, salon_name, avatar_url, title, bio, career_years, specialty, languages")
-      .eq("user_id", id)
+      .from("designer_profile")
+      .select(`
+        id, display_name, role, profile_image_url,
+        bio, highlight_message, years_of_exp,
+        rating_avg, review_count, is_verified,
+        languages, other_links,
+        salon:salon_id ( id, name, address ),
+        designer_keyword ( keyword:keyword_id ( slug, name, category:category_slug ( slug ) ) )
+      `)
+      .eq("id", id)
       .maybeSingle(),
     supabase
-      .from("designer_portfolio")
-      .select("id, image_url")
+      .from("portfolio")
+      .select("id, image_path")
       .eq("designer_id", id)
-      .order("sort_order", { ascending: true }),
+      .order("display_order", { ascending: true }),
   ]);
 
   if (profileRes.error || !profileRes.data) {
@@ -53,35 +66,39 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
   }
 
   return toDomain(
-    profileRes.data as unknown as RawProfile,
+    profileRes.data as unknown as RawDesignerProfile,
     (portfolioRes.data ?? []) as unknown as RawPortfolioRow[],
   );
 }
 
-function toDomain(raw: RawProfile, portfolioRows: RawPortfolioRow[]): DesignerDetail {
-  const keywords: DesignerKeyword[] = (raw.specialty ?? []).map((s) => ({
-    slug: s.toLowerCase().replace(/\s+/g, "-"),
-    name: s,
-    categorySlug: "specialty",
-    relationType: "specialty" as const,
-  }));
+function toDomain(raw: RawDesignerProfile, portfolioRows: RawPortfolioRow[]): DesignerDetail {
+  const keywords: DesignerKeyword[] = (raw.designer_keyword ?? [])
+    .filter((dk) => dk.keyword !== null)
+    .map((dk) => ({
+      slug: dk.keyword!.slug,
+      name: dk.keyword!.name,
+      categorySlug: dk.keyword!.category?.slug ?? "specialty",
+      relationType: "specialty" as const,
+    }));
+
+  const portfolioImages = portfolioRows.map((r) => storageUrl(r.image_path));
 
   return {
-    id: raw.user_id,
-    displayName: raw.name ?? "Designer",
-    role: raw.title ?? "",
+    id: raw.id,
+    displayName: raw.display_name ?? "Designer",
+    role: raw.role ?? "",
     bio: raw.bio,
-    highlightMessage: null,
-    yearsOfExp: raw.career_years,
-    ratingAvg: 0,
-    reviewCount: 0,
-    isVerified: false,
+    highlightMessage: raw.highlight_message,
+    yearsOfExp: raw.years_of_exp,
+    ratingAvg: Number(raw.rating_avg ?? 0),
+    reviewCount: raw.review_count ?? 0,
+    isVerified: raw.is_verified ?? false,
     languages: raw.languages ?? [],
-    otherLinks: {} as DesignerLinks,
-    profileImageUrl: raw.avatar_url,
-    portfolioImages: portfolioRows.map((r) => r.image_url),
-    portfolioItems: portfolioRows.map((r) => ({ id: r.id, imageUrl: r.image_url })),
-    salon: raw.salon_name ? { id: "", name: raw.salon_name, address: null } : null,
+    otherLinks: (raw.other_links ?? {}) as DesignerLinks,
+    profileImageUrl: raw.profile_image_url ? storageUrl(raw.profile_image_url) : null,
+    portfolioImages,
+    portfolioItems: portfolioRows.map((r) => ({ id: r.id, imageUrl: storageUrl(r.image_path) })),
+    salon: raw.salon ? { id: raw.salon.id, name: raw.salon.name, address: raw.salon.address } : null,
     keywords,
   };
 }
