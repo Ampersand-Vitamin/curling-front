@@ -9,11 +9,10 @@ import type { RecommendedKeyword } from "@/types/style";
  * (slug 미존재 키워드도 포함될 수 있음 — 인덱싱 결과에 따라 0건일 수 있고 그것도 OK)
  */
 const STATIC_RECOMMENDED: RecommendedKeyword[] = [
-  { slug: "straight_hair", label: "Straight Hair" },
+  { slug: "korean_perm", label: "Korean Perm" },
   { slug: "balayage", label: "Balayage" },
   { slug: "highlights", label: "Highlight" },
   { slug: "brown_hair", label: "Brown Hair" },
-  { slug: "korean_perm", label: "Korean Perm" },
   { slug: "curly_cut", label: "Curly Cut" },
 ];
 

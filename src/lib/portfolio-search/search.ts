@@ -61,10 +61,13 @@ export async function searchPortfolios(
 
   // (2) RPC
   const supabase = getPortfolioAdminClient();
+  const filterKeywords = keywordSlugs.length > 0 ? keywordSlugs : null;
+  console.log("[searchPortfolios]", { q: params.q, filterKeywords, limit, offset });
+
   const { data, error } = await supabase.rpc(RPC_NAME, {
     query_text: params.q ?? "",
     query_embedding: queryEmbedding,
-    filter_keywords: keywordSlugs.length > 0 ? keywordSlugs : null,
+    filter_keywords: filterKeywords,
     result_limit: limit,
     result_offset: offset,
   });
@@ -74,6 +77,7 @@ export async function searchPortfolios(
   }
 
   const rows = (data ?? []) as PortfolioRpcRow[];
+  console.log("[searchPortfolios] rows:", rows.length, rows.slice(0, 3).map(r => ({ id: r.id.slice(0, 8), keywords: r.keywords })));
   const hits = rows.map(rowToHit);
 
   // (3) 페이지네이션 — RPC 가 totalCount 를 반환하지 않으므로
