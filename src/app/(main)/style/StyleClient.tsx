@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import StyleSearchTab from "./components/StyleSearchTab";
-import StyleFilterPopup, { STYLE_SLUG_MAP } from "./components/StyleFilterPopup";
+import StyleFilterPopup from "./components/StyleFilterPopup";
 import RecommendedKeywords from "./components/RecommendedKeywords";
 import PortfolioGrid from "./components/PortfolioGrid";
 import StyleSearchSuggestions from "./components/StyleSearchSuggestions";
@@ -91,25 +91,16 @@ export default function StyleClient({
     }
   }, []);
 
-  const filterQuery = useMemo(() => {
-    if (activeSlugs.size === 0) return "";
-    return Array.from(activeSlugs)
-      .map((slug) => STYLE_SLUG_MAP.get(slug) ?? slug.replace(/_/g, " "))
-      .join(" ");
-  }, [activeSlugs]);
-
-  const combinedQuery = useMemo(
-    () => [query, filterQuery].filter(Boolean).join(" "),
-    [query, filterQuery],
-  );
+  const slugsKey = useMemo(() => Array.from(activeSlugs).sort().join(","), [activeSlugs]);
 
   useEffect(() => {
     if (photoSearch) return;
     const handle = setTimeout(() => {
-      runSearch(combinedQuery, [], 0);
+      runSearch(query, Array.from(activeSlugs), 0);
     }, QUERY_DEBOUNCE_MS);
     return () => clearTimeout(handle);
-  }, [combinedQuery, runSearch, photoSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, slugsKey, runSearch, photoSearch]);
 
   // 사진 검색: photoSearch 또는 activeSlugs 변경 시 재실행
   useEffect(() => {
