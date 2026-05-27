@@ -21,7 +21,7 @@ type RawDesignerProfile = {
   languages: string[];
   other_links: Record<string, string>;
   salon: { id: string; name: string; address: string | null } | null;
-  designer_keyword: { keyword: { slug: string; name: string; category_slug: string | null } | null }[] | null;
+  designer_keyword: { keyword: { slug: string; name: string; category: { slug: string } | null } | null }[] | null;
 };
 
 type RawPortfolioRow = {
@@ -43,7 +43,7 @@ export async function getDesignerById(id: string): Promise<DesignerDetail | null
         rating_avg, review_count, is_verified,
         languages, other_links,
         salon:salon_id ( id, name, address ),
-        designer_keyword ( keyword:keyword_id ( slug, name, category_slug ) )
+        designer_keyword ( keyword:keyword_id ( slug, name, category:category_id ( slug ) ) )
       `)
       .eq("id", id)
       .maybeSingle(),
@@ -77,7 +77,7 @@ function toDomain(raw: RawDesignerProfile, portfolioRows: RawPortfolioRow[]): De
     .map((dk) => ({
       slug: dk.keyword!.slug,
       name: dk.keyword!.name,
-      categorySlug: dk.keyword!.category_slug ?? "specialty",
+      categorySlug: dk.keyword!.category?.slug ?? "specialty",
       relationType: "specialty" as const,
     }));
 
