@@ -16,7 +16,6 @@ import type {
   StyleSearchParams,
   StyleSearchResult,
 } from "@/types/style";
-import { STYLE_SLUG_MAP } from "@/app/(main)/style/components/StyleFilterPopup";
 import sharp from "sharp";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -50,7 +49,7 @@ export async function searchStyle(
   const effectiveQ =
     q.length === 0 && keywordSlugs.length > 0
       ? keywordSlugs
-          .map((s) => STYLE_SLUG_MAP.get(s) ?? s.replace(/_/g, " "))
+          .map((s) => s.replace(/_/g, " "))
           .join(", ")
           .slice(0, 200)
       : q;
