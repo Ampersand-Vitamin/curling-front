@@ -54,7 +54,7 @@ export default function StyleSearchTab({
           aria-label="Filters"
           onClick={onFilterClick}
           className={`flex items-center justify-center size-11 rounded-full text-surface-900 transition-colors ${
-            activeFilterCount > 0 ? "bg-surface-900" : "bg-surface-200"
+            activeFilterCount > 0 ? "bg-primary-400" : "bg-surface-200"
           }`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
