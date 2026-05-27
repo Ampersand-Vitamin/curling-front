@@ -13,7 +13,7 @@ interface PortfolioCardProps {
 export default function PortfolioCard({ card, onFavoriteClick }: PortfolioCardProps) {
   return (
     <Link
-      href={`/portfolio/${card.id}`}
+      href={`/designer/${card.designerId}`}
       className="relative block w-full overflow-hidden rounded-2xl mb-2"
     >
       <div className="w-full" style={{ aspectRatio: "3/4" }}>

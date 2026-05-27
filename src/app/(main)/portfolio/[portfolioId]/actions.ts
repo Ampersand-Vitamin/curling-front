@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { storageUrl } from "@/lib/storage";
 
 export interface PortfolioDetailData {
   id: string;
@@ -21,8 +22,8 @@ export async function getPortfolioDetail(portfolioId: string): Promise<Portfolio
   const supabase = await createClient();
 
   const { data: portfolio, error } = await supabase
-    .from("designer_portfolio")
-    .select("id, designer_id, image_url")
+    .from("portfolio")
+    .select("id, designer_id, image_path")
     .eq("id", portfolioId)
     .maybeSingle();
 
@@ -30,16 +31,16 @@ export async function getPortfolioDetail(portfolioId: string): Promise<Portfolio
 
   const [profileRes, otherRes, authRes] = await Promise.all([
     supabase
-      .from("onboarding_profiles")
-      .select("name, salon_name, avatar_url")
-      .eq("user_id", portfolio.designer_id)
+      .from("designer_profile")
+      .select("display_name, profile_image_url, salon:salon_id ( name )")
+      .eq("id", portfolio.designer_id)
       .maybeSingle(),
     supabase
-      .from("designer_portfolio")
-      .select("id, image_url")
+      .from("portfolio")
+      .select("id, image_path")
       .eq("designer_id", portfolio.designer_id)
       .neq("id", portfolioId)
-      .order("sort_order", { ascending: true })
+      .order("display_order", { ascending: true })
       .limit(10),
     supabase.auth.getUser(),
   ]);
@@ -59,17 +60,20 @@ export async function getPortfolioDetail(portfolioId: string): Promise<Portfolio
     favoritedIds = new Set((favs ?? []).map((f) => f.portfolio_id as string));
   }
 
+  const salonRaw = profile?.salon as unknown;
+  const salon = Array.isArray(salonRaw) ? salonRaw[0] as { name: string } | undefined : salonRaw as { name: string } | null;
+
   return {
     id: portfolio.id as string,
-    imageUrl: portfolio.image_url as string,
+    imageUrl: storageUrl(portfolio.image_path as string),
     designerId: portfolio.designer_id as string,
-    designerName: profile?.name ?? "Designer",
-    salonName: profile?.salon_name ?? null,
-    avatarUrl: profile?.avatar_url ?? null,
+    designerName: profile?.display_name ?? "Designer",
+    salonName: salon?.name ?? null,
+    avatarUrl: profile?.profile_image_url ? storageUrl(profile.profile_image_url as string) : null,
     isFavorited: favoritedIds.has(portfolioId),
     otherPortfolios: others.map((o) => ({
       id: o.id as string,
-      imageUrl: o.image_url as string,
+      imageUrl: storageUrl(o.image_path as string),
       isFavorited: favoritedIds.has(o.id as string),
     })),
   };
