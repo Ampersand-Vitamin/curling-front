@@ -316,6 +316,9 @@ export default function StyleClient({
         />
       </div>
 
+      {/* Trending 섹션 타이틀 */}
+      <h2 className="typo-h4 text-surface-900 px-4 pt-2 pb-1">Trending</h2>
+
       {/* 포트폴리오 그리드 */}
       <PortfolioGrid
         cards={cards}

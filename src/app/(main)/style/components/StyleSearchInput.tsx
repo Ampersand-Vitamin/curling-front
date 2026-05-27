@@ -1,12 +1,9 @@
 "use client";
 
-import { useRef } from "react";
-
 interface StyleSearchInputProps {
   value: string;
   onChange: (next: string) => void;
   onSubmit?: () => void;
-  onFileSelect?: (file: File) => void;
   onFocus?: () => void;
   placeholder?: string;
   className?: string;
@@ -43,28 +40,16 @@ function Spinner() {
   );
 }
 
-function PhotoIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <rect x="2" y="3" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-      <circle cx="6.25" cy="7" r="1.1" fill="currentColor" />
-      <path d="M3 12.5L7 9L11 12L15 8.5" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export default function StyleSearchInput({
   value,
   onChange,
   onSubmit,
-  onFileSelect,
   onFocus,
   placeholder = "Search Salons",
   className = "",
   isLoading = false,
 }: StyleSearchInputProps) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   return (
     <form
       role="search"
@@ -83,37 +68,14 @@ export default function StyleSearchInput({
         className="flex-1 min-w-0 bg-transparent outline-none typo-body1 text-surface-900 placeholder:text-surface-400 pr-2"
         aria-label="Search styles"
       />
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        hidden
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file && onFileSelect) {
-            onFileSelect(file);
-            e.target.value = "";
-          }
-        }}
-      />
-      <div className="flex items-center">
-        <button
-          type="submit"
-          aria-label={isLoading ? "Searching" : "Search"}
-          disabled={isLoading}
-          className="flex items-center justify-center size-9 rounded-full text-surface-900"
-        >
-          {isLoading ? <Spinner /> : <SearchIcon />}
-        </button>
-        <button
-          type="button"
-          aria-label="Search by photo"
-          onClick={() => fileInputRef.current?.click()}
-          className="flex items-center justify-center size-9 rounded-full bg-white border border-surface-200 text-surface-900"
-        >
-          <PhotoIcon />
-        </button>
-      </div>
+      <button
+        type="submit"
+        aria-label={isLoading ? "Searching" : "Search"}
+        disabled={isLoading}
+        className="flex items-center justify-center size-9 rounded-full text-surface-900 shrink-0"
+      >
+        {isLoading ? <Spinner /> : <SearchIcon />}
+      </button>
     </form>
   );
 }
